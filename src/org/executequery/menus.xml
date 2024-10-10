@@ -329,6 +329,11 @@
         <menu-item id="generator-test-data-command"
                    class="org.underworldlabs.swing.menu.MainMenuItem"/>
 
+        <menu-item id="separator"/>
+
+        <menu-item id="query-builder-command"
+                   class="org.executequery.gui.querybuilder.QueryBuilderCommand"/>
+
     </menu>
 
     <menu name="System"

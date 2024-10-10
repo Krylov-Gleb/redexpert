@@ -397,6 +397,12 @@
             description="Allows online validation of DB tables"
             execute-class="org.executequery.actions.databasecommands.TableValidationCommand"/>
 
+    <action id="query-builder-command"
+            name="Query Builder"
+            small-icon="icon_table_validation"
+            description="Open Query Builder"
+            execute-class="org.executequery.gui.querybuilder.QueryBuilderCommand"/>
+
     <action id="execute-sql-script-command"
             name="Execute SQL Script"
             mnemonic="S"
