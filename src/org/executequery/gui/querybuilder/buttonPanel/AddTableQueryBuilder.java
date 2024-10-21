@@ -7,41 +7,48 @@ import org.executequery.gui.browser.ConnectionsTreePanel;
 import org.executequery.gui.querybuilder.QueryBuilderPanel;
 import org.underworldlabs.swing.ConnectionsComboBox;
 import org.underworldlabs.swing.layouts.GridBagHelper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 /**
- * The AddTableQueryBuilder
+ * This class creates a window for adding tables to the components panel (InputPanel).
  *
  * @author Krylov Gleb
  */
-
 public class AddTableQueryBuilder extends JFrame {
 
-    // --- Fields ---
+    // --- The field that is passed through the constructor ---
 
-    private DefaultDatabaseHost defaultDatabaseHost;
+    private QueryBuilderPanel queryBuilderPanel;
 
     // --- GUI Components ---
 
-    private QueryBuilderPanel queryBuilderPanel;
     private JPanel mainPanel;
     private JLabel labelConnect;
-    private ConnectionsComboBox connectionsCombo;
     private JLabel labelWhoTable;
-    private JComboBox<String> comboBoxTable;
     private JButton buttonCreate;
+    private JComboBox<String> comboBoxTable;
+    private ConnectionsComboBox connectionsCombo;
 
-    // --- Designer ---
+    // --- Other field ---
 
+    private DefaultDatabaseHost defaultDatabaseHost;
+
+    /**
+     * A new window is being created for adding tables.
+     * The components of the graphical interface of the window are initialized.
+     *
+     * @param queryBuilderPanel
+     */
     public AddTableQueryBuilder(QueryBuilderPanel queryBuilderPanel) {
         this.queryBuilderPanel = queryBuilderPanel;
         init();
     }
 
     /**
-     * Method for initialization.
+     * The GUI elements are initialized and actions are added to the buttons.
      */
     private void init() {
         mainPanel = WidgetFactory.createPanel("Add Table Panel");
@@ -59,7 +66,7 @@ public class AddTableQueryBuilder extends JFrame {
         comboBoxTable.setPreferredSize(new Dimension(200, 30));
 
         buttonCreate = WidgetFactory.createButton("CreateTable", "Создать", event -> {
-            TableQueryBuilder tableQueryBuilder = new TableQueryBuilder(getColumns(comboBoxTable.getSelectedItem().toString()),comboBoxTable.getSelectedItem().toString());
+            TableQueryBuilder tableQueryBuilder = new TableQueryBuilder(getColumns(comboBoxTable.getSelectedItem().toString()), comboBoxTable.getSelectedItem().toString());
             queryBuilderPanel.addTableInInputPanel(tableQueryBuilder.getTable());
             queryBuilderPanel.addListTableInInputPanel(tableQueryBuilder.getJTable());
         });
@@ -68,7 +75,7 @@ public class AddTableQueryBuilder extends JFrame {
     }
 
     /**
-     * A method for placing components
+     * The components are placed on the panel and their parameters are set.
      */
     private void arrangeComponent() {
         mainPanel.setLayout(new GridBagLayout());
@@ -79,17 +86,30 @@ public class AddTableQueryBuilder extends JFrame {
         mainPanel.add(buttonCreate, new GridBagHelper().anchorCenter().setX(0).setY(40).setInsets(5, 5, 5, 5).get());
 
         setLayout(new BorderLayout());
-        setTitle("Add Table");
+        setTitle("Добавить таблицу");
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setIconImage(new ImageIcon("red_expert.png").getImage());
         setLocationRelativeTo(queryBuilderPanel);
         add(mainPanel, BorderLayout.CENTER);
     }
 
-
+    /**
+     * A method for getting the database host by the connection used.
+     *
+     * @param connection
+     * @return DefaultDatabaseHost
+     */
     private static DefaultDatabaseHost getDefaultDatabaseHost(DatabaseConnection connection) {
         return ConnectionsTreePanel.getPanelFromBrowser().getDefaultDatabaseHostFromConnection(connection);
     }
 
 
+    /**
+     * Returns a list of columns from the specified table.
+     *
+     * @param table
+     * @return List<String>
+     */
     public List<String> getColumns(String table) {
         return getDefaultDatabaseHost(connectionsCombo.getSelectedConnection()).getColumnNames(table);
     }
