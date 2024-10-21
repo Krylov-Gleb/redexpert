@@ -7,11 +7,11 @@ import org.underworldlabs.swing.actions.BaseCommand;
 import java.awt.event.ActionEvent;
 
 /**
- * The QueryBuilderCommand
+ * A class that implements functionality for creating a Query Builder
+ * workspace by clicking on a button that uses this class.
  *
  * @author Krylov Gleb
  */
-
 public class QueryBuilderCommand extends OpenFrameCommand implements BaseCommand {
 
     /**
