@@ -3,29 +3,35 @@ package org.executequery.gui.querybuilder;
 import org.executequery.GUIUtilities;
 import org.executequery.actions.OpenFrameCommand;
 import org.executequery.gui.editor.QueryEditor;
-import org.executequery.gui.querybuilder.WorkQuryEditor.CreateStringQuery;
 
 import java.awt.event.ActionEvent;
 
 /**
- * The ExecuteQueryEditor
+ * A class for creating a query editor.
  *
  * @author Krylov Gleb
  */
-
 public class ExecuteQueryEditor extends OpenFrameCommand {
 
+    // --- Field constant ---
+    private final String Query = "SELECT * FROM EMPLOYEE;";
+
+    // --- GUI Components ---
+    private QueryEditor queryEditor;
+
     /**
-     * A method that creates a panel (QueryEditor) for displaying and using created (QueryBuilder) queries
-     *
-     * @param createStringQuery Passing the query that created the QueryBuilder
+     * Creating a new QueryEditor
      */
-    public ExecuteQueryEditor(CreateStringQuery createStringQuery) {
-        execute(createStringQuery);
+    public ExecuteQueryEditor() {
+        execute();
     }
 
-    private QueryEditor execute(CreateStringQuery createStringQuery) {
+    /**
+     * A method for creating a new query editor and creating a new tab in the workspace.
+     */
+    private void execute() {
         QueryEditor queryEditor = new QueryEditor();
+        this.queryEditor = queryEditor;
 
         GUIUtilities.addCentralPane(QueryEditor.TITLE,
                 QueryEditor.FRAME_ICON,
@@ -33,7 +39,15 @@ public class ExecuteQueryEditor extends OpenFrameCommand {
                 null,
                 true);
 
-        queryEditor.setEditorText(createStringQuery.getQuery());
+        queryEditor.setEditorText(Query);
+    }
+
+    /**
+     * The method for getting the query editor that we are working with.
+     *
+     * @return QueryEditor
+     */
+    public QueryEditor getQueryEditor() {
         return queryEditor;
     }
 
