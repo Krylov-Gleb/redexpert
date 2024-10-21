@@ -2,6 +2,7 @@ package org.executequery.gui.querybuilder;
 
 import org.executequery.base.TabView;
 import org.executequery.gui.editor.QueryEditor;
+import org.executequery.gui.editor.QueryEditorTextPanel;
 import org.executequery.gui.querybuilder.WorkQuryEditor.CreateStringQuery;
 import org.executequery.gui.querybuilder.inputPanel.QueryBuilderInputPanel;
 import org.executequery.gui.querybuilder.toolBar.QueryBuilderToolBarPanel;
@@ -23,15 +24,15 @@ public class QueryBuilderPanel extends JPanel implements TabView {
     public static final String TITLE = "Query Builder";
     public static final String FRAME_ICON = "icon_table_validation";
 
-    private ArrayList<JTable> tableListInInputPanel;
-
     // --- GUI Components ---
 
     private JPanel mainPanel;
-    private QueryBuilderToolBarPanel queryBuilderToolBarPanel;
+    private JSplitPane splitPane;
+    private QueryEditorTextPanel queryEditorTextPanel;
     private QueryBuilderInputPanel inputElementPanel;
+    private QueryBuilderToolBarPanel queryBuilderToolBarPanel;
+    private ArrayList<JTable> tableListInInputPanel;
     private CreateStringQuery createStringQuery;
-    private QueryEditor queryEditor;
 
     // --- Designer ---
 
@@ -45,13 +46,20 @@ public class QueryBuilderPanel extends JPanel implements TabView {
     private void init() {
 
         mainPanel = new JPanel(new BorderLayout());
-        queryEditor = new QueryEditor();
-        queryBuilderToolBarPanel = new QueryBuilderToolBarPanel(this);
+
+        createStringQuery = new CreateStringQuery();
+
+        queryBuilderToolBarPanel = new QueryBuilderToolBarPanel(this, createStringQuery);
+
+        queryEditorTextPanel = new QueryEditorTextPanel(new QueryEditor());
+
         tableListInInputPanel = new ArrayList<>();
 
-        createStringQuery = new CreateStringQuery(this);
         inputElementPanel = new QueryBuilderInputPanel();
         inputElementPanel.setLayout(new GridBagLayout());
+
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputElementPanel, queryEditorTextPanel);
+        splitPane.setDividerLocation(600);
 
         arrangeComponent();
     }
@@ -60,7 +68,7 @@ public class QueryBuilderPanel extends JPanel implements TabView {
      * A method for placing components
      */
     private void arrangeComponent() {
-        mainPanel.add(inputElementPanel, BorderLayout.CENTER);
+        mainPanel.add(splitPane, BorderLayout.CENTER);
         mainPanel.add(queryBuilderToolBarPanel, BorderLayout.NORTH);
 
         setLayout(new BorderLayout());
@@ -106,15 +114,6 @@ public class QueryBuilderPanel extends JPanel implements TabView {
     }
 
     /**
-     * Returns the created QueryEditor
-     *
-     * @return QueryEditor
-     */
-    public QueryEditor getQueryEditor() {
-        return queryEditor;
-    }
-
-    /**
      * The table added to the output panel is added to the array (ArrayList).
      *
      * @param table
@@ -139,6 +138,24 @@ public class QueryBuilderPanel extends JPanel implements TabView {
      */
     public ArrayList<JTable> getListTableInInputPanel() {
         return tableListInInputPanel;
+    }
+
+    /**
+     * A method for changing the text in the display panel of the created query.
+     *
+     * @param swapText
+     */
+    public void setTextInQueryEditorTextPanel(String swapText) {
+        queryEditorTextPanel.setQueryAreaText(swapText);
+    }
+
+    /**
+     * A method for passing a request from the lower display panel to the query constructor used.
+     *
+     * @param queryEditor
+     */
+    public void ApplyQueryFromQueryEditorTextPanel(QueryEditor queryEditor) {
+        queryEditor.setEditorText(queryEditorTextPanel.getQueryAreaText());
     }
 
     @Override
