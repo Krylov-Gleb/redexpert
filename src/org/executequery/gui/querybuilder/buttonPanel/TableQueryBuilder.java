@@ -6,56 +6,61 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * The TableQueryBuilder
+ * A class for creating tables.
  *
  * @author Krylov Gleb
  */
-
 public class TableQueryBuilder {
 
     // --- Fields ---
 
-    private List<String> ColumnsTable;
-    private String NameTable;
-    private Object[] Column;
-    private Object[][] TableData;
-    private DefaultTableModel defaultTableModel;
+    private List<String> columnsTable;
+    private String nameTable;
+    private Object[] column;
+    private Object[][] tableData;
 
     // --- GUI Components ---
 
     private JTable table;
     private JScrollPane scrollPane;
+    private DefaultTableModel defaultTableModel;
 
-    // --- Designer ---
-
-    public TableQueryBuilder(List<String> ColumnsTable, String NameTable) {
-        this.ColumnsTable = ColumnsTable;
-        this.NameTable = NameTable;
+    /**
+     * Creates a table using the passed table name and its columns.
+     * Initializes the fields of the class.
+     *
+     * @param columnsTable
+     * @param nameTable
+     */
+    public TableQueryBuilder(List<String> columnsTable, String nameTable) {
+        this.columnsTable = columnsTable;
+        this.nameTable = nameTable;
         init();
     }
 
     /**
-     * Method for initialization.
+     * A method for initializing class fields.
+     * As well as creating a table (columns and rows in it).
      */
     private void init() {
 
-        Column = new Object[2];
-        Column[0] = NameTable;
-        Column[1] = "Add In Select";
+        column = new Object[2];
+        column[0] = nameTable;
+        column[1] = "Add In Select";
 
-        TableData = new Object[ColumnsTable.size()][Column.length];
+        tableData = new Object[columnsTable.size()][column.length];
 
-        for (int i = 0; i < TableData.length; i++) {
-            for (int j = 0; j < TableData[i].length; j++) {
+        for (int i = 0; i < tableData.length; i++) {
+            for (int j = 0; j < tableData[i].length; j++) {
                 if (j == 0) {
-                    TableData[i][0] = ColumnsTable.get(i);
+                    tableData[i][0] = columnsTable.get(i);
                 } else {
-                    TableData[i][j] = false;
+                    tableData[i][j] = false;
                 }
             }
         }
 
-        defaultTableModel = new DefaultTableModel(TableData, Column) {
+        defaultTableModel = new DefaultTableModel(tableData, column) {
 
             // --- Overloading methods for correct display of CheckBox (Boolean type) ---
 
@@ -82,8 +87,6 @@ public class TableQueryBuilder {
 
         scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(200, 200));
-
-
     }
 
     /**
