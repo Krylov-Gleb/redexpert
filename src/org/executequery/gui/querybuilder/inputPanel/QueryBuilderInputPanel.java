@@ -4,30 +4,30 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * The QueryBuilderInputPanel
+ * A class for creating a panel for displaying graphical components to the user. (Tables, connections, etc.).
  *
  * @author Krylov Gleb
  */
-
 public class QueryBuilderInputPanel extends JPanel {
 
-    // --- Designer ---
-
-    public QueryBuilderInputPanel(){
+    /**
+     * Creating a panel and initializing the fields.
+     */
+    public QueryBuilderInputPanel() {
         init();
     }
 
     /**
      * Method for initialization
      */
-    private void init(){
+    private void init() {
         arrangeComponent();
     }
 
     /**
      * A method for placing components
      */
-    private void arrangeComponent(){
+    private void arrangeComponent() {
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
 
