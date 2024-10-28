@@ -401,7 +401,7 @@
             name="Query Builder"
             small-icon="icon_table_validation"
             description="Open Query Builder"
-            execute-class="org.executequery.gui.querybuilder.QueryBuilderCommand"/>
+            execute-class="org.executequery.gui.querybuilder.CommandUseQueryBuilder"/>
 
     <action id="execute-sql-script-command"
             name="Execute SQL Script"
