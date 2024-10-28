@@ -20,6 +20,7 @@ public class CreateStringQuery {
     private final String EQUALS = "=";
     private final String COMMA = ",";
     private final String STAR = "*";
+    private final String WHERE = "WHERE";
 
     // --- Other field ---
     private String first = "";
@@ -28,6 +29,10 @@ public class CreateStringQuery {
     private String join = "";
     private String table = "EMPLOYEE";
     private String attribute = "";
+    private String where = " ";
+    private String groupBy = "";
+
+    private ArrayList<String> historyCondition = new ArrayList<>();
 
     /**
      * A method for adding the first value to the query.
@@ -91,12 +96,12 @@ public class CreateStringQuery {
 
         for (int i = 0; i < attributes.size(); i++) {
             if (i >= 1) {
-                if(!join.contains(queryTable.get(i))){
-                    JOptionPane.showMessageDialog(new JFrame(),"Пожалуйста укажите соединение (Join) для таблиц!","Отсутствует объединение (Join)",JOptionPane.ERROR_MESSAGE);
+                if (!join.contains(queryTable.get(i))) {
+                    JOptionPane.showMessageDialog(new JFrame(), "Пожалуйста укажите соединение (Join) для таблиц!", "Отсутствует объединение (Join)", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
-            if (i < attributes.size()-1) {
+            if (i < attributes.size() - 1) {
                 stringBuilder.append(setAttribute(attributes.get(i))).append(COMMA);
             } else {
                 stringBuilder.append(setAttribute(attributes.get(i)));
@@ -131,7 +136,7 @@ public class CreateStringQuery {
 
         if (stringBuilder.indexOf(WHITESPACE + tableNameOne + WHITESPACE) == -1) {
             if (stringBuilder.indexOf(WHITESPACE + tableNameTwo + WHITESPACE) == -1) {
-                stringBuilder.replace(0,stringBuilder.length(),EMPTINESS);
+                stringBuilder.replace(0, stringBuilder.length(), EMPTINESS);
                 stringBuilder.append(tableNameOne).append(WHITESPACE).append(joinName.toUpperCase()).append(WHITESPACE).append(tableNameTwo).append(WHITESPACE).append(ON).append(WHITESPACE).append(tableNameOne).append(POINT).append(keyAttributeOne).append(EQUALS).append(tableNameTwo).append(POINT).append(keyAttributeTwo);
                 join = stringBuilder.toString();
                 return;
@@ -145,7 +150,7 @@ public class CreateStringQuery {
 
         if (stringBuilder.indexOf(WHITESPACE + tableNameTwo + WHITESPACE) == -1) {
             if (stringBuilder.indexOf(WHITESPACE + tableNameOne + WHITESPACE) == -1) {
-                stringBuilder.replace(0,stringBuilder.length(),EMPTINESS);
+                stringBuilder.replace(0, stringBuilder.length(), EMPTINESS);
                 stringBuilder.append(tableNameOne).append(WHITESPACE).append(joinName.toUpperCase()).append(WHITESPACE).append(tableNameTwo).append(WHITESPACE).append(ON).append(WHITESPACE).append(tableNameOne).append(POINT).append(keyAttributeOne).append(EQUALS).append(tableNameTwo).append(POINT).append(keyAttributeTwo);
                 join = stringBuilder.toString();
                 return;
@@ -206,15 +211,23 @@ public class CreateStringQuery {
         Query.append(distinct).append(WHITESPACE).append(attribute).append(WHITESPACE).append(FROM);
 
         if (!join.isEmpty()) {
-            if(join.charAt(0) != ' ') {
+            if (join.charAt(0) != ' ') {
                 join = WHITESPACE + join;
             }
             Query.append(join).append(WHITESPACE);
         } else {
-            if(table.charAt(0) != ' ') {
+            if (table.charAt(0) != ' ') {
                 table = WHITESPACE + table;
             }
             Query.append(table).append(WHITESPACE);
+        }
+
+        if (!where.isEmpty()) {
+            Query.append(where);
+        }
+
+        if(!groupBy.isEmpty()){
+            Query.append(groupBy);
         }
 
         Query.append(";");
@@ -229,7 +242,7 @@ public class CreateStringQuery {
      * @return
      */
     private String setAttribute(ArrayList<String> Array) {
-        StringBuilder stringBuilderAttributes = new StringBuilder(EMPTINESS);
+        StringBuilder stringBuilderAttributes = new StringBuilder();
 
         for (int i = 0; i < Array.size(); i++) {
             if (i != Array.size() - 1) {
@@ -240,4 +253,98 @@ public class CreateStringQuery {
         }
         return stringBuilderAttributes.toString();
     }
+
+    public void addWhere(String leftOperand, String operation, String rightOperand, String join) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilderWhere = new StringBuilder(where);
+
+        stringBuilder.append(WHITESPACE).append(leftOperand).append(WHITESPACE).append(operation).append(WHITESPACE).append(rightOperand);
+
+        if (stringBuilderWhere.indexOf(WHERE) > 0) {
+            if (stringBuilderWhere.indexOf(stringBuilder.toString()) == -1) {
+                stringBuilderWhere.append(WHITESPACE).append(join).append(stringBuilder.toString());
+                historyCondition.add(WHITESPACE + join + stringBuilder.toString());
+            }
+        } else {
+            stringBuilderWhere.append(WHERE).append(stringBuilder.toString());
+            historyCondition.add(stringBuilder.toString());
+        }
+
+        where = stringBuilderWhere.toString();
+    }
+
+    public void removeWhere(String removeWhere) {
+
+        StringBuilder stringBuilder = new StringBuilder(where);
+
+        if (stringBuilder.indexOf(removeWhere) > 0) {
+            if (historyCondition.size() == 1) {
+                stringBuilder.replace(stringBuilder.indexOf(WHERE + removeWhere), stringBuilder.indexOf(removeWhere) + removeWhere.length(), "");
+                historyCondition.remove(removeWhere);
+
+            }
+            if (historyCondition.size() > 1) {
+                stringBuilder.replace(stringBuilder.indexOf(removeWhere), stringBuilder.indexOf(removeWhere) + removeWhere.length(), "");
+                historyCondition.remove(removeWhere);
+            }
+        }
+
+        where = stringBuilder.toString();
+
+    }
+
+    public void clearWhere() {
+        where = " ";
+    }
+
+    public void addGroupBy(ArrayList<String> attributes) {
+        groupBy = EMPTINESS;
+        StringBuilder stringBuilder = new StringBuilder(groupBy);
+
+        if (!attributes.isEmpty()) {
+            for(int i = 0; i < attributes.size(); i++){
+                if(i == 0){
+                    stringBuilder.append("GROUP BY ").append(attributes.get(i));
+                }
+                else{
+                    stringBuilder.append(",").append(attributes.get(i));
+                }
+            }
+        }
+
+        groupBy = stringBuilder.toString();
+    }
+
+    public void clearAll(){
+        clearAttribute();
+        clearJoin();
+        clearTable();
+        clearSkip();
+        clearFirst();
+        clearWhere();
+        clearHistoryCondition();
+        clearGroupBy();
+    }
+
+    public void clearGroupBy(){
+        groupBy = " ";
+    }
+
+    public void clearHistoryCondition() {
+        historyCondition.clear();
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void replaceAttribute(String attributes){
+        attribute = attributes;
+    }
+
+    public ArrayList<String> getHistoryCondition() {
+        return historyCondition;
+    }
+
 }
