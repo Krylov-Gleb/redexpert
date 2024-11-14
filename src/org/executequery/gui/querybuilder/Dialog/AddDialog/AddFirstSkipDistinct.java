@@ -1,8 +1,8 @@
-package org.executequery.gui.querybuilder.buttonPanel;
+package org.executequery.gui.querybuilder.Dialog.AddDialog;
 
 import org.executequery.gui.WidgetFactory;
 import org.executequery.gui.querybuilder.QueryBuilderPanel;
-import org.executequery.gui.querybuilder.WorkQuryEditor.CreateStringQuery;
+import org.executequery.gui.querybuilder.WorkQuryEditor.QueryConstructor;
 import org.underworldlabs.swing.layouts.GridBagHelper;
 
 import javax.swing.*;
@@ -15,22 +15,22 @@ import java.awt.*;
  *
  * @author Krylov Gleb
  */
-public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
+public class AddFirstSkipDistinct extends JDialog {
 
     // --- Elements accepted using the constructor. ----
     // --- Поля, которые передаются через конструктор. ---
 
-    private CreateStringQuery createStringQueryConstructor;
-    private QueryBuilderPanel queryBuilderPanelConstructor;
+    private QueryConstructor queryConstructor;
+    private QueryBuilderPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
 
     private JPanel panelForPlacingComponents;
-    private JLabel labelSettingFirst;
-    private JLabel labelSettingSkip;
-    private JTextField textFieldFromSettingFirst;
-    private JTextField textFieldFromSettingSkip;
+    private JLabel labelFirst;
+    private JLabel labelSkip;
+    private JTextField textFieldSettingFirst;
+    private JTextField textFieldSettingSkip;
     private JCheckBox checkBoxSettingDistinct;
     private JButton buttonAddFirstSkipDistinctInQuery;
 
@@ -41,9 +41,9 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * Создаётся диалог (окно) для добавления first,skip,distinct в запрос.
      * Используется метод для инициализации.
      */
-    public DialogAddFirstSkipDistinctFromQueryBuilder(CreateStringQuery createStringQuery, QueryBuilderPanel queryBuilderPanel) {
-        this.createStringQueryConstructor = createStringQuery;
-        this.queryBuilderPanelConstructor = queryBuilderPanel;
+    public AddFirstSkipDistinct(QueryConstructor createStringQuery, QueryBuilderPanel queryBuilderPanel) {
+        this.queryConstructor = createStringQuery;
+        this.queryBuilderPanel = queryBuilderPanel;
         init();
     }
 
@@ -63,36 +63,61 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
         arrangeComponents();
     }
 
+    /**
+     * A method for initializing buttons.
+     * <p>
+     * Метод для инициализации кнопок.
+     */
     private void initButtons() {
-        buttonAddFirstSkipDistinctInQuery = WidgetFactory.createButton("Create Select Setting Panel", "Создать", event -> {
+        buttonAddFirstSkipDistinctInQuery = WidgetFactory.createButton("buttonAddFirstSkipDistinctInQuery", "Создать", event -> {
             eventButtonAddFirstSkipDistinct();
         });
     }
 
+    /**
+     * The method for initializing CheckBoxes.
+     * <p>
+     * Метод для инициализации CheckBoxes.
+     */
     private void initCheckBoxes() {
-        checkBoxSettingDistinct = WidgetFactory.createCheckBox("distinctCheckBox","DISTINCT");
+        checkBoxSettingDistinct = WidgetFactory.createCheckBox("checkBoxSettingDistinct", "DISTINCT");
     }
 
+    /**
+     * A method for initializing a text field.
+     * <p>
+     * Метод для инициализации текстового поля.
+     */
     private void initTextField() {
-        textFieldFromSettingFirst = WidgetFactory.createTextField("Input First Select");
-        textFieldFromSettingSkip = WidgetFactory.createTextField("Input Skip Select");
+        textFieldSettingFirst = WidgetFactory.createTextField("textFieldSettingFirst");
+        textFieldSettingSkip = WidgetFactory.createTextField("textFieldSettingSkip");
     }
 
+    /**
+     * A method for initializing labels.
+     * <p>
+     * Метод для инициализации меток.
+     */
     private void initLabels() {
-        labelSettingFirst = WidgetFactory.createLabel("Укажите число (FIRST)");
-        labelSettingSkip = WidgetFactory.createLabel("Укажите число (SKIP)");
+        labelFirst = WidgetFactory.createLabel("Укажите число (FIRST)");
+        labelSkip = WidgetFactory.createLabel("Укажите число (SKIP)");
     }
 
+    /**
+     * The method for initializing JPanel.
+     * <p>
+     * Метод для инициализации JPanel.
+     */
     private void initPanels() {
-        panelForPlacingComponents = WidgetFactory.createPanel("Additional Select Settings Panel");
+        panelForPlacingComponents = WidgetFactory.createPanel("panelForPlacingComponents");
         panelForPlacingComponents.setLayout(new GridBagLayout());
         panelForPlacingComponents.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
 
     /**
-     * A method for placing components.
+     * A method for placing components and configuring a dialog (window).
      * <p>
-     * Метод для размещения компонентов.
+     * Метод для размещения компонентов и настройки диалога (окна).
      */
     private void arrangeComponents() {
         arrangeComponentsInPanelForPlacingComponents();
@@ -106,7 +131,7 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      */
     private void configurationDialog() {
         setLayout(new BorderLayout());
-        setTitle("Дополнительные настройки");
+        setTitle("First Skip Distinct");
         setIconImage(new ImageIcon("red_expert.png").getImage());
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(panelForPlacingComponents, BorderLayout.CENTER);
@@ -123,14 +148,13 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * Размещение компонентов в панели для размещения компонентов.
      */
     private void arrangeComponentsInPanelForPlacingComponents() {
-        GridBagHelper gridBagHelper = new GridBagHelper().anchorCenter().setInsets(5,5,5,5).fillHorizontally();
-
-        panelForPlacingComponents.add(labelSettingFirst, gridBagHelper.setXY(0,0).setMinWeightX().get());
-        panelForPlacingComponents.add(textFieldFromSettingFirst, gridBagHelper.setXY(1,0).setMaxWeightX().setWidth(2).get());
-        panelForPlacingComponents.add(labelSettingSkip, gridBagHelper.setXY(0,1).setMinWeightX().setWidth(1).get());
-        panelForPlacingComponents.add(textFieldFromSettingSkip, gridBagHelper.setXY(1,1).setMaxWeightX().setWidth(2).get());
-        panelForPlacingComponents.add(checkBoxSettingDistinct,gridBagHelper.setXY(1,2).setMinWeightX().setWidth(1).get());
-        panelForPlacingComponents.add(buttonAddFirstSkipDistinctInQuery, gridBagHelper.setXY(1,3).setMinWeightX().get());
+        GridBagHelper gridBagHelper = new GridBagHelper().anchorCenter().setInsets(5, 5, 5, 5).fillHorizontally();
+        panelForPlacingComponents.add(labelFirst, gridBagHelper.setXY(0, 0).setMinWeightX().get());
+        panelForPlacingComponents.add(textFieldSettingFirst, gridBagHelper.setXY(1, 0).setMaxWeightX().setWidth(2).get());
+        panelForPlacingComponents.add(labelSkip, gridBagHelper.setXY(0, 1).setMinWeightX().setWidth(1).get());
+        panelForPlacingComponents.add(textFieldSettingSkip, gridBagHelper.setXY(1, 1).setMaxWeightX().setWidth(2).get());
+        panelForPlacingComponents.add(checkBoxSettingDistinct, gridBagHelper.setXY(1, 2).setMinWeightX().setWidth(1).get());
+        panelForPlacingComponents.add(buttonAddFirstSkipDistinctInQuery, gridBagHelper.setXY(1, 3).setMinWeightX().get());
     }
 
     /**
@@ -152,7 +176,7 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * Метод для смены текста на экране отображения тестовых запросов в конструкторе запросов.
      */
     private void setTextInQueryBuilderEditorText() {
-        queryBuilderPanelConstructor.setTextInPanelOutputTestingQuery(createStringQueryConstructor.getQuery());
+        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
     /**
@@ -171,11 +195,10 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * Метод для добавления Distinct в запрос.
      */
     private void addDistinct() {
-        if(checkBoxSettingDistinct.isSelected()){
-            createStringQueryConstructor.setDistinct("DISTINCT");
-        }
-        else{
-            createStringQueryConstructor.setDistinct("ALL");
+        if (checkBoxSettingDistinct.isSelected()) {
+            queryConstructor.setDistinct("DISTINCT");
+        } else {
+            queryConstructor.setDistinct("ALL");
         }
     }
 
@@ -184,22 +207,15 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * <p>
      * Метод для добавления skip в запрос.
      */
-    private void addSkip(){
-        String skip = "";
-
-        if (!textFieldFromSettingSkip.getText().isEmpty()) {
+    private void addSkip() {
+        if (!textFieldSettingSkip.getText().isEmpty()) {
             try {
-                Integer.parseInt(textFieldFromSettingSkip.getText());
-                skip = textFieldFromSettingSkip.getText();
-            } catch (NumberFormatException numberFormatException) {
-
+                if (Integer.parseInt(textFieldSettingSkip.getText()) > 0) {
+                    queryConstructor.addSkip(textFieldSettingSkip.getText());
+                }
+            } catch (NumberFormatException ignored) {
             }
-
-        } else {
-            skip = "";
         }
-
-        createStringQueryConstructor.addSkip(skip);
     }
 
     /**
@@ -207,22 +223,15 @@ public class DialogAddFirstSkipDistinctFromQueryBuilder extends JDialog {
      * <p>
      * Метод для добавления first в запрос.
      */
-    private void addFirst(){
-        String first = "";
-
-        if (!textFieldFromSettingFirst.getText().isEmpty()) {
+    private void addFirst() {
+        if (!textFieldSettingFirst.getText().isEmpty()) {
             try {
-                Integer.parseInt(textFieldFromSettingFirst.getText());
-                first = textFieldFromSettingFirst.getText();
-            } catch (NumberFormatException numberFormatException) {
-
+                if (Integer.parseInt(textFieldSettingFirst.getText()) > 0) {
+                    queryConstructor.addFirst(textFieldSettingFirst.getText());
+                }
+            } catch (NumberFormatException ignored) {
             }
-
-        } else {
-            first = "";
         }
-
-        createStringQueryConstructor.addFirst(first);
     }
 
 
