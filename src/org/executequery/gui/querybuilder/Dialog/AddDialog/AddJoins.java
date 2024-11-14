@@ -1,14 +1,15 @@
-package org.executequery.gui.querybuilder.buttonPanel;
+package org.executequery.gui.querybuilder.Dialog.AddDialog;
 
 import org.executequery.gui.WidgetFactory;
 import org.executequery.gui.querybuilder.QueryBuilderPanel;
-import org.executequery.gui.querybuilder.WorkQuryEditor.CreateStringQuery;
-import org.executequery.gui.querybuilder.toolBar.QueryBuilderToolBar;
+import org.executequery.gui.querybuilder.WorkQuryEditor.QueryConstructor;
 import org.underworldlabs.swing.layouts.GridBagHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 /**
@@ -18,14 +19,13 @@ import java.util.ArrayList;
  *
  * @author Krylov Gleb
  */
-public class DialogAddJoinsFromQueryBuilder extends JDialog {
+public class AddJoins extends JDialog {
 
     // --- Elements accepted using the constructor ----
     // --- Поля, которые передаются через конструктор. ---
 
-    private QueryBuilderPanel queryBuilderPanelConstructor;
-    private CreateStringQuery createStringQueryConstructor;
-    private QueryBuilderToolBar queryBuilderToolBarPanelConstructor;
+    private QueryConstructor queryConstructor;
+    private QueryBuilderPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
@@ -46,10 +46,9 @@ public class DialogAddJoinsFromQueryBuilder extends JDialog {
      * <p>
      * Создаём диалог (окно) который будет добавлять соединения (join)  в запрос.
      */
-    public DialogAddJoinsFromQueryBuilder(QueryBuilderToolBar queryBuilderToolBarPanel, QueryBuilderPanel queryBuilderPanel, CreateStringQuery createStringQuery) {
-        this.queryBuilderToolBarPanelConstructor = queryBuilderToolBarPanel;
-        this.queryBuilderPanelConstructor = queryBuilderPanel;
-        this.createStringQueryConstructor = createStringQuery;
+    public AddJoins(QueryBuilderPanel queryBuilderPanel, QueryConstructor createStringQuery) {
+        this.queryBuilderPanel = queryBuilderPanel;
+        this.queryConstructor = createStringQuery;
         init();
     }
 
@@ -66,40 +65,60 @@ public class DialogAddJoinsFromQueryBuilder extends JDialog {
         arrangeComponents();
     }
 
+    /**
+     * A method for initializing buttons.
+     * <p>
+     * Метод для инициализации кнопок.
+     */
     private void initButtons() {
-        buttonAddJoinInQuery = WidgetFactory.createButton("Create Join", "Создать", event -> {
+        buttonAddJoinInQuery = WidgetFactory.createButton("buttonAddJoinInQuery", "Создать", event -> {
             buttonEventAddJoin();
         });
     }
 
+    /**
+     * The method for initializing JPanel.
+     * <p>
+     * Метод для инициализации JPanel.
+     */
     private void initPanels() {
-        panelForPlacingComponents = WidgetFactory.createPanel("Main Panel");
+        panelForPlacingComponents = WidgetFactory.createPanel("panelForPlacingComponents");
         panelForPlacingComponents.setLayout(new GridBagLayout());
         panelForPlacingComponents.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
 
+    /**
+     * A method for initializing arrays.
+     * <p>
+     * Метод для инициализации массивов.
+     */
     private void initArrays() {
-        arrayTable = queryBuilderPanelConstructor.getListTable();
+        arrayTable = queryBuilderPanel.getListTable();
     }
 
+    /**
+     * A method for initializing drop-down lists (comboBox).
+     * <p>
+     * Метод для инициализации выпадающих списков (comboBox).
+     */
     private void initComboBoxes() {
-        leftComboBoxAttributesTables = WidgetFactory.createComboBox("Left Tables Attribute");
+        leftComboBoxAttributesTables = WidgetFactory.createComboBox("leftComboBoxAttributesTables");
         leftComboBoxAttributesTables.setPreferredSize(new Dimension(150, 30));
 
-        rightComboBoxAttributeTables = WidgetFactory.createComboBox("Right Tables Attribute");
+        rightComboBoxAttributeTables = WidgetFactory.createComboBox("rightComboBoxAttributeTables");
         rightComboBoxAttributeTables.setPreferredSize(new Dimension(150, 30));
 
-        leftComboBoxTables = WidgetFactory.createComboBox("Left Tables Combo Box", queryBuilderToolBarPanelConstructor.getArrayNamesTablesFromQueryBuilderToolBar());
+        leftComboBoxTables = WidgetFactory.createComboBox("leftComboBoxTables", queryBuilderPanel.getListNameTable());
         leftComboBoxTables.setPreferredSize(new Dimension(150, 30));
         addItemInLeftComboBoxAttributesTables();
         eventChangeLeftComboBoxTables();
 
-        rightComboBoxTables = WidgetFactory.createComboBox("Right Tables Combo Box", queryBuilderToolBarPanelConstructor.getArrayNamesTablesFromQueryBuilderToolBar());
+        rightComboBoxTables = WidgetFactory.createComboBox("rightComboBoxTables", queryBuilderPanel.getListNameTable());
         rightComboBoxTables.setPreferredSize(new Dimension(150, 30));
         addItemInRightComboBoxAttributesTables();
         eventChangeRightComboBoxTables();
 
-        comboBoxJoins = WidgetFactory.createComboBox("Join Combo Box", arrayJoin);
+        comboBoxJoins = WidgetFactory.createComboBox("comboBoxJoins", arrayJoin);
         comboBoxJoins.setSelectedIndex(arrayJoin.length - 1);
         comboBoxJoins.setPreferredSize(new Dimension(150, 30));
     }
@@ -133,58 +152,6 @@ public class DialogAddJoinsFromQueryBuilder extends JDialog {
     }
 
     /**
-     * A method for placing components.
-     * <p>
-     * Метод для размещения компонентов.
-     */
-    private void arrangeComponents() {
-        arrangeComponentsInPanelForPlacingComponents();
-        configurationDialog();
-    }
-
-    /**
-     * Configuring the parameters of the dialog (window) created by this class.
-     * <p>
-     * Настройка параметров диалога (окна) созданного этим классом.
-     */
-    private void configurationDialog() {
-        setLayout(new BorderLayout());
-        setTitle("Добавить соединение (Join)");
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        setIconImage(new ImageIcon("red_expert.png").getImage());
-        add(panelForPlacingComponents, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(null);
-        setModal(true);
-        setSize(600, 400);
-        setVisible(true);
-    }
-
-    /**
-     * The method of placing components on the panel for placing components.
-     * <p>
-     * Метод размещения компонентов на панели для размещения компонентов.
-     */
-    private void arrangeComponentsInPanelForPlacingComponents() {
-        panelForPlacingComponents.add(leftComboBoxTables, new GridBagHelper().setX(0).setY(0).anchorCenter().setInsets(5, 5, 5, 5).get());
-        panelForPlacingComponents.add(rightComboBoxTables, new GridBagHelper().setX(20).setY(0).anchorCenter().setInsets(5, 5, 5, 5).get());
-        panelForPlacingComponents.add(comboBoxJoins, new GridBagHelper().setX(10).setY(0).anchorCenter().setInsets(5, 5, 5, 5).get());
-        panelForPlacingComponents.add(leftComboBoxAttributesTables, new GridBagHelper().setX(0).setY(10).anchorCenter().setInsets(5, 5, 5, 5).get());
-        panelForPlacingComponents.add(rightComboBoxAttributeTables, new GridBagHelper().setX(20).setY(10).anchorCenter().setInsets(5, 5, 5, 5).get());
-        panelForPlacingComponents.add(buttonAddJoinInQuery, new GridBagHelper().setX(10).setY(20).anchorCenter().setInsets(5, 5, 5, 5).get());
-    }
-
-    /**
-     * The method in which the functionality of the button for adding connections (Join) to the request is prescribed.
-     * <p>
-     * Метод в котором прописан функционал кнопки для добавления соединений (Join) в запрос.
-     */
-    private void buttonEventAddJoin() {
-        createStringQueryConstructor.addJoins(leftComboBoxTables.getSelectedItem().toString(), rightComboBoxTables.getSelectedItem().toString(), comboBoxJoins.getSelectedItem().toString(), leftComboBoxAttributesTables.getSelectedItem().toString(), rightComboBoxAttributeTables.getSelectedItem().toString());
-        queryBuilderPanelConstructor.setTextInPanelOutputTestingQuery(createStringQueryConstructor.getQuery());
-    }
-
-    /**
      * Methods that add attribute values to the selected table. (Left)
      * <p>
      * Методы добавляющие  значения атрибутов выбранной таблицы. (Левый)
@@ -212,6 +179,78 @@ public class DialogAddJoinsFromQueryBuilder extends JDialog {
                 }
             }
         }
+    }
+
+    /**
+     * A method for placing components as well as setting up a dialog (window).
+     * <p>
+     * Метод для размещения компонентов а так же настройки диалога (окна).
+     */
+    private void arrangeComponents() {
+        arrangeComponentsInPanelForPlacingComponents();
+        configurationDialog();
+    }
+
+    /**
+     * Configuring the parameters of the dialog (window) created by this class.
+     * <p>
+     * Настройка параметров диалога (окна) созданного этим классом.
+     */
+    private void configurationDialog() {
+        setLayout(new BorderLayout());
+        setTitle("Добавить соединение (Join)");
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setIconImage(new ImageIcon("red_expert.png").getImage());
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowClosingInDialog();
+        add(panelForPlacingComponents, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(null);
+        setModal(true);
+        setSize(600, 400);
+        setVisible(true);
+    }
+
+    /**
+     * A method for adding an action to a dialog (window) when closing.
+     * <p>
+     * Метод для добавления действия диалогу (окну) при закрытии.
+     */
+    private void addWindowClosingInDialog(){
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                queryConstructor.addAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                setVisible(false);
+                dispose();
+            }
+        });
+    }
+
+    /**
+     * The method of placing components on the panel for placing components.
+     * <p>
+     * Метод размещения компонентов на панели для размещения компонентов.
+     */
+    private void arrangeComponentsInPanelForPlacingComponents() {
+        GridBagHelper gridBagHelper = new GridBagHelper().setInsets(5,5,5,5).anchorCenter().fillHorizontally();
+        panelForPlacingComponents.add(leftComboBoxTables, gridBagHelper.setXY(0,0).get());
+        panelForPlacingComponents.add(rightComboBoxTables, gridBagHelper.setXY(2,0).get());
+        panelForPlacingComponents.add(comboBoxJoins, gridBagHelper.setXY(1,0).get());
+        panelForPlacingComponents.add(leftComboBoxAttributesTables, gridBagHelper.setXY(0,1).get());
+        panelForPlacingComponents.add(rightComboBoxAttributeTables, gridBagHelper.setXY(2,1).get());
+        panelForPlacingComponents.add(buttonAddJoinInQuery, gridBagHelper.setXY(1,2).get());
+    }
+
+    /**
+     * The method in which the functionality of the button for adding connections (Join) to the request is prescribed.
+     * <p>
+     * Метод в котором прописан функционал кнопки для добавления соединений (Join) в запрос.
+     */
+    private void buttonEventAddJoin() {
+        queryConstructor.addJoins(leftComboBoxTables.getSelectedItem().toString(), rightComboBoxTables.getSelectedItem().toString(), comboBoxJoins.getSelectedItem().toString(), leftComboBoxAttributesTables.getSelectedItem().toString(), rightComboBoxAttributeTables.getSelectedItem().toString());
+        JOptionPane.showMessageDialog(queryBuilderPanel,"Join добавлен!","Соединение (Join)",JOptionPane.QUESTION_MESSAGE);
     }
 
 }
