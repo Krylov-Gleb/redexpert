@@ -7,22 +7,22 @@ import org.underworldlabs.swing.actions.BaseCommand;
 import java.awt.event.ActionEvent;
 
 /**
- * A class to start using the query builder.
+ * A class for creating a QueryBuilder.
  * <p>
- * Класс для начала использования построителя запросов.
+ * Класс для для создания QueryBuilder.
  *
  * @author Krylov Gleb
  */
-public class CommandUseQueryBuilder extends OpenFrameCommand implements BaseCommand {
+public class QBLaunch extends OpenFrameCommand implements BaseCommand {
 
     /**
-     * The method that adjusts the display and shows the panel (QueryBuilderPanel)
-     *
-     * @param queryBuilderPanel
+     * Method for creating the main QueryBuilder panel.
+     * <p>
+     * Метод для создания главной панели QueryBuilder.
      */
-    private void showPanel(QueryBuilderPanel queryBuilderPanel) {
+    private void showPanel(QBPanel queryBuilderPanel) {
 
-        String title = QueryBuilderPanel.TITLE;
+        String title = QBPanel.TITLE;
         if (isCentralPaneOpen(title))
             return;
 
@@ -31,7 +31,7 @@ public class CommandUseQueryBuilder extends OpenFrameCommand implements BaseComm
 
             GUIUtilities.addCentralPane(
                     title,
-                    QueryBuilderPanel.FRAME_ICON,
+                    QBPanel.FRAME_ICON,
                     queryBuilderPanel,
                     null, true
             );
@@ -44,7 +44,7 @@ public class CommandUseQueryBuilder extends OpenFrameCommand implements BaseComm
     @Override
     public void execute(ActionEvent e) {
         if (isConnected())
-            showPanel(new QueryBuilderPanel());
+            showPanel(new QBPanel());
     }
 
 }
