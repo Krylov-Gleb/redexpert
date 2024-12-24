@@ -7,22 +7,15 @@ import org.executequery.gui.editor.QueryEditor;
 import java.awt.event.ActionEvent;
 
 /**
- * A class for creating a query constructor.
+ * A class for creating a query editor (QueryEditor) customized for the query constructor (QueryBuilder).
  * <p>
- * Класс для создания конструктора запросов.
+ * Класс для создания кастомизированного под конструктор запросов(QueryBuilder) редактора запросов (QueryEditor).
  *
  * @author Krylov Gleb
  */
-public class CreateAndUseQueryEditor extends OpenFrameCommand {
-
-    // --- Fields ---
-    // --- Поля ---
+public class QBQueryEditor extends OpenFrameCommand {
 
     private final String Query = "";
-
-    // --- GUI Components ---
-    // --- Компоненты графического интерфейса ---
-
     private QueryEditor queryEditor;
 
     /**
@@ -30,7 +23,7 @@ public class CreateAndUseQueryEditor extends OpenFrameCommand {
      * <p>
      * Создаёт новый редактор запросов.
      */
-    public CreateAndUseQueryEditor() {
+    public QBQueryEditor() {
         execute();
     }
 
@@ -69,5 +62,6 @@ public class CreateAndUseQueryEditor extends OpenFrameCommand {
     }
 
     @Override
-    public void execute(ActionEvent e) {}
+    public void execute(ActionEvent e) {
+    }
 }
