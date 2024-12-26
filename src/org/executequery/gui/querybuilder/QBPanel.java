@@ -38,13 +38,6 @@ public class QBPanel extends JPanel implements TabView {
     private ArrayList<JTable> listTablesPanelGUIComponents;
     private QueryConstructor queryConstructor;
 
-    // --- Other fields ---
-    // --- Остальные поля ---
-
-    private int locationNewTableX = 150;
-    private int locationNewTableY = 100;
-    private ArrayList<String> arrayListCoordinateDeleteComponents;
-
     /**
      * Creating the main panel of the query builder.
      * A method is used to initialize fields.
@@ -118,7 +111,6 @@ public class QBPanel extends JPanel implements TabView {
      */
     private void initArrays() {
         listTablesPanelGUIComponents = new ArrayList<>();
-        arrayListCoordinateDeleteComponents = new ArrayList<>();
     }
 
     /**
@@ -127,8 +119,8 @@ public class QBPanel extends JPanel implements TabView {
      * Метод для инициализации SplitPane.
      */
     private void initSplitPane() {
-        splitPanePanelGUIComponentsAndPanelTestingQuery = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPanePlacingComponents, panelTestingQuery);
-        splitPanePanelGUIComponentsAndPanelTestingQuery.setDividerLocation(500);
+        splitPanePanelGUIComponentsAndPanelTestingQuery = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,panelTestingQuery,scrollPanePlacingComponents);
+        splitPanePanelGUIComponentsAndPanelTestingQuery.setDividerLocation(650);
     }
 
     /**
@@ -148,8 +140,7 @@ public class QBPanel extends JPanel implements TabView {
      */
     private void initPanelGUIComponents() {
         panelGUIComponents = WidgetFactory.createPanel("panelGUIComponents");
-        panelGUIComponents.setPreferredSize(new Dimension(10000000, 10000000));
-        panelGUIComponents.setLayout(null);
+        panelGUIComponents.setLayout(new BoxLayout(panelGUIComponents,BoxLayout.Y_AXIS));
         panelGUIComponents.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
 
@@ -183,171 +174,14 @@ public class QBPanel extends JPanel implements TabView {
         panelPlacingComponents.add(toolBar, BorderLayout.NORTH);
     }
 
-    /**
-     * A method for adding a table to the output panel of graphical components.
-     * <p>
-     * Метод для добавления таблицы на панель вывода графических компонентов.
-     */
-    public void addTableInPanelGUIComponents(JPanel panel) {
-        JScrollPane scrollPane = (JScrollPane) panel.getComponent(0);
-
-        if (isTableUnique(scrollPane)) {
-            if (arrayListCoordinateDeleteComponents.isEmpty()) {
-                if (panelGUIComponents.getComponents().length > 0) {
-                    if (locationNewTableX >= 1050) {
-                        locationNewTableX = 150;
-                        locationNewTableY = locationNewTableY + 300;
-                    } else {
-                        locationNewTableX = locationNewTableX + 300;
-                    }
-                } else {
-                    locationNewTableX = 150;
-                    locationNewTableY = 100;
-                }
-
-                if (locationNewTableX == 150) {
-                    JViewport viewport = scrollPane.getViewport();
-                    JTable table = (JTable) viewport.getComponent(0);
-                    JTableHeader header = table.getTableHeader();
-                    header.setBackground(new Color(255, 91, 91));
-                    header.setForeground(Color.WHITE);
-                }
-                if (locationNewTableX == 450) {
-                    JViewport viewport = scrollPane.getViewport();
-                    JTable table = (JTable) viewport.getComponent(0);
-                    JTableHeader header = table.getTableHeader();
-                    header.setBackground(new Color(174, 0, 0));
-                    header.setForeground(Color.WHITE);
-                }
-                if (locationNewTableX == 750) {
-                    JViewport viewport = scrollPane.getViewport();
-                    JTable table = (JTable) viewport.getComponent(0);
-                    JTableHeader header = table.getTableHeader();
-                    header.setBackground(new Color(116, 2, 2));
-                    header.setForeground(Color.WHITE);
-                }
-                if (locationNewTableX == 1050) {
-                    JViewport viewport = scrollPane.getViewport();
-                    JTable table = (JTable) viewport.getComponent(0);
-                    JTableHeader header = table.getTableHeader();
-                    header.setBackground(new Color(61, 0, 0));
-                    header.setForeground(Color.WHITE);
-                }
-
-                panel.setBounds(locationNewTableX, locationNewTableY, 220, 220);
-
-            } else {
-                if (panelGUIComponents.getComponents().length == 0) {
-                    arrayListCoordinateDeleteComponents.clear();
-                    locationNewTableX = 150;
-                    locationNewTableY = 100;
-
-                    if (locationNewTableX == 150) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(255, 91, 91));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (locationNewTableX == 450) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(174, 0, 0));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (locationNewTableX == 750) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(116, 2, 2));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (locationNewTableX == 1050) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(61, 0, 0));
-                        header.setForeground(Color.WHITE);
-                    }
-
-                    panel.setBounds(locationNewTableX, locationNewTableY, 220, 220);
-                } else {
-
-                    if (Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[0]) == 150) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(255, 91, 91));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[0]) == 450) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(174, 0, 0));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[0]) == 750) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(116, 2, 2));
-                        header.setForeground(Color.WHITE);
-                    }
-                    if (Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[0]) == 1050) {
-                        JViewport viewport = scrollPane.getViewport();
-                        JTable table = (JTable) viewport.getComponent(0);
-                        JTableHeader header = table.getTableHeader();
-                        header.setBackground(new Color(61, 0, 0));
-                        header.setForeground(Color.WHITE);
-                    }
-
-                    panel.setBounds(Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[0]), Integer.parseInt(arrayListCoordinateDeleteComponents.get(0).split(",")[1]), 220, 220);
-                    arrayListCoordinateDeleteComponents.remove(0);
-                }
-            }
-        }
-
+    public void addBlockInPanelBlocks(JPanel panel){
         panelGUIComponents.add(panel);
         panelGUIComponents.revalidate();
         panelGUIComponents.repaint();
     }
 
-    /**
-     * A method for removing a table from the output panel of graphical components.
-     * <p>
-     * Метод для удаления таблицы из панели вывода графических компонентов.
-     */
-    public void removeTableInInputPanel(String nameTable) {
-        for (int i = 0; i < getListTable().size(); i++) {
-            if (nameTable.equals(getListTable().get(i).getColumnName(0))) {
-
-                JPanel panel = (JPanel) panelGUIComponents.getComponent(i);
-                arrayListCoordinateDeleteComponents.add(panel.getX() + "," + panel.getY());
-
-                panelGUIComponents.remove(i);
-                panelGUIComponents.revalidate();
-                panelGUIComponents.repaint();
-            }
-        }
-    }
-
-    /**
-     * A method for checking the table for uniqueness.
-     * <p>
-     * Метод для проверки таблицы на уникальность.
-     */
-    private boolean isTableUnique(JScrollPane scrollPane) {
-        boolean Check = true;
-
-        for (int i = 0; i < panelGUIComponents.getComponents().length; i++) {
-            if (panelGUIComponents.getComponents()[i] == scrollPane) {
-                Check = false;
-            }
-        }
-
-        return Check;
+    public void clearBlocksPanel(){
+        panelGUIComponents.removeAll();
     }
 
     /**

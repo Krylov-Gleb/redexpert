@@ -212,7 +212,6 @@ public class Table extends JDialog {
 
         if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
             queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
-            queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
         }
 
         if (queryBuilderPanel.getListNameTable().size() == 1) {
@@ -229,7 +228,6 @@ public class Table extends JDialog {
      */
     private void removeTable(JCheckBox checkBox) {
         if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
-            queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
             queryBuilderPanel.removeTableInListTable(checkBox.getText());
             removeAttributes(checkBox.getText());
             removeMainTable(checkBox.getText());
