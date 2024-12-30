@@ -321,6 +321,9 @@ public class QBToolBar extends JToolBar {
      * Метод для удаления таблицы с панели вывода.
      */
     private void removeTableInOutputPanel() {
+        queryBuilderPanel.getBlocksPanel().removeAll();
+        queryBuilderPanel.getBlocksPanel().revalidate();
+        queryBuilderPanel.getBlocksPanel().repaint();
         queryBuilderPanel.getPanelGUIComponents().removeAll();
         queryBuilderPanel.getPanelGUIComponents().revalidate();
         queryBuilderPanel.getPanelGUIComponents().repaint();
