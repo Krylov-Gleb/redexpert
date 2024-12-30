@@ -349,9 +349,9 @@ public class OrderBy extends JDialog {
             StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
 
             if (stringBuilder.toString().isEmpty()) {
-                stringBuilder.append("ORDER BY ").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString());
+                stringBuilder.append("ORDER BY ").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
             } else {
-                stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString());
+                stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
             }
 
             queryConstructor.setOrderBy(stringBuilder.toString());
