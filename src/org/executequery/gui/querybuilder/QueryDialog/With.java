@@ -226,11 +226,11 @@ public class With extends JDialog {
      */
     private void addWith() {
         StringBuilder stringBuilder = new StringBuilder(queryConstructor.getWith());
-        StringBuilder stringBuilderTestQuery = new StringBuilder(queryBuilderPanel.getTestQuery());
+        StringBuilder stringBuilderUseQuery = new StringBuilder(textFieldUsingQuery.getText());
 
         if(!stringBuilder.toString().contains(" " + textFieldAlias.getText() + " ")) {
             if(!stringBuilder.toString().contains("\n" + textFieldAlias.getText() + " ")) {
-                if (!stringBuilderTestQuery.toString().isEmpty()) {
+                if (!textFieldUsingQuery.toString().isEmpty()) {
                     if (!textFieldAlias.getText().isEmpty()) {
                         if (stringBuilder.toString().isEmpty()) {
                             stringBuilder.append("WITH");
@@ -240,16 +240,16 @@ public class With extends JDialog {
                             }
 
                             stringBuilder.append(" ").append(textFieldAlias.getText()).append(" AS (").append("\n");
-                            deleteOptimization(stringBuilderTestQuery);
-                            stringBuilder.append(stringBuilderTestQuery.toString().replace(";", ""));
+                            deleteOptimization(stringBuilderUseQuery);
+                            stringBuilder.append(stringBuilderUseQuery.toString().replace(";", ""));
 
                             stringBuilder.append(")");
 
                         } else {
 
-                            stringBuilderTestQuery.replace(0, queryConstructor.getWith().length(), "");
+                            stringBuilderUseQuery.replace(0, queryConstructor.getWith().length(), "");
 
-                            if (!stringBuilder.toString().contains(stringBuilderTestQuery.toString())) {
+                            if (!stringBuilder.toString().contains(stringBuilderUseQuery.toString())) {
                                 if (comboBoxRecursive.getSelectedIndex() == 0) {
                                     if (stringBuilder.indexOf("RECURSIVE") < 0) {
                                         stringBuilder.replace(stringBuilder.indexOf("WITH") + "WITH".length(), stringBuilder.indexOf("WITH") + "WITH".length() + 1, " RECURSIVE ");
@@ -263,8 +263,8 @@ public class With extends JDialog {
                                 stringBuilder.append(",").append("\n");
 
                                 stringBuilder.append(textFieldAlias.getText()).append(" AS (");
-                                deleteOptimization(stringBuilderTestQuery);
-                                stringBuilder.append(stringBuilderTestQuery.toString().replace(";", ""));
+                                deleteOptimization(stringBuilderUseQuery);
+                                stringBuilder.append(stringBuilderUseQuery.toString().replace(";", ""));
 
                                 stringBuilder.append(")");
                             }
