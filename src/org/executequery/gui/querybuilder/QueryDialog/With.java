@@ -239,16 +239,12 @@ public class With extends JDialog {
                                 stringBuilder.append(" ").append("RECURSIVE");
                             }
 
-                            stringBuilder.append(" ").append(textFieldAlias.getText()).append(" AS (").append("\n");
-                            deleteOptimization(stringBuilderUseQuery);
+                            stringBuilder.append(" ").append(textFieldAlias.getText()).append(" AS (");
                             stringBuilder.append(stringBuilderUseQuery.toString().replace(";", ""));
 
                             stringBuilder.append(")");
 
                         } else {
-
-                            stringBuilderUseQuery.replace(0, queryConstructor.getWith().length(), "");
-
                             if (!stringBuilder.toString().contains(stringBuilderUseQuery.toString())) {
                                 if (comboBoxRecursive.getSelectedIndex() == 0) {
                                     if (stringBuilder.indexOf("RECURSIVE") < 0) {
@@ -260,10 +256,9 @@ public class With extends JDialog {
                                     }
                                 }
 
-                                stringBuilder.append(",").append("\n");
+                                stringBuilder.append(",");
 
                                 stringBuilder.append(textFieldAlias.getText()).append(" AS (");
-                                deleteOptimization(stringBuilderUseQuery);
                                 stringBuilder.append(stringBuilderUseQuery.toString().replace(";", ""));
 
                                 stringBuilder.append(")");
@@ -314,21 +309,6 @@ public class With extends JDialog {
 
         queryConstructor.setWith(stringBuilder.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-    }
-
-    /**
-     * A method for removing optimization.
-     * <p>
-     * Метод для удаления оптимизации.
-     */
-    private static void deleteOptimization(StringBuilder stringBuilder) {
-        if (stringBuilder.toString().contains("OPTIMIZE FOR ALL ROWS")) {
-            stringBuilder.replace(stringBuilder.indexOf("OPTIMIZE FOR ALL ROWS")-1, stringBuilder.indexOf("OPTIMIZE FOR ALL ROWS") + "OPTIMIZE FOR ALL ROWS".length() + 1, "");
-        }
-
-        if (stringBuilder.toString().contains("OPTIMIZE FOR FIRST ROWS")) {
-            stringBuilder.replace(stringBuilder.indexOf("OPTIMIZE FOR FIRST ROWS")-1, stringBuilder.indexOf("OPTIMIZE FOR FIRST ROWS") + "OPTIMIZE FOR FIRST ROWS".length() + 1, "");
-        }
     }
 
     /**
