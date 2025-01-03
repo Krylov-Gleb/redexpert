@@ -25,8 +25,8 @@ public class Union extends JDialog {
     // --- Fields that are passed through the constructor ----
     // --- Поля, которые передаются через конструктор ---
 
-    private QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
+    private final QueryConstructor queryConstructor;
+    private final QBPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
@@ -108,17 +108,17 @@ public class Union extends JDialog {
      * Метод для инициализации кнопок.
      */
     private void initButton() {
-        buttonAddUnion = WidgetFactory.createButton("buttonAddUnion",Bundles.get("common.add.button"), event -> {
+        buttonAddUnion = WidgetFactory.createButton("buttonAddUnion", Bundles.get("common.add.button"), event -> {
             eventAddUnion();
             arrangeCheckBoxesInScrollPane();
         });
 
-        buttonRemoveUnion = WidgetFactory.createButton("buttonRemoveUnion",Bundles.get("common.delete.button"), event -> {
+        buttonRemoveUnion = WidgetFactory.createButton("buttonRemoveUnion", Bundles.get("common.delete.button"), event -> {
             eventRemoveUnion();
             arrangeCheckBoxesInScrollPane();
         });
 
-        buttonClose = WidgetFactory.createButton("buttonClose",Bundles.get("common.close.button"),event -> {
+        buttonClose = WidgetFactory.createButton("buttonClose", Bundles.get("common.close.button"), event -> {
             closeDialog();
         });
 
@@ -131,10 +131,10 @@ public class Union extends JDialog {
      * Метод для размещения кнопок в панели для размещения кнопок.
      */
     private void placingButtonsInPanel() {
-        GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(10,5,10,5).fillHorizontally();
-        panelButton.add(buttonAddUnion,gridBagHelper.setXY(0,0).setMaxWeightX().get());
-        panelButton.add(buttonRemoveUnion,gridBagHelper.nextCol().setMaxWeightX().get());
-        panelButton.add(buttonClose,gridBagHelper.nextRow().setMaxWeightX().get());
+        GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(10, 5, 10, 5).fillHorizontally();
+        panelButton.add(buttonAddUnion, gridBagHelper.setXY(0, 0).setMaxWeightX().get());
+        panelButton.add(buttonRemoveUnion, gridBagHelper.nextCol().setMaxWeightX().get());
+        panelButton.add(buttonClose, gridBagHelper.nextRow().setMaxWeightX().get());
     }
 
     /**
@@ -164,15 +164,15 @@ public class Union extends JDialog {
                 textChanged();
             }
 
-            private void textChanged(){
+            private void textChanged() {
                 panelPlacingCheckBoxInScrollPane = WidgetFactory.createPanel("panelPlacingCheckBoxInScrollPane");
                 panelPlacingCheckBoxInScrollPane.setLayout(new BoxLayout(panelPlacingCheckBoxInScrollPane, BoxLayout.Y_AXIS));
 
                 if (!queryConstructor.getUnion().isEmpty()) {
                     String[] splitUnionText = queryConstructor.getUnion().split("(?<=UNION)");
 
-                    for (int i = 0; i < splitUnionText.length-1; i++) {
-                        if(splitUnionText[i].contains(textFieldSearch.getText().toUpperCase())) {
+                    for (int i = 0; i < splitUnionText.length - 1; i++) {
+                        if (splitUnionText[i].contains(textFieldSearch.getText().toUpperCase())) {
                             JCheckBox checkBox = new JCheckBox(splitUnionText[i]);
                             checkBox.setToolTipText(Bundles.get("QueryBuilder.Union.toolTipTextCheckBoxUnion"));
                             panelPlacingCheckBoxInScrollPane.add(checkBox);
@@ -240,6 +240,8 @@ public class Union extends JDialog {
 
         stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.length() - 1, stringBuilderTestQueryValue.length(), "");
         deleteOptimization(stringBuilderTestQueryValue);
+        deleteOrderBy(stringBuilderTestQueryValue);
+        deleteWith(stringBuilderTestQueryValue);
         stringBuilderUnionValue.append(stringBuilderTestQueryValue.toString()).append("UNION").append("\n");
 
         queryConstructor.setUnion(stringBuilderUnionValue.toString());
@@ -251,29 +253,58 @@ public class Union extends JDialog {
      * <p>
      * Метод для удаления оптимизации.
      */
-    private static void deleteOptimization(StringBuilder stringBuilderTestQueryValue) {
+    private void deleteOptimization(StringBuilder stringBuilderTestQueryValue) {
         if (stringBuilderTestQueryValue.toString().contains("OPTIMIZE FOR ALL ROWS")) {
-            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR ALL ROWS")-1, stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR ALL ROWS") + "OPTIMIZE FOR ALL ROWS".length() + 1, "");
+            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR ALL ROWS") - 1, stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR ALL ROWS") + "OPTIMIZE FOR ALL ROWS".length() + 1, "");
         }
 
         if (stringBuilderTestQueryValue.toString().contains("OPTIMIZE FOR FIRST ROWS")) {
-            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR FIRST ROWS")-1, stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR FIRST ROWS") + "OPTIMIZE FOR FIRST ROWS".length() + 1, "");
+            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR FIRST ROWS") - 1, stringBuilderTestQueryValue.indexOf("OPTIMIZE FOR FIRST ROWS") + "OPTIMIZE FOR FIRST ROWS".length() + 1, "");
         }
     }
+
+    /**
+     * A method for removing sorting.
+     * <p>
+     * Метод для удаления сортировки.
+     */
+    private void deleteOrderBy(StringBuilder stringBuilderTestQueryValue) {
+        if (stringBuilderTestQueryValue.toString().contains("ORDER BY")) {
+            String orderBy = queryConstructor.getOrderBy();
+            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("ORDER BY"), stringBuilderTestQueryValue.indexOf("ORDER BY") + orderBy.length() + 4, "");
+        }
+    }
+
+    /**
+     * A method for deleting queries (with).
+     * <p>
+     * Метод для удаления запросов (with).
+     */
+    private void deleteWith(StringBuilder stringBuilderTestQueryValue) {
+        if (stringBuilderTestQueryValue.toString().contains("WITH RECURSIVE")) {
+            String with = queryConstructor.getWith();
+            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("WITH RECURSIVE"), stringBuilderTestQueryValue.indexOf("WITH RECURSIVE") + with.length() + 2, "");
+        }
+        if (stringBuilderTestQueryValue.toString().contains("WITH")) {
+            String with = queryConstructor.getWith();
+            stringBuilderTestQueryValue.replace(stringBuilderTestQueryValue.indexOf("WITH"), stringBuilderTestQueryValue.indexOf("WITH") + with.length() + 4, "");
+        }
+    }
+
 
     /**
      * A method that implements the functionality of removing union from a query.
      * <p>
      * Метод реализующий функционал удаления union из запроса.
      */
-    private void eventRemoveUnion(){
+    private void eventRemoveUnion() {
         StringBuilder stringBuilderUnionValue = new StringBuilder(queryConstructor.getUnion());
         JCheckBox[] checkBoxesFromScrollPane = getCheckBoxesFromPanelArrangeCheckBox();
 
         for (int i = 0; i < checkBoxesFromScrollPane.length; i++) {
             if (checkBoxesFromScrollPane[i].isSelected()) {
                 if (checkBoxesFromScrollPane.length == 1) {
-                    stringBuilderUnionValue.replace(0,stringBuilderUnionValue.length(),"");
+                    stringBuilderUnionValue.replace(0, stringBuilderUnionValue.length(), "");
                     queryConstructor.setUnion("");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
@@ -287,8 +318,8 @@ public class Union extends JDialog {
             }
         }
 
-        if(stringBuilderUnionValue.indexOf("\n") == 0){
-            stringBuilderUnionValue.replace(0,1,"");
+        if (stringBuilderUnionValue.indexOf("\n") == 0) {
+            stringBuilderUnionValue.replace(0, 1, "");
         }
 
         queryConstructor.setUnion(stringBuilderUnionValue.toString());
@@ -323,7 +354,7 @@ public class Union extends JDialog {
         if (!queryConstructor.getUnion().isEmpty()) {
             String[] splitUnionText = queryConstructor.getUnion().split("(?<=UNION)");
 
-            for (int i = 0; i < splitUnionText.length-1; i++) {
+            for (int i = 0; i < splitUnionText.length - 1; i++) {
                 JCheckBox checkBox = new JCheckBox(splitUnionText[i]);
                 checkBox.setToolTipText(Bundles.get("QueryBuilder.Union.toolTipTextCheckBoxUnion"));
                 panelPlacingCheckBoxInScrollPane.add(checkBox);
@@ -338,8 +369,8 @@ public class Union extends JDialog {
      * <p>
      * Метод для создания и получения иконки диалога.
      */
-    private ImageIcon getAndCreateIconDialog(){
-       return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE,"svg",512, IconManager.IconFolder.BASE);
+    private ImageIcon getAndCreateIconDialog() {
+        return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE, "svg", 512, IconManager.IconFolder.BASE);
     }
 
     /**
