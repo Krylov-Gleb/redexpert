@@ -28,8 +28,8 @@ public class Functions extends JDialog {
     // --- Fields that are passed through the constructor ----
     // --- Поля, которые передаются через конструктор ---
 
-    private QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
+    private final QueryConstructor queryConstructor;
+    private final QBPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
@@ -53,7 +53,7 @@ public class Functions extends JDialog {
     // --- Arrays ---
     // --- Массивы ---
 
-    private String[] functions = new String[]{"", "RDB$GET_CONTEXT", "RDB$SET_CONTEXT", "CREATE_FILE", "DELETE_FILE", "READ_FILE", "CHECK_DDL_RIGHTS",
+    private final String[] functions = new String[]{"", "RDB$GET_CONTEXT", "RDB$SET_CONTEXT", "CREATE_FILE", "DELETE_FILE", "READ_FILE", "CHECK_DDL_RIGHTS",
             "CHECK_DML_RIGHTS", "RDB$ROLE_IN_USE", "RDB$SYSTEM_PRIVILEGE", "MAKE_DBKEY", "RDB$TRACE_MSG", "RDB$ERROR", "RDB$GET_TRANSACTION_CN",
             "ABS", "ACOS", "ACOSH", "ASIN", "ASINH", "ATAN", "ATAN2", "ATANH", "CEILING", "COS", "COSH", "COT", "EXP", "FLOOR", "LN", "LOG", "LOG10",
             "MOD", "PI", "POWER", "RAND", "ROUND", "SIGN", "SIN", "SINH", "SQRT", "TAN", "TANH", "TRUNC", "ASCII_CHAR", "ASCII_VAL", "BIT_LENGTH",
@@ -345,8 +345,14 @@ public class Functions extends JDialog {
                 }
 
                 if (!queryConstructor.getFunctions().contains(stringBuilderFunctions)) {
-                    queryConstructor.replaceFunctions(queryConstructor.getFunctions() + "," + stringBuilderFunctions.toString());
-                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    if(queryConstructor.getFunctions().isEmpty()) {
+                        queryConstructor.replaceFunctions(queryConstructor.getFunctions() + stringBuilderFunctions.toString());
+                        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    }
+                    else{
+                        queryConstructor.replaceFunctions(queryConstructor.getFunctions() + "," + stringBuilderFunctions.toString());
+                        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    }
                 }
             }
         }
