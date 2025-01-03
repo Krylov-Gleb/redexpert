@@ -1,8 +1,6 @@
 package org.executequery.gui.querybuilder;
 
-import org.executequery.GUIUtilities;
 import org.executequery.gui.WidgetFactory;
-import org.executequery.gui.editor.QueryEditor;
 import org.executequery.gui.querybuilder.QueryDialog.*;
 import org.executequery.localization.Bundles;
 import org.underworldlabs.swing.ConnectionsComboBox;
@@ -12,6 +10,8 @@ import org.underworldlabs.swing.layouts.GridBagHelper;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 /**
  * This class creates a toolbar for the query constructor (QueryBuilder).
@@ -22,21 +22,19 @@ import java.awt.*;
  */
 public class QBToolBar extends JToolBar {
 
-    private final Color colorBorderButton = new Color(230,0,0);
+    private final Color colorBorderButton = new Color(230, 0, 0);
 
     // --- Fields that are passed through the constructor ----
     // --- Поля, которые передаются через конструктор ---
 
-    private QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
-    private QueryEditor queryEditor;
+    private final QueryConstructor queryConstructor;
+    private final QBPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
 
     private ConnectionsComboBox connections;
     private JPanel panelPlacingComponents;
-
     private RolloverButton buttonTable;
     private RolloverButton buttonFirstSkipDistinct;
     private RolloverButton buttonConditions;
@@ -47,19 +45,8 @@ public class QBToolBar extends JToolBar {
     private RolloverButton buttonFunctions;
     private RolloverButton buttonJoin;
     private RolloverButton buttonWith;
-    private RolloverButton buttonUseRequest;
+    private RolloverButton buttonSaveQuery;
     private RolloverButton buttonClearQuery;
-
-    private FirstSkipDistinct dialogFirstSkipDistinct;
-    private Table dialogTable;
-    private Join dialogJoin;
-    private Condition dialogCondition;
-    private GroupBy dialogGroups;
-    private OrderBy dialogOrderBy;
-    private Optimize dialogOptimize;
-    private Union dialogUnion;
-    private Functions dialogFunction;
-    private With dialogWith;
 
     /**
      * A toolbar is being created.
@@ -114,113 +101,89 @@ public class QBToolBar extends JToolBar {
      * Метод для инициализации кнопок.
      */
     private void initButton() {
-        buttonTable = WidgetFactory.createRolloverButton("buttonAddTableInQuery",
+        buttonTable = WidgetFactory.createRolloverButton("buttonTable",
                 Bundles.get("common.tables"),
                 "icon_db_table",
-                event -> {
-                    addTableInQuery();
-                });
+                event -> addTableInQuery());
 
-        buttonTable.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonTable.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonFirstSkipDistinct = WidgetFactory.createRolloverButton("buttonAddFirstSkipAndDistinct",
+        buttonFirstSkipDistinct = WidgetFactory.createRolloverButton("buttonFirstSkipDistinct",
                 Bundles.get("common.additions"),
                 "icon_limit_row_count",
-                event -> {
-                    addFirsSkipAndDistinctInQuery();
-                });
+                event -> addFirsSkipAndDistinctInQuery());
 
-        buttonFirstSkipDistinct.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonFirstSkipDistinct.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonConditions = WidgetFactory.createRolloverButton("buttonAddConditionsInQuery",
+        buttonConditions = WidgetFactory.createRolloverButton("buttonConditions",
                 Bundles.get("common.conditions"),
                 "icon_filter",
-                event -> {
-                    addConditionsInQuery();
-                });
+                event -> addConditionsInQuery());
 
-        buttonConditions.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonConditions.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonGroupBy = WidgetFactory.createRolloverButton("buttonAddGroupByInQuery",
+        buttonGroupBy = WidgetFactory.createRolloverButton("buttonGroupBy",
                 Bundles.get("common.grouping"),
                 "icon_background",
-                event -> {
-                    addGroupInQuery();
-                });
+                event -> addGroupInQuery());
 
-        buttonGroupBy.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonGroupBy.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonOrderBy = WidgetFactory.createRolloverButton("buttonAddOrderByInQuery",
+        buttonOrderBy = WidgetFactory.createRolloverButton("buttonOrderBy",
                 Bundles.get("common.sorting"),
                 "icon_refresh_connection",
-                event -> {
-                    addOrderByInQuery();
-                });
+                event -> addOrderByInQuery());
 
-        buttonOrderBy.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonOrderBy.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonOptimize = WidgetFactory.createRolloverButton("buttonAddOptimizeInQuery",
+        buttonOptimize = WidgetFactory.createRolloverButton("buttonOptimize",
                 Bundles.get("common.optimization"),
                 "icon_db_statistic",
-                event -> {
-                    addOptimizeInQuery();
-                });
+                event -> addOptimizeInQuery());
 
-        buttonOptimize.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonOptimize.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonUnion = WidgetFactory.createRolloverButton("buttonAddUnionInQuery",
+        buttonUnion = WidgetFactory.createRolloverButton("buttonUnion",
                 Bundles.get("common.union"),
                 "icon_erd_relation_add",
-                event -> {
-                    addUnionInQuery();
-                });
+                event -> addUnionInQuery());
 
-        buttonUnion.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonUnion.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonFunctions = WidgetFactory.createRolloverButton("buttonFunctionsInQuery",
+        buttonFunctions = WidgetFactory.createRolloverButton("buttonFunctions",
                 Bundles.get("common.functions"),
                 "icon_style_font",
-                event -> {
-                    addFunctionsInQuery();
-                });
+                event -> addFunctionsInQuery());
 
-        buttonFunctions.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonFunctions.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonJoin = WidgetFactory.createRolloverButton("buttonAddJoinsInQuery",
+        buttonJoin = WidgetFactory.createRolloverButton("buttonJoin",
                 Bundles.get("common.join"),
                 "icon_web",
-                event -> {
-                    addJoinsInQuery();
-                });
+                event -> addJoinsInQuery());
 
-        buttonJoin.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonJoin.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonWith = WidgetFactory.createRolloverButton("buttonAddWithInQuery",
+        buttonWith = WidgetFactory.createRolloverButton("buttonWith",
                 Bundles.get("common.with"),
                 "icon_create_db",
-                event -> {
-                    addWithInQuery();
-                });
+                event -> addWithInQuery());
 
-        buttonWith.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonWith.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
         buttonClearQuery = WidgetFactory.createRolloverButton("buttonClearQuery",
                 Bundles.get("common.clearAll"),
                 "icon_zoom_out",
-                event -> {
-                    clearQuery();
-                });
+                event -> clearQuery());
 
-        buttonClearQuery.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonClearQuery.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
-        buttonUseRequest = WidgetFactory.createRolloverButton("buttonFromCreateAndSetTextQueryInQueryEditor",
-                Bundles.get("common.useRequest"),
+        buttonSaveQuery = WidgetFactory.createRolloverButton("buttonSaveQuery",
+                Bundles.get("common.saveQuery"),
                 "icon_create_script",
-                event -> {
-                    useRequest();
-                });
+                event -> saveQuery());
 
-        buttonUseRequest.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton,1,true),BorderFactory.createEmptyBorder(3,3,3,3)));
+        buttonSaveQuery.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
     }
 
     /**
@@ -252,7 +215,7 @@ public class QBToolBar extends JToolBar {
         panelPlacingComponents.add(buttonUnion, gridBagHelper.setXY(10, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonWith, gridBagHelper.setXY(11, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonClearQuery, gridBagHelper.setXY(12, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(buttonUseRequest, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonSaveQuery, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(new JLabel(" "), gridBagHelper.setXY(14, 0).spanX().get());
         add(panelPlacingComponents);
     }
@@ -271,37 +234,12 @@ public class QBToolBar extends JToolBar {
      * <p>
      * Метод для использования запроса.
      */
-    private void useRequest() {
-        if (queryEditor == null) {
-            createNewQueryEditor();
-        }
-        if (!GUIUtilities.isPanelOpen(queryEditor.getDisplayName())) {
-            createNewQueryEditor();
-        }
-        if (GUIUtilities.isPanelOpen(queryEditor.getDisplayName())) {
-            addQueryInQueryEditor();
-        }
-
-        GUIUtilities.setSelectedCentralPane(queryEditor.getDisplayName());
-    }
-
-    /**
-     * Method for adding a query to the query editor.
-     * <p>
-     * Метод для добавления запроса в редактор запросов.
-     */
-    private void addQueryInQueryEditor() {
-        queryBuilderPanel.applyTestQuery(queryEditor);
-    }
-
-    /**
-     * Creating a new Query Editor.
-     * <p>
-     * Создание нового редактора запросов.
-     */
-    private void createNewQueryEditor() {
-        QBQueryEditor executeQueryEditor = new QBQueryEditor();
-        queryEditor = executeQueryEditor.getQueryEditor();
+    private void saveQuery() {
+        String textCopy = queryBuilderPanel.getTestQuery();
+        StringSelection stringSelection = new StringSelection(textCopy);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+        JOptionPane.showMessageDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.savingRequestClipboard"), Bundles.get("QueryBuilder.ToolBar.savingRequestClipboardTitle"), JOptionPane.QUESTION_MESSAGE);
     }
 
     /**
@@ -336,7 +274,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления соединений в запрос.
      */
     public void addJoinsInQuery() {
-        dialogJoin = new Join(queryBuilderPanel, queryConstructor);
+        new Join(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -345,7 +283,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления запросов (With) в запрос.
      */
     public void addWithInQuery() {
-        dialogWith = new With(queryConstructor, queryBuilderPanel);
+        new With(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -354,7 +292,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления функций в запрос.
      */
     private void addFunctionsInQuery() {
-        dialogFunction = new Functions(queryBuilderPanel, queryConstructor);
+        new Functions(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -363,7 +301,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления группировок в запрос.
      */
     private void addGroupInQuery() {
-        dialogGroups = new GroupBy(queryConstructor, queryBuilderPanel);
+        new GroupBy(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -372,7 +310,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления сортировки в запрос.
      */
     private void addOrderByInQuery() {
-        dialogOrderBy = new OrderBy(queryBuilderPanel, queryConstructor);
+        new OrderBy(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -381,7 +319,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления оптимизации в запрос.
      */
     private void addOptimizeInQuery() {
-        dialogOptimize = new Optimize(queryConstructor, queryBuilderPanel);
+        new Optimize(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -390,7 +328,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления условий в запрос.
      */
     private void addConditionsInQuery() {
-        dialogCondition = new Condition(queryConstructor, queryBuilderPanel);
+        new Condition(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -398,8 +336,8 @@ public class QBToolBar extends JToolBar {
      * <p>
      * Метод для добавления объединений (Union) в запрос.
      */
-    private void addUnionInQuery(){
-        dialogUnion = new Union(queryConstructor,queryBuilderPanel);
+    private void addUnionInQuery() {
+        new Union(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -408,7 +346,7 @@ public class QBToolBar extends JToolBar {
      * Добавить First Skip и Distinct в запрос.
      */
     private void addFirsSkipAndDistinctInQuery() {
-        dialogFirstSkipDistinct = new FirstSkipDistinct(queryConstructor, queryBuilderPanel);
+        new FirstSkipDistinct(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -417,7 +355,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления таблицы в запрос.
      */
     private void addTableInQuery() {
-        dialogTable = new Table(queryBuilderPanel, queryConstructor, this);
+        new Table(queryBuilderPanel, queryConstructor, this);
     }
 
     /**
@@ -428,5 +366,4 @@ public class QBToolBar extends JToolBar {
     public ConnectionsComboBox getConnections() {
         return connections;
     }
-
 }
