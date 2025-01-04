@@ -16,16 +16,40 @@ public class QueryConstructor {
     // --- Elements accepted using the constructor. ----
     // --- Поля, которые передаются через конструктор. ---
 
-    private QBPanel queryBuilderPanel;
+    private final QBPanel queryBuilderPanel;
 
     // --- Constant fields ---
     // --- Константные поля ---
 
-    private final String SELECT = "SELECT";
-    private final String FROM = "FROM";
     private final String EMPTINESS = "";
     private final String WHITESPACE = " ";
     private final String STAR = "*";
+
+    // --- Fields of colors ---
+    // --- Поля цветов ---
+
+    private final Color colorBorderBlockFrom = new Color(191, 34, 51);
+    private final Color colorBackgroundBlockFrom = new Color(234, 140, 150);
+    private final Color colorBorderBlockSelect = new Color(100, 149, 237);
+    private final Color colorBackgroundBlockSelect = new Color(194, 213, 248);
+    private final Color colorBorderBlockUnion = new Color(230, 168, 215);
+    private final Color colorBackgroundBlockUnion = new Color(247, 229, 243);
+    private final Color colorBorderBlockAdditions = new Color(255, 117, 20);
+    private final Color colorBackgroundBlockAdditions = new Color(255, 185, 136);
+    private final Color colorBorderBlockWith = new Color(170, 240, 209);
+    private final Color colorBackgroundBlockWith = new Color(212, 247, 232);
+    private final Color colorBorderBlockFunctionsAndAttributes = new Color(255, 207, 64);
+    private final Color colorBackgroundBlockFunctionsAndAttributes = new Color(255, 238, 187);
+    private final Color colorBorderBlockTable = new Color(119, 221, 119);
+    private final Color colorBackgroundBlockTable = new Color(201, 241, 201);
+    private final Color colorBorderBlockWhereAndHaving = new Color(255, 155, 170);
+    private final Color colorBackgroundBlockWhereAndHaving = new Color(255, 221, 226);
+    private final Color colorBorderBlockGroupBy = new Color(234, 141, 247);
+    private final Color colorBackgroundBlockGroupBy = new Color(243, 191, 251);
+    private final Color colorBorderBlockOrderBy = new Color(62, 180, 137);
+    private final Color colorBackgroundBlockOrderBy = new Color(154, 220, 196);
+    private final Color colorBorderBlockOptimization = new Color(91, 58, 41);
+    private final Color colorBackgroundBlockOptimization = new Color(197, 150, 126);
 
     // --- Other field ---
     // --- Остальные поля ---
@@ -59,79 +83,81 @@ public class QueryConstructor {
      * Главный метод для создания (сборки) и получения запроса.
      */
     public String buildAndGetQuery() {
-        StringBuilder Query = new StringBuilder();
+        StringBuilder query = new StringBuilder();
         queryBuilderPanel.clearBlocksPanel();
-        addWith(Query);
-        addUnion(Query);
-        addSelect(Query);
-        addFirstInQuery(Query);
-        addSkipInQuery(Query);
-        addDistinct(Query);
+        addWith(query);
+        addUnion(query);
+        addSelect(query);
+        addFirstInQuery(query);
+        addSkipInQuery(query);
+        addDistinct(query);
         addAttributesInQuery();
         addFunctionIsEmpty();
-        addFunctions(Query);
-        addFrom(Query);
-        addTableInQuery(Query);
-        addWhereIfGroupingIsEmpty(Query);
-        addGroupingAndSwapWhereOnHaving(Query);
-        addOrderByInQuery(Query);
-        addOptimizationInQuery(Query);
-        Query.append(";");
-        return Query.toString();
+        addFunctions(query);
+        addFrom(query);
+        addTableInQuery(query);
+        addWhereIfGroupingIsEmpty(query);
+        addGroupingAndSwapWhereOnHaving(query);
+        addOrderByInQuery(query);
+        addOptimizationInQuery(query);
+        query.append(";");
+        return query.toString();
     }
 
-    private void addFrom(StringBuilder Query) {
-        Query.append(WHITESPACE).append("\n").append(FROM);
-        queryBuilderPanel.addBlockInBlocksPanel(FROM,
-                new Color(191, 34, 51),
-                new Color(234, 140, 150));
+    /**
+     * A method for adding from to a request.
+     * <p>
+     * Метод для добавления from в запрос.
+     */
+    private void addFrom(StringBuilder query) {
+        query.append("\n").append("FROM").append(WHITESPACE);
+        queryBuilderPanel.addBlockInBlocksPanel("FROM", colorBorderBlockFrom, colorBackgroundBlockFrom);
     }
 
-    private void addSelect(StringBuilder Query) {
-        Query.append(SELECT).append(WHITESPACE);
-        queryBuilderPanel.addBlockInBlocksPanel(SELECT,
-                new Color(100, 149, 237),
-                new Color(194, 213, 248));
+    /**
+     * A method for adding select to a query.
+     * <p>
+     * Метод для добавления select в запрос.
+     */
+    private void addSelect(StringBuilder query) {
+        query.append("SELECT").append(WHITESPACE);
+        queryBuilderPanel.addBlockInBlocksPanel("SELECT", colorBorderBlockSelect, colorBackgroundBlockSelect);
     }
 
-    private void addUnion(StringBuilder Query) {
+    /**
+     * A method for adding a union to a request.
+     * <p>
+     * Метод для добавления union в запрос.
+     */
+    private void addUnion(StringBuilder query) {
         if (!union.isEmpty()) {
-            Query.append(union);
+
+            query.append(union).append(WHITESPACE);
 
             StringBuilder stringBuilder = new StringBuilder(union);
-            int countStrUnion = (int) Math.ceil((double) stringBuilder.length() / 10);
+            int countStrFunctions = (int) Math.ceil((double) stringBuilder.length() / 30);
             int start = 0;
 
-            for (int i = 0; i < countStrUnion; i++) {
-                if (stringBuilder.indexOf(",", start + 20) >= 0) {
-                    if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                        if (stringBuilder.indexOf(",", start + 20) < stringBuilder.indexOf(" ", start + 20)) {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                    new Color(230, 168, 215),
-                                    new Color(247, 229, 243));
-                            start = stringBuilder.indexOf(",", start + 20) + 1;
+            for (int index = 0; index < countStrFunctions; index++) {
+                if (stringBuilder.indexOf(",", start + 30) >= 0) {
+                    if (stringBuilder.indexOf(" ", start + 30) >= 0) {
+                        if (stringBuilder.indexOf(",", start + 30) < stringBuilder.indexOf(" ", start + 30)) {
+                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 30) + 1), colorBorderBlockUnion, colorBackgroundBlockUnion);
+                            start = stringBuilder.indexOf(",", start + 30) + 1;
                         } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                    new Color(230, 168, 215),
-                                    new Color(247, 229, 243));
-                            start = stringBuilder.indexOf(" ", start + 20) + 1;
+                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 30) + 1), colorBorderBlockUnion, colorBackgroundBlockUnion);
+                            start = stringBuilder.indexOf(" ", start + 30) + 1;
                         }
                     } else {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                new Color(230, 168, 215),
-                                new Color(247, 229, 243));
-                        start = stringBuilder.indexOf(",", start + 20) + 1;
+                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 30) + 1), colorBorderBlockUnion, colorBackgroundBlockUnion);
+                        start = stringBuilder.indexOf(",", start + 30) + 1;
                     }
                 } else {
-                    if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                new Color(230, 168, 215),
-                                new Color(247, 229, 243));
-                        start = stringBuilder.indexOf(" ", start + 20) + 1;
+                    if (stringBuilder.indexOf(" ", start + 30) >= 0) {
+                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 30) + 1), colorBorderBlockUnion, colorBackgroundBlockUnion);
+                        start = stringBuilder.indexOf(" ", start + 30) + 1;
                     } else {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                                new Color(230, 168, 215),
-                                new Color(247, 229, 243));
+                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()), colorBorderBlockUnion, colorBackgroundBlockUnion);
                         break;
                     }
                 }
@@ -139,12 +165,15 @@ public class QueryConstructor {
         }
     }
 
-    private void addDistinct(StringBuilder Query) {
+    /**
+     * A method for adding distinct to a query.
+     * <p>
+     * Метод для добавления distinct в запрос.
+     */
+    private void addDistinct(StringBuilder query) {
         if (!distinct.isEmpty()) {
-            Query.append(distinct);
-            queryBuilderPanel.addBlockInBlocksPanel(distinct,
-                    new Color(255, 117, 20),
-                    new Color(255, 185, 136));
+            query.append("\n").append(distinct).append(WHITESPACE);
+            queryBuilderPanel.addBlockInBlocksPanel(distinct, colorBorderBlockAdditions, colorBackgroundBlockAdditions);
         }
     }
 
@@ -153,48 +182,77 @@ public class QueryConstructor {
      * <p>
      * Метод для добавления with в запрос.
      */
-    private void addWith(StringBuilder Query) {
+    private void addWith(StringBuilder query) {
         if (!with.isEmpty()) {
-            Query.append(with).append("\n");
-
             StringBuilder stringBuilder = new StringBuilder(with);
-            int countStrWith = (int) Math.ceil((double) stringBuilder.length() / 10);
-            int start = 0;
+            stringBuilder.replace(stringBuilder.indexOf("WITH RECURSIVE"), stringBuilder.indexOf("WITH RECURSIVE") + "WITH RECURSIVE".length() + 1, "");
 
-            for (int i = 0; i < countStrWith; i++) {
-                if (stringBuilder.indexOf(",", start + 20) >= 0) {
-                    if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                        if (stringBuilder.indexOf(",", start + 20) < stringBuilder.indexOf(" ", start + 20)) {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                    new Color(170, 240, 209),
-                                    new Color(212, 247, 232));
-                            start = stringBuilder.indexOf(",", start + 20) + 1;
+            query.append("WITH RECURSIVE");
+            queryBuilderPanel.addBlockInBlocksPanel("WITH RECURSIVE", colorBorderBlockWith, colorBackgroundBlockWith);
+
+            String[] withSplit = stringBuilder.toString().split("(?<=\\),)");
+
+            for (int i = 0; i < withSplit.length; i++) {
+                query.append("\n");
+
+                StringBuilder stringBuilderWith = new StringBuilder(withSplit[i]);
+                int countStrFunctions = (int) Math.ceil((double) stringBuilderWith.length() / 30);
+                int start = 0;
+
+                for (int index = 0; index < countStrFunctions; index++) {
+                    if (stringBuilderWith.indexOf(",", start + 30) >= 0) {
+                        if (stringBuilderWith.indexOf(" ", start + 30) >= 0) {
+                            if (stringBuilderWith.indexOf(",", start + 30) < stringBuilderWith.indexOf(" ", start + 30)) {
+                                if (stringBuilderWith.indexOf(",", start + 30) + 1 == stringBuilderWith.length()) {
+                                    query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1));
+                                } else {
+                                    query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1)).append("\n");
+                                }
+
+                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1), colorBorderBlockWith, colorBackgroundBlockWith);
+                                start = stringBuilderWith.indexOf(",", start + 30) + 1;
+                            } else {
+                                if (stringBuilderWith.indexOf(" ", start + 30) + 1 == stringBuilderWith.length()) {
+                                    query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1));
+                                } else {
+                                    query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1)).append("\n");
+                                }
+
+                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1), colorBorderBlockWith, colorBackgroundBlockWith);
+                                start = stringBuilderWith.indexOf(" ", start + 30) + 1;
+                            }
                         } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                    new Color(170, 240, 209),
-                                    new Color(212, 247, 232));
-                            start = stringBuilder.indexOf(" ", start + 20) + 1;
+                            if (stringBuilderWith.indexOf(",", start + 30) + 1 == stringBuilderWith.length()) {
+                                query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1));
+                            } else {
+                                query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1)).append("\n");
+                            }
+
+                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderWith.substring(start, stringBuilderWith.indexOf(",", start + 30) + 1), colorBorderBlockWith, colorBackgroundBlockWith);
+                            start = stringBuilderWith.indexOf(",", start + 30) + 1;
                         }
                     } else {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                new Color(170, 240, 209),
-                                new Color(212, 247, 232));
-                        start = stringBuilder.indexOf(",", start + 20) + 1;
-                    }
-                } else {
-                    if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                new Color(170, 240, 209),
-                                new Color(212, 247, 232));
-                        start = stringBuilder.indexOf(" ", start + 20) + 1;
-                    } else {
-                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                                new Color(170, 240, 209),
-                                new Color(212, 247, 232));
-                        break;
+                        if (stringBuilderWith.indexOf(" ", start + 30) >= 0) {
+                            if (stringBuilderWith.indexOf(" ", start + 30) + 1 == stringBuilderWith.length()) {
+                                query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1));
+                            } else {
+                                query.append(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1)).append("\n");
+                            }
+
+                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderWith.substring(start, stringBuilderWith.indexOf(" ", start + 30) + 1), colorBorderBlockWith, colorBackgroundBlockWith);
+                            start = stringBuilderWith.indexOf(" ", start + 30) + 1;
+                        } else {
+                            query.append(stringBuilderWith.substring(start, stringBuilderWith.length()));
+                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderWith.substring(start, stringBuilderWith.length()), colorBorderBlockWith, colorBackgroundBlockWith);
+                            break;
+                        }
                     }
                 }
+
+                query.append(WHITESPACE);
             }
+
+            query.append("\n");
         }
     }
 
@@ -221,12 +279,10 @@ public class QueryConstructor {
      * <p>
      * Метод для добавления First в запрос.
      */
-    private void addFirstInQuery(StringBuilder Query) {
+    private void addFirstInQuery(StringBuilder query) {
         if (!first.isEmpty()) {
-            Query.append(first).append(WHITESPACE);
-            queryBuilderPanel.addBlockInBlocksPanel(first,
-                    new Color(255, 117, 20),
-                    new Color(255, 185, 136));
+            query.append("\n").append(first).append(WHITESPACE);
+            queryBuilderPanel.addBlockInBlocksPanel(first, colorBorderBlockAdditions, colorBackgroundBlockAdditions);
         }
     }
 
@@ -265,17 +321,19 @@ public class QueryConstructor {
         first = EMPTINESS;
     }
 
+    private void clearDistinct() {
+        distinct = "";
+    }
+
     /**
      * The method for adding Skip to the request.
      * <p>
      * Метод для добавления Skip в запрос.
      */
-    private void addSkipInQuery(StringBuilder Query) {
+    private void addSkipInQuery(StringBuilder query) {
         if (!skip.isEmpty()) {
-            Query.append(skip).append(WHITESPACE);
-            queryBuilderPanel.addBlockInBlocksPanel(skip,
-                    new Color(255, 117, 20),
-                    new Color(255, 185, 136));
+            query.append("\n").append(skip).append(WHITESPACE);
+            queryBuilderPanel.addBlockInBlocksPanel(skip, colorBorderBlockAdditions, colorBackgroundBlockAdditions);
         }
     }
 
@@ -436,7 +494,7 @@ public class QueryConstructor {
      * <p>
      * Метод для добавления функций в запрос.
      */
-    private void addFunctions(StringBuilder Query) {
+    private void addFunctions(StringBuilder query) {
         if (!functions.isEmpty()) {
             if (attribute.equals("*")) {
                 attribute = "";
@@ -445,67 +503,32 @@ public class QueryConstructor {
                     functions = functions.substring(1);
                 }
 
-                Query.append(WHITESPACE).append("\n").append(attribute).append(functions);
+                query.append(WHITESPACE).append(attribute);
 
                 String[] functionElements = functions.split("(?<=\\),)");
 
                 for (int i = 0; i < functionElements.length; i++) {
                     String[] functionsElementIsAlias = functionElements[i].split("(?<=\",)");
                     for (int j = 0; j < functionsElementIsAlias.length; j++) {
-
-                        StringBuilder stringBuilder = new StringBuilder(functionsElementIsAlias[i]);
-                        int countStrFunctions = (int) Math.ceil((double) stringBuilder.length() / 10);
-                        int start = 0;
-
-                        for (int index = 0; index < countStrFunctions; index++) {
-                            if (stringBuilder.indexOf(",", start + 20) >= 0) {
-                                if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                                    if (stringBuilder.indexOf(",", start + 20) < stringBuilder.indexOf(" ", start + 20)) {
-                                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                                new Color(255, 207, 64),
-                                                new Color(255, 238, 187));
-                                        start = stringBuilder.indexOf(",", start + 20) + 1;
-                                    } else {
-                                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                                new Color(255, 207, 64),
-                                                new Color(255, 238, 187));
-                                        start = stringBuilder.indexOf(" ", start + 20) + 1;
-                                    }
-                                } else {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    start = stringBuilder.indexOf(",", start + 20) + 1;
-                                }
-                            } else {
-                                if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    start = stringBuilder.indexOf(" ", start + 20) + 1;
-                                } else {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    break;
-                                }
-                            }
-                        }
+                        query.append("\n").append(functionsElementIsAlias[j]);
+                        queryBuilderPanel.addBlockInBlocksPanel(functionsElementIsAlias[j], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                     }
                 }
+
+                query.append(WHITESPACE);
+
             } else {
-                if (functions.indexOf(",") != 0) {
-                    functions = "," + functions;
+                if (attribute.lastIndexOf(",") != attribute.length() - 1) {
+                    attribute = attribute + ",";
                 }
 
-                Query.append(WHITESPACE).append("\n").append(attribute).append(functions);
+                query.append(WHITESPACE);
 
                 String[] attributes = attribute.split("(?<=,)");
 
                 for (int i = 0; i < attributes.length; i++) {
-                    queryBuilderPanel.addBlockInBlocksPanel(attributes[i],
-                            new Color(255, 207, 64),
-                            new Color(255, 238, 187));
+                    query.append("\n").append(attributes[i]);
+                    queryBuilderPanel.addBlockInBlocksPanel(attributes[i], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                 }
 
                 String[] functionElements = functions.split("(?<=\\),)");
@@ -513,58 +536,24 @@ public class QueryConstructor {
                 for (int i = 0; i < functionElements.length; i++) {
                     String[] functionsElementIsAlias = functionElements[i].split("(?<=\",)");
                     for (int j = 0; j < functionsElementIsAlias.length; j++) {
-
-                        StringBuilder stringBuilder = new StringBuilder(functionsElementIsAlias[i]);
-                        int countStrFunctions = (int) Math.ceil((double) stringBuilder.length() / 10);
-                        int start = 0;
-
-                        for (int index = 0; index < countStrFunctions; index++) {
-                            if (stringBuilder.indexOf(",", start + 20) >= 0) {
-                                if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                                    if (stringBuilder.indexOf(",", start + 20) < stringBuilder.indexOf(" ", start + 20)) {
-                                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                                new Color(255, 207, 64),
-                                                new Color(255, 238, 187));
-                                        start = stringBuilder.indexOf(",", start + 20) + 1;
-                                    } else {
-                                        queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                                new Color(255, 207, 64),
-                                                new Color(255, 238, 187));
-                                        start = stringBuilder.indexOf(" ", start + 20) + 1;
-                                    }
-                                } else {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    start = stringBuilder.indexOf(",", start + 20) + 1;
-                                }
-                            } else {
-                                if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    start = stringBuilder.indexOf(" ", start + 20) + 1;
-                                } else {
-                                    queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                                            new Color(255, 207, 64),
-                                            new Color(255, 238, 187));
-                                    break;
-                                }
-                            }
-                        }
+                        query.append("\n").append(functionsElementIsAlias[j]);
+                        queryBuilderPanel.addBlockInBlocksPanel(functionsElementIsAlias[j], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                     }
                 }
+
+                query.append(WHITESPACE);
             }
         } else {
-            Query.append(WHITESPACE).append("\n").append(attribute);
+            query.append(WHITESPACE);
 
             String[] attributes = attribute.split("(?<=,)");
 
             for (int i = 0; i < attributes.length; i++) {
-                queryBuilderPanel.addBlockInBlocksPanel(attributes[i],
-                        new Color(255, 207, 64),
-                        new Color(255, 238, 187));
+                query.append("\n").append(attributes[i]);
+                queryBuilderPanel.addBlockInBlocksPanel(attributes[i], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
             }
+
+            query.append(WHITESPACE);
         }
     }
 
@@ -600,26 +589,21 @@ public class QueryConstructor {
      * <p>
      * Метод для добавления таблиц в запрос.
      */
-    private void addTableInQuery(StringBuilder Query) {
-        Query.append(WHITESPACE).append(table).append(WHITESPACE);
+    private void addTableInQuery(StringBuilder query) {
+        query.append(WHITESPACE);
 
-        StringBuilder stringBuilder = new StringBuilder(table);
-        int countStrTable = (int) Math.ceil((double) stringBuilder.length() / 10);
-        int start = 0;
+        String[] joins = table.split("(?=INNER JOIN)|(?=LEFT JOIN)|(?=RIGHT JOIN)" +
+                "|(?=FULL OUTER JOIN)|(?=CROSS JOIN)|(?=NATURAL JOIN)");
 
-        for (int i = 0; i < countStrTable; i++) {
-            if (stringBuilder.indexOf(" ", start + 20) > 0) {
-                queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                        new Color(119, 221, 119),
-                        new Color(201, 241, 201));
-                start = stringBuilder.indexOf(" ", start + 20) + 1;
-            } else {
-                queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                        new Color(119, 221, 119),
-                        new Color(201, 241, 201));
-                break;
+        for (int i = 0; i < joins.length; i++) {
+            String[] splitOn = joins[i].split("(?=ON)");
+            for (int j = 0; j < splitOn.length; j++) {
+                query.append("\n").append(splitOn[j]);
+                queryBuilderPanel.addBlockInBlocksPanel(splitOn[j], colorBorderBlockTable, colorBackgroundBlockTable);
             }
         }
+
+        query.append(WHITESPACE);
     }
 
     /**
@@ -658,49 +642,27 @@ public class QueryConstructor {
      * <p>
      * Метод для проверки и добавления условия в запрос.
      */
-    private void addWhereIfGroupingIsEmpty(StringBuilder Query) {
+    private void addWhereIfGroupingIsEmpty(StringBuilder query) {
         if (groupBy.isEmpty()) {
             if (!where.isEmpty()) {
-                Query.append("\n").append(where).append(WHITESPACE);
 
                 StringBuilder stringBuilder = new StringBuilder(where);
-                int countStrWhere = (int) Math.ceil((double) stringBuilder.length() / 10);
-                int start = 0;
 
-                for (int i = 0; i < countStrWhere; i++) {
-                    if (stringBuilder.indexOf(",", start + 20) >= 0) {
-                        if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                            if (stringBuilder.indexOf(",", start + 20) < stringBuilder.indexOf(" ", start + 20)) {
-                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                        new Color(255, 155, 170),
-                                        new Color(255, 221, 226));
-                                start = stringBuilder.indexOf(",", start + 20) + 1;
-                            } else {
-                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                        new Color(255, 155, 170),
-                                        new Color(255, 221, 226));
-                                start = stringBuilder.indexOf(" ", start + 20) + 1;
-                            }
-                        } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(",", start + 20) + 1),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            start = stringBuilder.indexOf(",", start + 20) + 1;
-                        }
-                    } else {
-                        if (stringBuilder.indexOf(" ", start + 20) >= 0) {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.indexOf(" ", start + 20) + 1),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            start = stringBuilder.indexOf(" ", start + 20) + 1;
-                        } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilder.substring(start, stringBuilder.length()),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            break;
-                        }
-                    }
+                if (stringBuilder.indexOf("WHERE") >= 0) {
+                    stringBuilder.replace(stringBuilder.indexOf("WHERE"), stringBuilder.indexOf("WHERE") + "WHERE".length() + 1, "");
                 }
+
+                query.append("\n").append("WHERE");
+                queryBuilderPanel.addBlockInBlocksPanel("WHERE", colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+
+                String[] conditions = stringBuilder.toString().split("(?=OR )|(?=AND )");
+
+                for (int i = 0; i < conditions.length; i++) {
+                    query.append("\n").append(conditions[i]);
+                    queryBuilderPanel.addBlockInBlocksPanel(conditions[i], colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+                }
+
+                query.append(WHITESPACE);
             }
         }
     }
@@ -750,68 +712,44 @@ public class QueryConstructor {
      * <p>
      * Метод для проверки и добавления группировки в запрос а также замены where на having.
      */
-    private void addGroupingAndSwapWhereOnHaving(StringBuilder Query) {
+    private void addGroupingAndSwapWhereOnHaving(StringBuilder query) {
         if (!groupBy.isEmpty()) {
-            Query.append("\n").append(groupBy);
 
             StringBuilder stringBuilder = new StringBuilder(groupBy);
-            queryBuilderPanel.addBlockInBlocksPanel("GROUP BY",
-                    new Color(234, 141, 247),
-                    new Color(243, 191, 251));
+            queryBuilderPanel.addBlockInBlocksPanel("GROUP BY", colorBorderBlockGroupBy, colorBackgroundBlockGroupBy);
+            stringBuilder.replace(stringBuilder.indexOf("GROUP BY"), stringBuilder.indexOf("GROUP BY") + "GROUP BY".length() + 1, "");
 
-            stringBuilder.replace(stringBuilder.indexOf("GROUP BY"), stringBuilder.indexOf("GROUP BY") + "GROUP BY".length(), "");
+            query.append("\n").append("GROUP BY");
 
-            String[] attributeGroupBY = stringBuilder.toString().split(",");
+            String[] attributeGroupBY = stringBuilder.toString().split("(?<=,)");
 
             for (int i = 0; i < attributeGroupBY.length; i++) {
-                queryBuilderPanel.addBlockInBlocksPanel(attributeGroupBY[i],
-                        new Color(234, 141, 247),
-                        new Color(243, 191, 251));
+                query.append("\n").append(attributeGroupBY[i]);
+                queryBuilderPanel.addBlockInBlocksPanel(attributeGroupBY[i], colorBorderBlockGroupBy, colorBackgroundBlockGroupBy);
             }
+
+            query.append(WHITESPACE);
 
             if (!where.isEmpty()) {
                 swapWhereOnHaving();
 
-                Query.append("\n").append(having);
-
                 StringBuilder stringBuilderHaving = new StringBuilder(having);
-                int countStrHaving = (int) Math.ceil((double) stringBuilderHaving.length() / 10);
-                int start = 0;
 
-                for (int i = 0; i < countStrHaving; i++) {
-                    if (stringBuilderHaving.indexOf(",", start + 20) >= 0) {
-                        if (stringBuilderHaving.indexOf(" ", start + 20) >= 0) {
-                            if (stringBuilderHaving.indexOf(",", start + 20) < stringBuilderHaving.indexOf(" ", start + 20)) {
-                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilderHaving.substring(start, stringBuilderHaving.indexOf(",", start + 20) + 1),
-                                        new Color(255, 155, 170),
-                                        new Color(255, 221, 226));
-                                start = stringBuilderHaving.indexOf(",", start + 20) + 1;
-                            } else {
-                                queryBuilderPanel.addBlockInBlocksPanel(stringBuilderHaving.substring(start, stringBuilderHaving.indexOf(" ", start + 20) + 1),
-                                        new Color(255, 155, 170),
-                                        new Color(255, 221, 226));
-                                start = stringBuilderHaving.indexOf(" ", start + 20) + 1;
-                            }
-                        } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderHaving.substring(start, stringBuilderHaving.indexOf(",", start + 20) + 1),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            start = stringBuilderHaving.indexOf(",", start + 20) + 1;
-                        }
-                    } else {
-                        if (stringBuilderHaving.indexOf(" ", start + 20) >= 0) {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderHaving.substring(start, stringBuilderHaving.indexOf(" ", start + 20) + 1),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            start = stringBuilderHaving.indexOf(" ", start + 20) + 1;
-                        } else {
-                            queryBuilderPanel.addBlockInBlocksPanel(stringBuilderHaving.substring(start, stringBuilderHaving.length()),
-                                    new Color(255, 155, 170),
-                                    new Color(255, 221, 226));
-                            break;
-                        }
-                    }
+                if (stringBuilderHaving.indexOf("HAVING") >= 0) {
+                    stringBuilderHaving.replace(stringBuilderHaving.indexOf("HAVING"), stringBuilderHaving.indexOf("HAVING") + "HAVING".length() + 1, "");
                 }
+
+                query.append("\n").append("HAVING").append(WHITESPACE);
+                queryBuilderPanel.addBlockInBlocksPanel("HAVING", colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+
+                String[] conditions = stringBuilderHaving.toString().split("(?=OR )|(?=AND )");
+
+                for (int i = 0; i < conditions.length; i++) {
+                    query.append("\n").append(conditions[i]);
+                    queryBuilderPanel.addBlockInBlocksPanel(conditions[i], colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+                }
+
+                query.append(WHITESPACE);
             }
         }
     }
@@ -857,22 +795,22 @@ public class QueryConstructor {
      * <p>
      * Метод для добавления сортировки в запрос.
      */
-    private void addOrderByInQuery(StringBuilder Query) {
+    private void addOrderByInQuery(StringBuilder query) {
         if (!orderBy.isEmpty()) {
-            Query.append("\n").append(orderBy);
-
             StringBuilder stringBuilder = new StringBuilder(orderBy);
-            queryBuilderPanel.addBlockInBlocksPanel("ORDER BY",
-                    new Color(62, 180, 137),
-                    new Color(154, 220, 196));
-            stringBuilder.replace(stringBuilder.indexOf("ORDER BY"), stringBuilder.indexOf("ORDER BY") + "ORDER BY".length(), "");
-            String[] attributeOrderBy = stringBuilder.toString().split(",");
+            queryBuilderPanel.addBlockInBlocksPanel("ORDER BY", colorBorderBlockOrderBy, colorBackgroundBlockOrderBy);
+            stringBuilder.replace(stringBuilder.indexOf("ORDER BY"), stringBuilder.indexOf("ORDER BY") + "ORDER BY".length() + 1, "");
+
+            query.append("\n").append("ORDER BY");
+
+            String[] attributeOrderBy = stringBuilder.toString().split("(?<=,)");
 
             for (int i = 0; i < attributeOrderBy.length; i++) {
-                queryBuilderPanel.addBlockInBlocksPanel(attributeOrderBy[i],
-                        new Color(62, 180, 137),
-                        new Color(154, 220, 196));
+                query.append("\n").append(attributeOrderBy[i]);
+                queryBuilderPanel.addBlockInBlocksPanel(attributeOrderBy[i], colorBorderBlockOrderBy, colorBackgroundBlockOrderBy);
             }
+
+            query.append(WHITESPACE);
         }
     }
 
@@ -908,12 +846,11 @@ public class QueryConstructor {
      * <p>
      * Метод для проверки и добавления оптимизации в запрос.
      */
-    private void addOptimizationInQuery(StringBuilder Query) {
+    private void addOptimizationInQuery(StringBuilder query) {
         if (!optimization.isEmpty()) {
-            Query.append("\n").append(optimization);
-            queryBuilderPanel.addBlockInBlocksPanel(optimization,
-                    new Color(91, 58, 41),
-                    new Color(197, 150, 126));
+            query.append("\n").append(optimization);
+            queryBuilderPanel.addBlockInBlocksPanel(optimization, colorBorderBlockOptimization, colorBackgroundBlockOptimization);
+            query.append(WHITESPACE);
         }
     }
 
@@ -958,6 +895,15 @@ public class QueryConstructor {
     }
 
     /**
+     * A method for resetting with values.
+     * <p>
+     * Метод для сброса значений with.
+     */
+    private void clearWith() {
+        with = "";
+    }
+
+    /**
      * The method for getting the union value.
      * <p>
      * Метод для получения значения union.
@@ -976,6 +922,7 @@ public class QueryConstructor {
         clearFunction();
         clearSkip();
         clearFirst();
+        clearDistinct();
         clearWhere();
         clearHaving();
         clearTable();
@@ -983,5 +930,6 @@ public class QueryConstructor {
         clearOrderBy();
         clearOptimization();
         clearUnion();
+        clearWith();
     }
 }
