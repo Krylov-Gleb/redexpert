@@ -12,6 +12,7 @@ import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.*;
 
 /**
  * This class creates a toolbar for the query constructor (QueryBuilder).
@@ -28,7 +29,7 @@ public class QBToolBar extends JToolBar {
     // --- Поля, которые передаются через конструктор ---
 
     private final QueryConstructor queryConstructor;
-    private final QBPanel queryBuilderPanel;
+    private QBPanel queryBuilderPanel;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
@@ -47,6 +48,8 @@ public class QBToolBar extends JToolBar {
     private RolloverButton buttonWith;
     private RolloverButton buttonSaveQuery;
     private RolloverButton buttonClearQuery;
+    private RolloverButton buttonSaveQueryBuilder;
+    private RolloverButton buttonOpenQueryBuilderFromFile;
 
     /**
      * A toolbar is being created.
@@ -184,6 +187,20 @@ public class QBToolBar extends JToolBar {
                 event -> saveQuery());
 
         buttonSaveQuery.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+
+        buttonSaveQueryBuilder = WidgetFactory.createRolloverButton("buttonSaveQueryBuilder",
+                Bundles.get("QueryBuilder.ToolBar.saveQueryBuilder"),
+                "icon_query_editor",
+                event -> saveQueryBuilder());
+
+        buttonSaveQueryBuilder.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+
+        buttonOpenQueryBuilderFromFile = WidgetFactory.createRolloverButton("buttonOpenQueryBuilderFromFile",
+                Bundles.get("QueryBuilder.ToolBar.openQueryBuilderFromFile"),
+                "icon_execute_to_file",
+                event -> OpenQueryBuilderFromFile());
+
+        buttonOpenQueryBuilderFromFile.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
     }
 
     /**
@@ -216,7 +233,9 @@ public class QBToolBar extends JToolBar {
         panelPlacingComponents.add(buttonWith, gridBagHelper.setXY(11, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonClearQuery, gridBagHelper.setXY(12, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonSaveQuery, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(new JLabel(" "), gridBagHelper.setXY(14, 0).spanX().get());
+        panelPlacingComponents.add(buttonSaveQueryBuilder, gridBagHelper.setXY(14, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonOpenQueryBuilderFromFile, gridBagHelper.setXY(15, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(new JLabel(" "), gridBagHelper.setXY(16, 0).spanX().get());
         add(panelPlacingComponents);
     }
 
@@ -240,6 +259,45 @@ public class QBToolBar extends JToolBar {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
         JOptionPane.showMessageDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.savingRequestClipboard"), Bundles.get("QueryBuilder.ToolBar.savingRequestClipboardTitle"), JOptionPane.QUESTION_MESSAGE);
+    }
+
+    /**
+     * A method for saving the query builder.
+     * <p>
+     * Метод для сохранения построителя запросов.
+     */
+    private void saveQueryBuilder() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(Bundles.get("QueryBuilder.ToolBar.saveQueryBuilder"));
+        int saveCondition = fileChooser.showSaveDialog(null);
+        if (saveCondition == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileOutputStream file = new FileOutputStream(fileChooser.getSelectedFile() + ".bin");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(file);
+                Object object = queryBuilderPanel;
+                objectOutputStream.writeObject(object);
+                objectOutputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void OpenQueryBuilderFromFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(Bundles.get("QueryBuilder.ToolBar.openQueryBuilderFromFile"));
+        int openCondition = fileChooser.showSaveDialog(null);
+//        if (openCondition == JFileChooser.APPROVE_OPTION) {
+//            File file = new File(fileChooser.getSelectedFile().getName());
+//            try {
+//                ObjectInputStream objectInputStream = new ObjectInputStream(Files.newInputStream(file.toPath()));
+//                Object object = objectInputStream.readObject();
+//                queryBuilderPanel = (QBPanel) object;
+//            } catch (IOException | ClassNotFoundException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//        }
     }
 
     /**
