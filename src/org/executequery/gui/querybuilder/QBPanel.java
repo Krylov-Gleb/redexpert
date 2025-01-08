@@ -11,6 +11,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * The main class for working with the query constructor (QueryBuilder)
@@ -48,6 +49,7 @@ public class QBPanel extends JPanel implements TabView {
     private int locationNewTableX = 50;
     private int locationNewTableY = 50;
     private ArrayList<String> arrayListCoordinateDeleteComponents;
+    private Stack<String> historyUserActions;
 
     /**
      * Creating the main panel of the query builder.
@@ -71,6 +73,7 @@ public class QBPanel extends JPanel implements TabView {
         initToolBar();
         initQueryEditorTextPanel();
         initArrays();
+        initStack();
         intScrollPane();
         initSplitPane();
         arrangeComponent();
@@ -132,6 +135,15 @@ public class QBPanel extends JPanel implements TabView {
     private void initArrays() {
         listTablesPanelGUIComponents = new ArrayList<>();
         arrayListCoordinateDeleteComponents = new ArrayList<>();
+    }
+
+    /**
+     * A method for initializing the stack.
+     * <p>
+     * Метод для инициализации стека.
+     */
+    private void initStack(){
+        historyUserActions = new Stack<>();
     }
 
     /**
@@ -445,6 +457,38 @@ public class QBPanel extends JPanel implements TabView {
         return Check;
     }
 
+    /**
+     * Метод для добавления активности пользователя в историю.
+     * <p>
+     * A method for adding user activity to the history.
+     */
+    public void addUserActionInHistory(String action){
+        historyUserActions.add(action);
+    }
+
+    /**
+     * A method for getting and deleting an activity from the history.
+     * <p>
+     * Метод для получения и удаления активности из истории.
+     */
+    public String getAndRemoveUserActionsInHistory(){
+        return historyUserActions.pop();
+    }
+
+    /**
+     * A method for getting user activity history.
+     * <p>
+     * Метод для получения истории активности пользователей.
+     */
+    public Stack<String> getHistoryUserAction(){
+        return historyUserActions;
+    }
+
+    /**
+     * A method for obtaining a panel for the location of graphic components.
+     * <p>
+     * Метод получения панели для расположения графических компонентов.
+     */
     public JPanel getPanelGUIComponents(){
         return panelGUIComponents;
     }

@@ -118,6 +118,7 @@ public class OrderBy extends JDialog {
         });
 
         buttonClear = WidgetFactory.createButton("buttonClear", Bundles.get("common.clear.button"), event -> {
+            queryBuilderPanel.addUserActionInHistory("Clear OrderBy " + queryConstructor.getOrderBy());
             queryConstructor.setOrderBy("");
             clearSelectedCheckBoxes();
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
@@ -216,9 +217,9 @@ public class OrderBy extends JDialog {
                                 @Override
                                 public void itemStateChanged(ItemEvent e) {
                                     if (checkBox.isSelected()) {
-                                        addOrderBy(checkBox);
+                                        addOrderBy(checkBox, false);
                                     } else {
-                                        removeOrderBy(checkBox);
+                                        removeOrderBy(checkBox, false);
                                     }
                                 }
                             });
@@ -287,9 +288,9 @@ public class OrderBy extends JDialog {
                     @Override
                     public void itemStateChanged(ItemEvent e) {
                         if (checkBox.isSelected()) {
-                            addOrderBy(checkBox);
+                            addOrderBy(checkBox, false);
                         } else {
-                            removeOrderBy(checkBox);
+                            removeOrderBy(checkBox, false);
                         }
                     }
                 });
@@ -344,18 +345,34 @@ public class OrderBy extends JDialog {
      * <p>
      * Метод реализующий функционал добавления сортировки (OrderBy) в запрос.
      */
-    public void addOrderBy(JCheckBox checkBox) {
-        if (!queryConstructor.getOrderBy().contains(checkBox.getText())) {
-            StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
+    public void addOrderBy(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            if (!queryConstructor.getOrderBy().contains(checkBox.getText())) {
+                StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
 
-            if (stringBuilder.toString().isEmpty()) {
-                stringBuilder.append("ORDER BY ").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
-            } else {
-                stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
+                if (stringBuilder.toString().isEmpty()) {
+                    stringBuilder.append("ORDER BY ").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
+                } else {
+                    stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
+                }
+
+                queryConstructor.setOrderBy(stringBuilder.toString());
+                queryBuilderPanel.addUserActionInHistory("Delete OrderBy " + checkBox.getText());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
+        } else {
+            if (!queryConstructor.getOrderBy().contains(checkBox.getText())) {
+                StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
 
-            queryConstructor.setOrderBy(stringBuilder.toString());
-            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                if (stringBuilder.toString().isEmpty()) {
+                    stringBuilder.append("ORDER BY ").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
+                } else {
+                    stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
+                }
+
+                queryConstructor.setOrderBy(stringBuilder.toString());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
         }
     }
 
@@ -364,29 +381,57 @@ public class OrderBy extends JDialog {
      * <p>
      * Метод реализующий функционал удаления сортировки (OrderBy) из запроса.
      */
-    public void removeOrderBy(JCheckBox checkBox) {
-        if (queryConstructor.getOrderBy().contains(checkBox.getText())) {
-            StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
-            String[] orderByElements = stringBuilder.substring(stringBuilder.indexOf("ORDER BY") + "ORDER BY".length() + 1).split(",");
+    public void removeOrderBy(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            if (queryConstructor.getOrderBy().contains(checkBox.getText())) {
+                StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
+                String[] orderByElements = stringBuilder.substring(stringBuilder.indexOf("ORDER BY") + "ORDER BY".length() + 1).split(",");
 
-            for (int i = 0; i < orderByElements.length; i++) {
-                if (orderByElements.length == 1) {
-                    stringBuilder.replace(0, stringBuilder.length(), "");
-                    queryConstructor.setOrderBy(stringBuilder.toString());
-                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-                    return;
+                for (int i = 0; i < orderByElements.length; i++) {
+                    if (orderByElements.length == 1) {
+                        stringBuilder.replace(0, stringBuilder.length(), "");
+                        queryConstructor.setOrderBy(stringBuilder.toString());
+                        queryBuilderPanel.addUserActionInHistory("Add OrderBy " + checkBox.getText());
+                        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                        return;
+                    }
+                    if (orderByElements[i].contains(checkBox.getText())) {
+                        stringBuilder.replace(stringBuilder.indexOf(orderByElements[i]), stringBuilder.indexOf(orderByElements[i]) + orderByElements[i].length() + 1, "");
+                    }
                 }
-                if (orderByElements[i].contains(checkBox.getText())) {
-                    stringBuilder.replace(stringBuilder.indexOf(orderByElements[i]), stringBuilder.indexOf(orderByElements[i]) + orderByElements[i].length() + 1, "");
+
+                if (stringBuilder.lastIndexOf(",") == stringBuilder.length() - 1) {
+                    stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
                 }
-            }
 
-            if (stringBuilder.lastIndexOf(",") == stringBuilder.length() - 1) {
-                stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
+                queryConstructor.setOrderBy(stringBuilder.toString());
+                queryBuilderPanel.addUserActionInHistory("Add OrderBy " + checkBox.getText());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
+        } else {
+            if (queryConstructor.getOrderBy().contains(checkBox.getText())) {
+                StringBuilder stringBuilder = new StringBuilder(queryConstructor.getOrderBy());
+                String[] orderByElements = stringBuilder.substring(stringBuilder.indexOf("ORDER BY") + "ORDER BY".length() + 1).split(",");
 
-            queryConstructor.setOrderBy(stringBuilder.toString());
-            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                for (int i = 0; i < orderByElements.length; i++) {
+                    if (orderByElements.length == 1) {
+                        stringBuilder.replace(0, stringBuilder.length(), "");
+                        queryConstructor.setOrderBy(stringBuilder.toString());
+                        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                        return;
+                    }
+                    if (orderByElements[i].contains(checkBox.getText())) {
+                        stringBuilder.replace(stringBuilder.indexOf(orderByElements[i]), stringBuilder.indexOf(orderByElements[i]) + orderByElements[i].length() + 1, "");
+                    }
+                }
+
+                if (stringBuilder.lastIndexOf(",") == stringBuilder.length() - 1) {
+                    stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
+                }
+
+                queryConstructor.setOrderBy(stringBuilder.toString());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
         }
     }
 

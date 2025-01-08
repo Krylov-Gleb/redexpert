@@ -47,8 +47,13 @@ public class QBToolBar extends JToolBar {
     private RolloverButton buttonJoin;
     private RolloverButton buttonWith;
     private RolloverButton buttonSaveQuery;
+    private RolloverButton buttonBack;
     private RolloverButton buttonClearQuery;
     private RolloverButton buttonSaveQueryBuilder;
+
+    private Table table;
+    private OrderBy orderBy;
+    private Condition condition;
 
     /**
      * A toolbar is being created.
@@ -180,6 +185,13 @@ public class QBToolBar extends JToolBar {
 
         buttonClearQuery.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 
+        buttonBack = WidgetFactory.createRolloverButton("buttonBack",
+                Bundles.get("common.back"),
+                "icon_rollback",
+                event -> backQuery());
+
+        buttonBack.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+
         buttonSaveQuery = WidgetFactory.createRolloverButton("buttonSaveQuery",
                 Bundles.get("common.saveQuery"),
                 "icon_create_script",
@@ -223,9 +235,10 @@ public class QBToolBar extends JToolBar {
         panelPlacingComponents.add(buttonOptimize, gridBagHelper.setXY(9, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonUnion, gridBagHelper.setXY(10, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonWith, gridBagHelper.setXY(11, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(buttonClearQuery, gridBagHelper.setXY(12, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(buttonSaveQuery, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(buttonSaveQueryBuilder, gridBagHelper.setXY(14, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonBack, gridBagHelper.setXY(12, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonClearQuery, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonSaveQuery, gridBagHelper.setXY(14, 0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonSaveQueryBuilder, gridBagHelper.setXY(15, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(new JLabel(" "), gridBagHelper.setXY(16, 0).spanX().get());
         add(panelPlacingComponents);
     }
@@ -250,6 +263,70 @@ public class QBToolBar extends JToolBar {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
         JOptionPane.showMessageDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.savingRequestClipboard"), Bundles.get("QueryBuilder.ToolBar.savingRequestClipboardTitle"), JOptionPane.QUESTION_MESSAGE);
+    }
+
+    /**
+     * The method that implements the functionality is a step back.
+     * <p>
+     * Метод реализующий функционал шаг назад.
+     */
+    private void backQuery() {
+        if (!queryBuilderPanel.getHistoryUserAction().empty()) {
+            StringBuilder backActions = new StringBuilder(queryBuilderPanel.getAndRemoveUserActionsInHistory());
+            String actions = backActions.toString().split(" ")[0];
+            String queryElement = backActions.toString().split(" ")[1];
+            String pattern = backActions.substring(backActions.indexOf(queryElement) + queryElement.length() + 1);
+
+            methodIfActionDelete(actions, queryElement, pattern);
+            methodIfActionAdd(actions, queryElement, pattern);
+            methodIfActionClear(actions, queryElement, pattern);
+        }
+    }
+
+    private void methodIfActionClear(String actions, String queryElement, String pattern) {
+        if (actions.equals("Clear")) {
+            if (queryElement.equals("OrderBy")) {
+                queryConstructor.setOrderBy(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+        }
+    }
+
+    private void methodIfActionAdd(String actions, String queryElement, String pattern) {
+        if (actions.equals("Add")) {
+            if (queryElement.equals("Table")) {
+                table.addTable(new JCheckBox(pattern), true);
+            }
+            if (queryElement.equals("Optimize")) {
+                queryConstructor.setOptimization(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("OrderBy")) {
+                orderBy.addOrderBy(new JCheckBox(pattern), true);
+            }
+            if (queryElement.equals("Where")) {
+               queryConstructor.setWhere(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+        }
+    }
+
+    private void methodIfActionDelete(String actions, String queryElement, String pattern) {
+        if (actions.equals("Delete")) {
+            if (queryElement.equals("Table")) {
+                table.removeTable(new JCheckBox(pattern), true);
+            }
+            if (queryElement.equals("Optimize")) {
+                queryConstructor.setOptimization("");
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("OrderBy")) {
+                orderBy.removeOrderBy(new JCheckBox(pattern), true);
+            }
+            if (queryElement.equals("Where")) {
+                condition.removeConditions(new JCheckBox(pattern), true);
+            }
+        }
     }
 
     /**
@@ -341,7 +418,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления сортировки в запрос.
      */
     private void addOrderByInQuery() {
-        new OrderBy(queryBuilderPanel, queryConstructor);
+        orderBy = new OrderBy(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -359,7 +436,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления условий в запрос.
      */
     private void addConditionsInQuery() {
-        new Condition(queryConstructor, queryBuilderPanel);
+        condition = new Condition(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -386,7 +463,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления таблицы в запрос.
      */
     private void addTableInQuery() {
-        new Table(queryBuilderPanel, queryConstructor, this);
+        table = new Table(queryBuilderPanel, queryConstructor, this);
     }
 
     /**

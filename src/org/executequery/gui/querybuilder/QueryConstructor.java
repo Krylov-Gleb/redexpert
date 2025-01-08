@@ -913,6 +913,15 @@ public class QueryConstructor {
     }
 
     /**
+     * A method for obtaining the optimization value.
+     * <p>
+     * Метод для получения значения оптимизации.
+     */
+    public String getOptimization(){
+        return optimization;
+    }
+
+    /**
      * A method for completely clearing the request.
      * <p>
      * Метод для полной очистки запроса.

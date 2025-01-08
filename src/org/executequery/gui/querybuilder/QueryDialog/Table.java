@@ -93,8 +93,8 @@ public class Table extends JDialog {
      * <p>
      * Метод для инициализации кнопок.
      */
-    private void initButton(){
-        buttonClose = WidgetFactory.createButton("buttonClose",Bundles.get("common.close.button"), event -> {
+    private void initButton() {
+        buttonClose = WidgetFactory.createButton("buttonClose", Bundles.get("common.close.button"), event -> {
             closeDialog();
         });
 
@@ -108,9 +108,9 @@ public class Table extends JDialog {
      */
     private void placingButtonsInPanel() {
         GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().fillHorizontally();
-        panelButton.add(new JLabel(" "),gridBagHelper.setXY(0,0).setMaxWeightX().get());
-        panelButton.add(buttonClose,gridBagHelper.nextCol().setMaxWeightX().get());
-        panelButton.add(new JLabel(" "),gridBagHelper.nextCol().setMaxWeightX().get());
+        panelButton.add(new JLabel(" "), gridBagHelper.setXY(0, 0).setMaxWeightX().get());
+        panelButton.add(buttonClose, gridBagHelper.nextCol().setMaxWeightX().get());
+        panelButton.add(new JLabel(" "), gridBagHelper.nextCol().setMaxWeightX().get());
     }
 
     /**
@@ -199,7 +199,7 @@ public class Table extends JDialog {
         panelPlacingComponents.add(labelSearch, gridBagHelper.setXY(0, 0).setMinWeightX().get());
         panelPlacingComponents.add(textFieldSearch, gridBagHelper.nextCol().setMaxWeightX().get());
         panelPlacingComponents.add(scrollPaneTable, gridBagHelper.previousCol().nextRow().nextRow().spanX().setMaxWeightX().get());
-        panelPlacingComponents.add(panelButton,gridBagHelper.nextRow().spanX().spanY().setMaxWeightX().get());
+        panelPlacingComponents.add(panelButton, gridBagHelper.nextRow().spanX().spanY().setMaxWeightX().get());
     }
 
     /**
@@ -207,19 +207,35 @@ public class Table extends JDialog {
      * <p>
      * Метод реализующий функционал добавления таблиц в запрос.
      */
-    private void addTable(JCheckBox checkBox) {
-        QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
+    public void addTable(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
 
-        if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
-            queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
-            queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+            if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
+                queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
+                queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+                queryBuilderPanel.addUserActionInHistory("Delete Table " + checkBox.getText());
+            }
+
+            if (queryBuilderPanel.getListNameTable().size() == 1) {
+                queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0));
+            }
+
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+        } else {
+            QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
+
+            if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
+                queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
+                queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+            }
+
+            if (queryBuilderPanel.getListNameTable().size() == 1) {
+                queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0));
+            }
+
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
-
-        if (queryBuilderPanel.getListNameTable().size() == 1) {
-            queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0));
-        }
-
-        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
     /**
@@ -227,19 +243,36 @@ public class Table extends JDialog {
      * <p>
      * Метод реализующий функционал удаления таблиц из запроса.
      */
-    private void removeTable(JCheckBox checkBox) {
-        if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
-            queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
-            queryBuilderPanel.removeTableInListTable(checkBox.getText());
-            removeAttributes(checkBox.getText());
-            removeMainTable(checkBox.getText());
-            removeJoins(checkBox.getText());
-            removeLastComma();
+    public void removeTable(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                queryBuilderPanel.addUserActionInHistory("Add Table " + checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
 
-            queryConstructor.setAttributes(queryBuilderPanel.getListTable());
-            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
 
-            checkTableIsEmpty();
+                checkTableIsEmpty();
+            }
+        } else {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
+
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                checkTableIsEmpty();
+            }
         }
     }
 
@@ -248,10 +281,11 @@ public class Table extends JDialog {
      * <p>
      * Проверка на наличие таблиц на панели вывода.
      */
-    private void checkTableIsEmpty(){
-        if(queryBuilderPanel.getBlocksPanel().getComponents().length == 0){
-            if(queryBuilderPanel.getListTable().isEmpty()){
+    private void checkTableIsEmpty() {
+        if (queryBuilderPanel.getPanelGUIComponents().getComponents().length == 0) {
+            if (queryBuilderPanel.getListTable().isEmpty()) {
                 queryBuilderPanel.setTextInPanelOutputTestingQuery("");
+                queryBuilderPanel.getBlocksPanel().removeAll();
             }
         }
     }
@@ -417,9 +451,9 @@ public class Table extends JDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (checkBox.isSelected()) {
-                    addTable(checkBox);
+                    addTable(checkBox, false);
                 } else {
-                    removeTable(checkBox);
+                    removeTable(checkBox, false);
                 }
             }
         });
@@ -455,8 +489,8 @@ public class Table extends JDialog {
      * <p>
      * Метод для создания и получения иконки диалога.
      */
-    private ImageIcon getAndCreateIconDialog(){
-        return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE,"svg",512, IconManager.IconFolder.BASE);
+    private ImageIcon getAndCreateIconDialog() {
+        return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE, "svg", 512, IconManager.IconFolder.BASE);
     }
 
     /**
