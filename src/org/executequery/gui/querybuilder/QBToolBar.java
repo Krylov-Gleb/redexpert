@@ -54,6 +54,10 @@ public class QBToolBar extends JToolBar {
     private Table table;
     private OrderBy orderBy;
     private Condition condition;
+    private Functions functions;
+    private GroupBy groupBy;
+    private Join join;
+    private Union union;
 
     /**
      * A toolbar is being created.
@@ -276,17 +280,72 @@ public class QBToolBar extends JToolBar {
             String actions = backActions.toString().split(" ")[0];
             String queryElement = backActions.toString().split(" ")[1];
             String pattern = backActions.substring(backActions.indexOf(queryElement) + queryElement.length() + 1);
-
-            methodIfActionDelete(actions, queryElement, pattern);
+            methodActionSet(actions, queryElement, pattern);
             methodIfActionAdd(actions, queryElement, pattern);
-            methodIfActionClear(actions, queryElement, pattern);
+            methodIfActionDelete(actions, queryElement, pattern);
         }
     }
 
-    private void methodIfActionClear(String actions, String queryElement, String pattern) {
-        if (actions.equals("Clear")) {
+    private void methodActionSet(String actions, String queryElement, String pattern) {
+        if (actions.equals("Set")) {
+            if (queryElement.equals("FirstSkipDistinct")) {
+                String first = pattern.split(" ")[0];
+
+                if (first.equals("empty")) {
+                    first = "";
+                }
+
+                String skip = pattern.split(" ")[1];
+
+                if (skip.equals("empty")) {
+                    skip = "";
+                }
+
+                String distinct = pattern.split(" ")[2];
+
+                if (distinct.equals("empty")) {
+                    distinct = "";
+                }
+
+                queryConstructor.setFirst(first);
+                queryConstructor.setSkip(skip);
+                queryConstructor.setDistinct(distinct);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Where")) {
+                queryConstructor.setWhere(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Optimize")) {
+                queryConstructor.setOptimization(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
             if (queryElement.equals("OrderBy")) {
                 queryConstructor.setOrderBy(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Function")) {
+                queryConstructor.replaceFunctions(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("GroupBy")) {
+                queryConstructor.setGroupBy(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Join")) {
+                queryConstructor.setTable(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Union")) {
+                queryConstructor.setUnion(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("With")) {
+                queryConstructor.setWith(pattern);
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Attribute")) {
+                queryConstructor.setAttributes(pattern);
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
         }
@@ -297,17 +356,6 @@ public class QBToolBar extends JToolBar {
             if (queryElement.equals("Table")) {
                 table.addTable(new JCheckBox(pattern), true);
             }
-            if (queryElement.equals("Optimize")) {
-                queryConstructor.setOptimization(pattern);
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
-            if (queryElement.equals("OrderBy")) {
-                orderBy.addOrderBy(new JCheckBox(pattern), true);
-            }
-            if (queryElement.equals("Where")) {
-               queryConstructor.setWhere(pattern);
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
         }
     }
 
@@ -315,16 +363,6 @@ public class QBToolBar extends JToolBar {
         if (actions.equals("Delete")) {
             if (queryElement.equals("Table")) {
                 table.removeTable(new JCheckBox(pattern), true);
-            }
-            if (queryElement.equals("Optimize")) {
-                queryConstructor.setOptimization("");
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
-            if (queryElement.equals("OrderBy")) {
-                orderBy.removeOrderBy(new JCheckBox(pattern), true);
-            }
-            if (queryElement.equals("Where")) {
-                condition.removeConditions(new JCheckBox(pattern), true);
             }
         }
     }
@@ -355,7 +393,7 @@ public class QBToolBar extends JToolBar {
      * <p>
      * Метод для очистки запроса.
      */
-    private void clearQuery() {
+    public void clearQuery() {
         queryConstructor.clearAll();
         removeTableInOutputPanel();
         queryBuilderPanel.setTextInPanelOutputTestingQuery("");
@@ -382,7 +420,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления соединений в запрос.
      */
     public void addJoinsInQuery() {
-        new Join(queryBuilderPanel, queryConstructor);
+        join = new Join(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -400,7 +438,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления функций в запрос.
      */
     private void addFunctionsInQuery() {
-        new Functions(queryBuilderPanel, queryConstructor);
+        functions = new Functions(queryBuilderPanel, queryConstructor);
     }
 
     /**
@@ -409,7 +447,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления группировок в запрос.
      */
     private void addGroupInQuery() {
-        new GroupBy(queryConstructor, queryBuilderPanel);
+        groupBy = new GroupBy(queryConstructor, queryBuilderPanel);
     }
 
     /**
@@ -445,7 +483,7 @@ public class QBToolBar extends JToolBar {
      * Метод для добавления объединений (Union) в запрос.
      */
     private void addUnionInQuery() {
-        new Union(queryConstructor, queryBuilderPanel);
+        union = new Union(queryConstructor, queryBuilderPanel);
     }
 
     /**

@@ -81,18 +81,13 @@ public class Condition extends JDialog {
      */
     private void initButtons() {
         buttonAddCondition = WidgetFactory.createButton("buttonAddCondition", Bundles.get("common.add.button"), event -> {
-            eventButtonAddConditions(comboBoxLeftOperand.getSelectedItem().toString(), textFieldRightOperand.getText(), comboBoxJoinConditions.getSelectedItem().toString(), comboBoxOperation.getSelectedItem().toString());
+            eventButtonAddConditions();
             arrangeCheckBoxesInScrollPane();
         });
 
         buttonDeleteCondition = WidgetFactory.createButton("buttonDeleteCondition", Bundles.get("common.delete.button"), event -> {
-            JCheckBox[] checkBoxesInScrollPane = getCheckBoxesFromPanelArrangeCheckBox();
-            for (int i = 0; i < checkBoxesInScrollPane.length; i++) {
-                if (checkBoxesInScrollPane[i].isSelected()) {
-                    removeConditions(checkBoxesInScrollPane[i],false);
-                    arrangeCheckBoxesInScrollPane();
-                }
-            }
+            eventButtonRemoveConditions();
+            arrangeCheckBoxesInScrollPane();
         });
 
         buttonClose = WidgetFactory.createButton("buttonClose", Bundles.get("common.close.button"), event -> {
@@ -268,11 +263,11 @@ public class Condition extends JDialog {
      * <p>
      * Событие кнопки по удалению условия из запроса.
      */
-    private void eventButtonAddConditions(String leftOperand, String rightOperand, String join, String operation) {
-        if (!leftOperand.isEmpty()) {
-            if (!rightOperand.isEmpty()) {
-                if (!join.isEmpty()) {
-                    addWhere(leftOperand, operation, rightOperand, join, false);
+    private void eventButtonAddConditions() {
+        if (!comboBoxLeftOperand.getSelectedItem().toString().isEmpty()) {
+            if (!textFieldRightOperand.getText().isEmpty()) {
+                if (!comboBoxJoinConditions.getSelectedItem().toString().isEmpty()) {
+                    addWhere(comboBoxLeftOperand.getSelectedItem().toString(), comboBoxOperation.getSelectedItem().toString(), textFieldRightOperand.getText(), comboBoxJoinConditions.getSelectedItem().toString());
                 }
             }
         }
@@ -285,69 +280,45 @@ public class Condition extends JDialog {
      * <p>
      * Метод для удаления условий из запроса.
      */
-    public void removeConditions(JCheckBox checkBox, boolean externalCall) {
-        if (!externalCall) {
-            StringBuilder stringBuilderWhere = new StringBuilder(queryConstructor.getWhere());
-            arrangeCheckBoxesInScrollPane();
-            if (getCheckBoxesFromPanelArrangeCheckBox().length == 1) {
-                stringBuilderWhere.replace(0, stringBuilderWhere.length(), "");
-                queryBuilderPanel.addUserActionInHistory("Add Where " + queryConstructor.getWhere());
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-                return;
-            } else {
-                if (stringBuilderWhere.toString().contains(checkBox.getText())) {
-                    stringBuilderWhere.replace(stringBuilderWhere.indexOf(checkBox.getText()),
-                            stringBuilderWhere.indexOf(checkBox.getText()) + checkBox.getText().length(),
-                            "");
+    private void eventButtonRemoveConditions() {
+        StringBuilder stringBuilderWhere = new StringBuilder(queryConstructor.getWhere());
+        JCheckBox[] checkBoxesInScrollPane = getCheckBoxesFromPanelArrangeCheckBox();
 
-                    queryBuilderPanel.addUserActionInHistory("Add Where " + queryConstructor.getWhere());
+        for (int i = 0; i < checkBoxesInScrollPane.length; i++) {
+            if (checkBoxesInScrollPane[i].isSelected()) {
+                if (checkBoxesInScrollPane.length == 1) {
+                    stringBuilderWhere.replace(0, stringBuilderWhere.length(), "");
+
+                    queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
                     queryConstructor.setWhere(stringBuilderWhere.toString());
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    return;
+                } else {
+                    if (stringBuilderWhere.toString().contains(checkBoxesInScrollPane[i].getText())) {
+                        stringBuilderWhere.replace(stringBuilderWhere.indexOf(checkBoxesInScrollPane[i].getText()),
+                                stringBuilderWhere.indexOf(checkBoxesInScrollPane[i].getText()) + checkBoxesInScrollPane[i].getText().length(),
+                                "");
+
+                        queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                        queryConstructor.setWhere(stringBuilderWhere.toString());
+                        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    }
                 }
             }
+        }
 
-            if (stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length() - 3) {
-                stringBuilderWhere.replace(stringBuilderWhere.length() - 4, stringBuilderWhere.length(), "");
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
+        if(stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length()-3){
+            stringBuilderWhere.replace(stringBuilderWhere.length()-4,stringBuilderWhere.length(),"");
+            queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+            queryConstructor.setWhere(stringBuilderWhere.toString());
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+        }
 
-            if (stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length() - 4) {
-                stringBuilderWhere.replace(stringBuilderWhere.length() - 5, stringBuilderWhere.length(), "");
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
-        } else {
-            StringBuilder stringBuilderWhere = new StringBuilder(queryConstructor.getWhere());
-            arrangeCheckBoxesInScrollPane();
-            if (getCheckBoxesFromPanelArrangeCheckBox().length == 1) {
-                stringBuilderWhere.replace(0, stringBuilderWhere.length(), "");
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-                return;
-            } else {
-                if (stringBuilderWhere.toString().contains(checkBox.getText())) {
-                    stringBuilderWhere.replace(stringBuilderWhere.indexOf(checkBox.getText()),
-                            stringBuilderWhere.indexOf(checkBox.getText()) + checkBox.getText().length(),
-                            "");
-
-                    queryConstructor.setWhere(stringBuilderWhere.toString());
-                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-                }
-            }
-
-            if (stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length() - 3) {
-                stringBuilderWhere.replace(stringBuilderWhere.length() - 4, stringBuilderWhere.length(), "");
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
-
-            if (stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length() - 4) {
-                stringBuilderWhere.replace(stringBuilderWhere.length() - 5, stringBuilderWhere.length(), "");
-                queryConstructor.setWhere(stringBuilderWhere.toString());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-            }
+        if(stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length()-4){
+            stringBuilderWhere.replace(stringBuilderWhere.length()-5,stringBuilderWhere.length(),"");
+            queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+            queryConstructor.setWhere(stringBuilderWhere.toString());
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
     }
 
@@ -372,71 +343,38 @@ public class Condition extends JDialog {
      * <p>
      * Метод для добавления условия.
      */
-    public void addWhere(String leftOperand, String operation, String rightOperand, String join, boolean externalCall) {
-        if (!externalCall) {
-            StringBuilder stringBuilder = new StringBuilder();
+    public void addWhere(String leftOperand, String operation, String rightOperand, String join) {
+        StringBuilder stringBuilder = new StringBuilder();
 
-            if (!queryConstructor.getWhere().isEmpty()) {
-                stringBuilder.append(leftOperand).append(" ");
-                if (!operation.isEmpty()) {
-                    stringBuilder.append(operation).append(" ").append(rightOperand);
-                } else {
-                    stringBuilder.append(rightOperand);
-                }
-
-                if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                    queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder.toString());
-                    queryBuilderPanel.addUserActionInHistory("Delete Where " + " " + join + " " + stringBuilder.toString());
-                }
-
-                return;
-
+        if (!queryConstructor.getWhere().isEmpty()) {
+            stringBuilder.append(leftOperand).append(" ");
+            if (!operation.isEmpty()) {
+                stringBuilder.append(operation).append(" ").append(rightOperand);
             } else {
-                stringBuilder.append("WHERE").append(" ").append(leftOperand).append(" ");
-                if (!operation.isEmpty()) {
-                    stringBuilder.append(operation).append(" ").append(rightOperand);
-                } else {
-                    stringBuilder.append(rightOperand);
-                }
-
-                if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                    queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder.toString());
-                    queryBuilderPanel.addUserActionInHistory("Delete Where " + stringBuilder.toString());
-                }
-
-                return;
+                stringBuilder.append(rightOperand);
             }
+
+            if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
+                queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder.toString());
+            }
+
+            return;
+
         } else {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            if (!queryConstructor.getWhere().isEmpty()) {
-                stringBuilder.append(leftOperand).append(" ");
-                if (!operation.isEmpty()) {
-                    stringBuilder.append(operation).append(" ").append(rightOperand);
-                } else {
-                    stringBuilder.append(rightOperand);
-                }
-
-                if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                    queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder.toString());
-                }
-
-                return;
-
+            stringBuilder.append("WHERE").append(" ").append(leftOperand).append(" ");
+            if (!operation.isEmpty()) {
+                stringBuilder.append(operation).append(" ").append(rightOperand);
             } else {
-                stringBuilder.append("WHERE").append(" ").append(leftOperand).append(" ");
-                if (!operation.isEmpty()) {
-                    stringBuilder.append(operation).append(" ").append(rightOperand);
-                } else {
-                    stringBuilder.append(rightOperand);
-                }
-
-                if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                    queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder.toString());
-                }
-
-                return;
+                stringBuilder.append(rightOperand);
             }
+
+            if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
+                queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder.toString());
+            }
+
+            return;
         }
     }
 

@@ -276,6 +276,7 @@ public class Functions extends JDialog {
             if (checkBoxesInScrollPane[i].isSelected()) {
                 if (checkBoxesInScrollPane.length == 1) {
                     stringBuilderFunctions.replace(0, stringBuilderFunctions.length(), "");
+                    queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                     queryConstructor.replaceFunctions(stringBuilderFunctions.toString());
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
@@ -285,6 +286,7 @@ public class Functions extends JDialog {
                                 stringBuilderFunctions.indexOf(checkBoxesInScrollPane[i].getText()) + checkBoxesInScrollPane[i].getText().length(),
                                 "");
 
+                        queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                         queryConstructor.replaceFunctions(stringBuilderFunctions.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
@@ -294,6 +296,7 @@ public class Functions extends JDialog {
 
         if(stringBuilderFunctions.toString().charAt(stringBuilderFunctions.length()-1) == ','){
             stringBuilderFunctions.deleteCharAt(stringBuilderFunctions.length()-1);
+            queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
             queryConstructor.replaceFunctions(stringBuilderFunctions.toString());
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
@@ -320,6 +323,7 @@ public class Functions extends JDialog {
                     }
 
                     if (!queryConstructor.getFunctions().contains(stringBuilderFunctions)) {
+                        queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                         queryConstructor.replaceFunctions(queryConstructor.getFunctions() + stringBuilderFunctions.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
@@ -331,6 +335,7 @@ public class Functions extends JDialog {
                     }
 
                     if (!queryConstructor.getFunctions().contains(stringBuilderFunctions)) {
+                        queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                         queryConstructor.replaceFunctions(queryConstructor.getFunctions() + "," + stringBuilderFunctions.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
@@ -346,10 +351,12 @@ public class Functions extends JDialog {
 
                 if (!queryConstructor.getFunctions().contains(stringBuilderFunctions)) {
                     if(queryConstructor.getFunctions().isEmpty()) {
+                        queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                         queryConstructor.replaceFunctions(queryConstructor.getFunctions() + stringBuilderFunctions.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
                     else{
+                        queryBuilderPanel.addUserActionInHistory("Set Function " + queryConstructor.getFunctions());
                         queryConstructor.replaceFunctions(queryConstructor.getFunctions() + "," + stringBuilderFunctions.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }

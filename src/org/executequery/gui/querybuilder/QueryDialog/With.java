@@ -265,6 +265,7 @@ public class With extends JDialog {
                             }
                         }
 
+                        queryBuilderPanel.addUserActionInHistory("Set With " + queryConstructor.getWith());
                         queryConstructor.setWith(stringBuilder.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
@@ -286,6 +287,8 @@ public class With extends JDialog {
             if (checkBoxesInScrollPane[i].isSelected()) {
                 if (checkBoxesInScrollPane.length == 1) {
                     stringBuilder.replace(0, stringBuilder.length(), "");
+
+                    queryBuilderPanel.addUserActionInHistory("Set With " + queryConstructor.getWith());
                     queryConstructor.setWith("");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
@@ -307,6 +310,7 @@ public class With extends JDialog {
             stringBuilder.replace(0,stringBuilder.length(),"");
         }
 
+        queryBuilderPanel.addUserActionInHistory("Set With " + queryConstructor.getWith());
         queryConstructor.setWith(stringBuilder.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }

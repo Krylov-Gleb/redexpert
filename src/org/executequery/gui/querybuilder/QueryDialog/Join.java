@@ -288,6 +288,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
+                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -304,6 +305,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
+                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -320,6 +322,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
+                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -336,6 +339,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
+                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -371,6 +375,7 @@ public class Join extends JDialog {
     public void eventRemoveJoin(String removeJoinInQuery) {
         StringBuilder stringBuilder = new StringBuilder(queryConstructor.getTable());
         stringBuilder.replace(stringBuilder.indexOf(removeJoinInQuery), stringBuilder.indexOf(removeJoinInQuery) + removeJoinInQuery.length(), "");
+        queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
         queryConstructor.setTable(stringBuilder.toString());
     }
 

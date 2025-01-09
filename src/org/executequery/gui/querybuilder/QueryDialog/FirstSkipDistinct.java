@@ -214,6 +214,35 @@ public class FirstSkipDistinct extends JDialog {
      * Метод реализующий функционал добавления дополнений (first,skip,distinct) в запрос.
      */
     private void eventButtonAddFirstSkipDistinct() {
+        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
+
+        if(queryConstructor.getFirst().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getFirst());
+        }
+
+        stringBuilder.append(" ");
+
+        if(queryConstructor.getSkip().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getSkip());
+        }
+
+        stringBuilder.append(" ");
+
+        if(queryConstructor.getDistinct().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getDistinct());
+        }
+
+        queryBuilderPanel.addUserActionInHistory(stringBuilder.toString());
+
         addFirst();
         addSkip();
         addDistinct();
@@ -227,6 +256,35 @@ public class FirstSkipDistinct extends JDialog {
      * Метод реализующий функционал удаления дополнений (first,skip,distinct) из запроса.
      */
     private void eventButtonRemoveFirstSkipDistinct(){
+        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
+
+        if(queryConstructor.getFirst().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getFirst());
+        }
+
+        stringBuilder.append(" ");
+
+        if(queryConstructor.getSkip().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getSkip());
+        }
+
+        stringBuilder.append(" ");
+
+        if(queryConstructor.getDistinct().isEmpty()){
+            stringBuilder.append("empty");
+        }
+        else{
+            stringBuilder.append(queryConstructor.getDistinct());
+        }
+
+        queryBuilderPanel.addUserActionInHistory(stringBuilder.toString());
+
         queryConstructor.setSkip("");
         queryConstructor.setFirst("");
         queryConstructor.setDistinct("");

@@ -452,6 +452,16 @@ public class QueryConstructor {
     }
 
     /**
+     * A method for changing the attribute values.
+     * <p>
+     * Метод для смены значения атрибутов.
+     */
+    public void setAttributes(String attribute) {
+        this.attribute = attribute;
+    }
+
+
+    /**
      * A method for resetting attribute values.
      * <p>
      * Метод для сброса значений атрибутов.
@@ -917,7 +927,7 @@ public class QueryConstructor {
      * <p>
      * Метод для получения значения оптимизации.
      */
-    public String getOptimization(){
+    public String getOptimization() {
         return optimization;
     }
 
