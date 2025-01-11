@@ -305,7 +305,7 @@ public class GroupBy extends JDialog {
      * Метод для размещения компонентов на панели размещения компонентов.
      */
     private void arrangeComponentsInPanelForPlacingComponents() {
-        GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(10, 5, 10, 5).fillHorizontally();
+        GridBagHelper gridBagHelper = new GridBagHelper().setInsets(10, 5, 10, 5).anchorCenter().fillHorizontally();
         panelPlacingComponents.add(labelSearch, gridBagHelper.setXY(0, 0).setMinWeightX().get());
         panelPlacingComponents.add(textFieldSearch, gridBagHelper.nextCol().setMaxWeightX().get());
         panelPlacingComponents.add(scrollPaneCheckBoxesAttribute, gridBagHelper.previousCol().nextRow().spanX().setMaxWeightX().get());

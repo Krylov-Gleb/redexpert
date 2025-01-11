@@ -348,7 +348,6 @@ public class FirstSkipDistinct extends JDialog {
             }
         } else {
             queryConstructor.setFirst("");
-            queryConstructor.setFirst("");
         }
 
         return textFieldFirst.getText();
