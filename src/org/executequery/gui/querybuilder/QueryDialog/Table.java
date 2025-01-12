@@ -1,10 +1,12 @@
 package org.executequery.gui.querybuilder.QueryDialog;
 
 import org.executequery.databasemediators.DatabaseConnection;
+import org.executequery.databaseobjects.DatabaseColumn;
 import org.executequery.databaseobjects.impl.DefaultDatabaseHost;
 import org.executequery.gui.IconManager;
 import org.executequery.gui.WidgetFactory;
 import org.executequery.gui.browser.BrowserConstants;
+import org.executequery.gui.browser.ColumnData;
 import org.executequery.gui.browser.ConnectionsTreePanel;
 import org.executequery.gui.querybuilder.QBCreateTable;
 import org.executequery.gui.querybuilder.QBPanel;
@@ -19,6 +21,9 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -178,6 +183,12 @@ public class Table extends JDialog {
     private void configurationDialog() {
         setLayout(new BorderLayout());
         setTitle(Bundles.get("QueryBuilder.Table.title"));
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                AutoCreateJoin();
+            }
+        });
         setIconImage(getAndCreateIconDialog().getImage());
         setLocationRelativeTo(queryBuilderPanel);
         setResizable(false);
@@ -214,7 +225,7 @@ public class Table extends JDialog {
             if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
                 queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
                 queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
-                queryBuilderPanel.addUserActionInHistory("Delete Table " + checkBox.getText());
+                queryBuilderPanel.addStepBackActionInHistory("Delete Table " + checkBox.getText());
             }
 
             if (queryBuilderPanel.getListNameTable().size() == 1) {
@@ -248,7 +259,7 @@ public class Table extends JDialog {
             if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
                 queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
                 queryBuilderPanel.removeTableInListTable(checkBox.getText());
-                queryBuilderPanel.addUserActionInHistory("Add Table " + checkBox.getText());
+                queryBuilderPanel.addStepBackActionInHistory("Add Table " + checkBox.getText());
                 removeAttributes(checkBox.getText());
                 removeMainTable(checkBox.getText());
                 removeJoins(checkBox.getText());
@@ -466,6 +477,83 @@ public class Table extends JDialog {
     }
 
     /**
+     * The method for adding connections (Join).
+     * <p>
+     * Метод для добавления соединений (Join).
+     */
+    private void addJoin(String tableNameOne, String tableNameTwo, String joinName, String keyValues) {
+        StringBuilder stringBuilderTable = new StringBuilder(queryConstructor.getTable());
+
+        if (stringBuilderTable.indexOf(tableNameOne) == 0) {
+            if (!stringBuilderTable.toString().contains(" " + tableNameTwo + " ")) {
+                if (!keyValues.isEmpty()) {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo)
+                            .append(" ").append("ON").append(" ").append(keyValues);
+                } else {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
+                }
+
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
+                queryConstructor.setTable(stringBuilderTable.toString());
+                return;
+            } else {
+                return;
+            }
+        }
+
+        if (stringBuilderTable.indexOf(tableNameTwo) == 0) {
+            if (!stringBuilderTable.toString().contains(" " + tableNameOne + " ")) {
+                if (!keyValues.isEmpty()) {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne)
+                            .append(" ").append("ON").append(" ").append(keyValues);
+                } else {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
+                }
+
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
+                queryConstructor.setTable(stringBuilderTable.toString());
+                return;
+            } else {
+                return;
+            }
+        }
+
+        if (stringBuilderTable.toString().contains(" " + tableNameOne + " ")) {
+            if (!stringBuilderTable.toString().contains(" " + tableNameTwo + " ")) {
+                if (!keyValues.isEmpty()) {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo)
+                            .append(" ").append("ON").append(" ").append(keyValues);
+                } else {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
+                }
+
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
+                queryConstructor.setTable(stringBuilderTable.toString());
+                return;
+            } else {
+                return;
+            }
+        }
+
+        if (stringBuilderTable.toString().contains(" " + tableNameTwo + " ")) {
+            if (!stringBuilderTable.toString().contains(" " + tableNameOne + " ")) {
+                if (!keyValues.isEmpty()) {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne)
+                            .append(" ").append("ON").append(" ").append(keyValues);
+                } else {
+                    stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
+                }
+
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
+                queryConstructor.setTable(stringBuilderTable.toString());
+                return;
+            } else {
+                return;
+            }
+        }
+    }
+
+    /**
      * The method for getting the database host.
      * <p>
      * Метод для получения хоста базы данных.
@@ -499,8 +587,72 @@ public class Table extends JDialog {
      * Метод для закрытия диалога (окна).
      */
     private void closeDialog() {
+        AutoCreateJoin();
         setVisible(false);
         dispose();
     }
 
+    /**
+     * A method for automatically adding connections.
+     * <p>
+     * Метод для автоматического добавления соединений.
+     */
+    private void AutoCreateJoin() {
+
+        ArrayList<JTable> listTables = queryBuilderPanel.getListTable();
+        ArrayList<String> listNameTables = queryBuilderPanel.getListNameTable();
+
+        for (int i = 0; i < 3; i++) {
+            for (int a = 0; a < listTables.size(); a++) {
+                if(listTables.get(a).getColumnName(0).indexOf("MON$") != 0 & listTables.get(a).getColumnName(0).indexOf("RDB$") != 0 & listTables.get(a).getColumnName(0).indexOf("SEC$") != 0) {
+                    List<DatabaseColumn> databaseColumnTableOne = defaultDatabaseHost.getTableFromName(listTables.get(a).getColumnName(0)).getColumns();
+
+                    for (int b = 0; b < databaseColumnTableOne.size(); b++) {
+                        ColumnData columnData = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumnTableOne.get(b));
+                        if (columnData.isForeignKey() || columnData.isPrimaryKey()) {
+                            for (int c = 0; c < columnData.getColumnConstraintsArray().length; c++) {
+                                if (columnData.getColumnConstraintsArray()[c].getRefTable() != null) {
+                                    if (listNameTables.contains(columnData.getColumnConstraintsArray()[c].getRefTable())) {
+                                        List<DatabaseColumn> databaseColumn2 = defaultDatabaseHost.getTableFromName(columnData.getColumnConstraintsArray()[c].getRefTable()).getColumns();
+
+                                        for (int d = 0; d < databaseColumn2.size(); d++) {
+                                            ColumnData columnData2 = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumn2.get(d));
+                                            if (columnData.isForeignKey() || columnData.isPrimaryKey()) {
+                                                addJoin(listTables.get(a).getColumnName(0), columnData.getColumnConstraintsArray()[c].getRefTable(), "INNER JOIN", columnData.getTableName() + "." + columnData.getColumnName() + " = " + columnData2.getTableName() + "." + columnData2.getColumnName());
+                                                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                                                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        String tableValues = queryConstructor.getTable();
+
+        if (listNameTables.size() > 1) {
+            for (int i = 1; i < listNameTables.size(); i++) {
+                if (!tableValues.contains(" " + listNameTables.get(i) + " ")) {
+                    int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.Join.connectionMissing") + listNameTables.get(i) + ".\n" + Bundles.get("QueryBuilder.Table.isAddTable"), Bundles.get("QueryBuilder.Join.connectionMissingTitle"), JOptionPane.YES_NO_OPTION);
+                    if (userDecision == JOptionPane.YES_OPTION) {
+                        new Join(queryBuilderPanel, queryConstructor, queryBuilderToolBar);
+                        tableValues = queryConstructor.getTable();
+                    }
+                }
+            }
+
+            for (int i = 1; i < listNameTables.size(); i++) {
+                if (!tableValues.contains(" " + listNameTables.get(i) + " ")) {
+                    int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.Join.connectionMissing") + listNameTables.get(i) + ".\n" + Bundles.get("QueryBuilder.Join.isDeleteTable"), Bundles.get("QueryBuilder.Join.connectionMissingTitle"), JOptionPane.YES_NO_OPTION);
+                    if (userDecision == JOptionPane.YES_OPTION) {
+                        removeTable(new JCheckBox(listNameTables.get(i)), false);
+                    }
+                }
+            }
+        }
+    }
 }
