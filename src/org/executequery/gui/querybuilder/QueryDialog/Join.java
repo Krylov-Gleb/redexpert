@@ -1,11 +1,16 @@
 package org.executequery.gui.querybuilder.QueryDialog;
 
+import org.executequery.databaseobjects.DatabaseColumn;
+import org.executequery.databaseobjects.impl.DefaultDatabaseHost;
 import org.executequery.gui.IconManager;
 import org.executequery.gui.WidgetFactory;
 import org.executequery.gui.browser.BrowserConstants;
+import org.executequery.gui.browser.ColumnData;
 import org.executequery.gui.querybuilder.QBPanel;
+import org.executequery.gui.querybuilder.QBToolBar;
 import org.executequery.gui.querybuilder.QueryConstructor;
 import org.executequery.localization.Bundles;
+import org.underworldlabs.swing.RolloverButton;
 import org.underworldlabs.swing.layouts.GridBagHelper;
 
 import javax.swing.*;
@@ -13,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class creates a dialog (window) that adds a Join to the request.
@@ -28,6 +34,7 @@ public class Join extends JDialog {
 
     private QueryConstructor queryConstructor;
     private QBPanel queryBuilderPanel;
+    private QBToolBar queryBuilderToolBar;
 
     // --- GUI Components ---
     // --- Компоненты графического интерфейса ---
@@ -43,10 +50,14 @@ public class Join extends JDialog {
     private JButton buttonAddJoin;
     private JButton buttonRemoveJoin;
     private JButton buttonClose;
+    private RolloverButton buttonShowColumnLeftTable;
+    private RolloverButton buttonShowColumnRightTable;
     private JComboBox<String> comboBoxLeftTable;
     private JComboBox<String> comboBoxRightTable;
     private JComboBox<String> comboBoxJoins;
     private JTextField textFieldValuesUnity;
+
+    private DefaultDatabaseHost defaultDatabaseHost;
 
     /**
      * A dialog (window) is created.
@@ -55,9 +66,10 @@ public class Join extends JDialog {
      * Создаётся диалог (окно).
      * Используется метод для инициализации полей.
      */
-    public Join(QBPanel queryBuilderPanel, QueryConstructor queryConstructor) {
+    public Join(QBPanel queryBuilderPanel, QueryConstructor queryConstructor, QBToolBar queryBuilderToolBar) {
         this.queryBuilderPanel = queryBuilderPanel;
         this.queryConstructor = queryConstructor;
+        this.queryBuilderToolBar = queryBuilderToolBar;
         init();
     }
 
@@ -70,6 +82,7 @@ public class Join extends JDialog {
         initPanels();
         initScrollPane();
         intLabel();
+        initDefaultDataBaseHost();
         initComboBox();
         initTextFields();
         initButtons();
@@ -96,7 +109,26 @@ public class Join extends JDialog {
             closeDialog();
         });
 
+        buttonShowColumnLeftTable = WidgetFactory.createRolloverButton("buttonShowColumnLeftTable",
+                Bundles.get("QueryBuilder.Join.showColumnLeftTable"),
+                "icon_password_show",
+                event -> showColumnTable("left"));
+
+        buttonShowColumnRightTable = WidgetFactory.createRolloverButton("buttonShowColumnRightTable",
+                Bundles.get("QueryBuilder.Join.showColumnRightTable"),
+                "icon_password_show",
+                event -> showColumnTable("right"));
+
         placingButtonsInPanel();
+    }
+
+    /**
+     * The method for initializing the database host.
+     * <p>
+     * Метод для инициализации хоста базы данных.
+     */
+    private void initDefaultDataBaseHost() {
+        defaultDatabaseHost = new DefaultDatabaseHost(queryBuilderToolBar.getConnections().getSelectedConnection());
     }
 
     /**
@@ -225,15 +257,17 @@ public class Join extends JDialog {
      */
     private void arrangeComponentsInPanelForPlacingComponents() {
         GridBagHelper gridBagHelper = new GridBagHelper().setInsets(10, 5, 10, 5).anchorCenter().fillHorizontally();
-        panelPlacingComponents.add(scrollPaneCheckBoxJoin, gridBagHelper.setXY(0, 0).setWidth(3).setMaxWeightX().get());
+        panelPlacingComponents.add(scrollPaneCheckBoxJoin, gridBagHelper.setXY(0, 0).setWidth(4).setMaxWeightX().get());
         panelPlacingComponents.add(labelLeftTable, gridBagHelper.nextRow().setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(comboBoxLeftTable, gridBagHelper.nextCol().setWidth(2).setMaxWeightX().get());
-        panelPlacingComponents.add(labelJoin, gridBagHelper.previousCol().nextRow().setWidth(1).setMinWeightX().get());
-        panelPlacingComponents.add(comboBoxJoins, gridBagHelper.nextCol().setWidth(2).setMaxWeightX().get());
+        panelPlacingComponents.add(buttonShowColumnLeftTable, gridBagHelper.nextCol().setWidth(1).setInsets(0, 5, 10, 5).setMinWeightX().get());
+        panelPlacingComponents.add(labelJoin, gridBagHelper.previousCol().previousCol().previousCol().nextRow().setWidth(1).setMinWeightX().setInsets(10, 5, 10, 5).get());
+        panelPlacingComponents.add(comboBoxJoins, gridBagHelper.nextCol().setWidth(3).setMaxWeightX().get());
         panelPlacingComponents.add(labelRightTable, gridBagHelper.previousCol().nextRow().setWidth(1).setMinWeightX().get());
         panelPlacingComponents.add(comboBoxRightTable, gridBagHelper.nextCol().setWidth(2).setMaxWeightX().get());
-        panelPlacingComponents.add(labelValuesUnity, gridBagHelper.previousCol().nextRow().setWidth(1).setMinWeightX().get());
-        panelPlacingComponents.add(textFieldValuesUnity, gridBagHelper.nextCol().setWidth(2).setMaxWeightX().get());
+        panelPlacingComponents.add(buttonShowColumnRightTable, gridBagHelper.nextCol().setWidth(1).setInsets(0, 5, 10, 5).setMinWeightX().get());
+        panelPlacingComponents.add(labelValuesUnity, gridBagHelper.previousCol().previousCol().previousCol().nextRow().setWidth(1).setMinWeightX().setInsets(10, 5, 10, 5).get());
+        panelPlacingComponents.add(textFieldValuesUnity, gridBagHelper.nextCol().setWidth(3).setMaxWeightX().get());
         panelPlacingComponents.add(panelButton, gridBagHelper.nextRow().spanX().spanY().setMinWeightX().get());
     }
 
@@ -288,7 +322,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
-                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -305,7 +339,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
-                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -322,7 +356,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
-                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -339,7 +373,7 @@ public class Join extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
-                queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
+                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString());
                 return;
             } else {
@@ -375,8 +409,35 @@ public class Join extends JDialog {
     public void eventRemoveJoin(String removeJoinInQuery) {
         StringBuilder stringBuilder = new StringBuilder(queryConstructor.getTable());
         stringBuilder.replace(stringBuilder.indexOf(removeJoinInQuery), stringBuilder.indexOf(removeJoinInQuery) + removeJoinInQuery.length(), "");
-        queryBuilderPanel.addUserActionInHistory("Set Join " + queryConstructor.getTable());
+        queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
         queryConstructor.setTable(stringBuilder.toString());
+
+        ArrayList<String> listNameTable = queryBuilderPanel.getListNameTable();
+
+        if (removeJoinInQuery.contains("FULL OUTER JOIN")) {
+            String[] splitJoin = removeJoinInQuery.split(" ");
+
+            for (int i = 0; i < listNameTable.size(); i++) {
+                if (splitJoin[3].equals(listNameTable.get(i))) {
+                    int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.Join.connectionMissing") + listNameTable.get(i) + ".\n" + Bundles.get("QueryBuilder.Join.isDeleteTable"), Bundles.get("QueryBuilder.Join.connectionMissingTitle"), JOptionPane.YES_NO_OPTION);
+                    if (userDecision == JOptionPane.YES_OPTION) {
+                        removeTable(new JCheckBox(listNameTable.get(i)), false);
+                    }
+                }
+            }
+
+        } else {
+            String[] splitJoin = removeJoinInQuery.split(" ");
+            for (int i = 0; i < listNameTable.size(); i++) {
+                if (splitJoin[2].equals(listNameTable.get(i))) {
+                    int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.Join.connectionMissing") + listNameTable.get(i) + ".\n" + Bundles.get("QueryBuilder.Join.isDeleteTable"), Bundles.get("QueryBuilder.Join.connectionMissingTitle"), JOptionPane.YES_NO_OPTION);
+                    if (userDecision == JOptionPane.YES_OPTION) {
+                        removeTable(new JCheckBox(listNameTable.get(i)), false);
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -419,6 +480,53 @@ public class Join extends JDialog {
     }
 
     /**
+     * A method for displaying columns of a user-selected table on the screen.
+     * <p>
+     * Метод для вывода колонок выбранной пользователем таблицы  на экран.
+     */
+    private void showColumnTable(String varLeftOrRight) {
+        if (varLeftOrRight.equals("left")) {
+            if (!comboBoxLeftTable.getSelectedItem().toString().isEmpty()) {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                List<DatabaseColumn> databaseColumnTableOne = defaultDatabaseHost.getTableFromName(comboBoxLeftTable.getSelectedItem().toString()).getColumns();
+
+                for (int i = 0; i < databaseColumnTableOne.size(); i++) {
+                    if (i != databaseColumnTableOne.size() - 1) {
+                        ColumnData columnData = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumnTableOne.get(i));
+                        stringBuilder.append(columnData.getColumnName()).append("\n");
+                    } else {
+                        ColumnData columnData = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumnTableOne.get(i));
+                        stringBuilder.append(columnData.getColumnName());
+                    }
+                }
+
+                JOptionPane.showMessageDialog(queryBuilderPanel, stringBuilder.toString(), Bundles.get("QueryBuilder.Join.columnTableTitle"), JOptionPane.QUESTION_MESSAGE);
+            }
+        }
+
+        if (varLeftOrRight.equals("right")) {
+            if (!comboBoxRightTable.getSelectedItem().toString().isEmpty()) {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                List<DatabaseColumn> databaseColumnTableOne = defaultDatabaseHost.getTableFromName(comboBoxRightTable.getSelectedItem().toString()).getColumns();
+
+                for (int i = 0; i < databaseColumnTableOne.size(); i++) {
+                    if (i != databaseColumnTableOne.size() - 1) {
+                        ColumnData columnData = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumnTableOne.get(i));
+                        stringBuilder.append(columnData.getColumnName()).append("\n");
+                    } else {
+                        ColumnData columnData = new ColumnData(queryBuilderToolBar.getConnections().getSelectedConnection(), databaseColumnTableOne.get(i));
+                        stringBuilder.append(columnData.getColumnName());
+                    }
+                }
+
+                JOptionPane.showMessageDialog(queryBuilderPanel, stringBuilder.toString(), Bundles.get("QueryBuilder.Join.columnTableTitle"), JOptionPane.QUESTION_MESSAGE);
+            }
+        }
+    }
+
+    /**
      * A method for changing the state of a drop-down list item from non editable to editable.
      * <p>
      * Метод для изменения состояния элемента выпадающего списка с не редактируемого на редактируемый.
@@ -435,6 +543,153 @@ public class Join extends JDialog {
             }
         });
     }
+
+    /**
+     * A method that implements the functionality of deleting tables from a query.
+     * <p>
+     * Метод реализующий функционал удаления таблиц из запроса.
+     */
+    public void removeTable(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                queryBuilderPanel.addStepBackActionInHistory("Add Table " + checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
+
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                checkTableIsEmpty();
+            }
+        } else {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
+
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                checkTableIsEmpty();
+            }
+        }
+    }
+
+    /**
+     * Checking for tables in the output panel.
+     * <p>
+     * Проверка на наличие таблиц на панели вывода.
+     */
+    private void checkTableIsEmpty() {
+        if (queryBuilderPanel.getPanelGUIComponents().getComponents().length == 0) {
+            if (queryBuilderPanel.getListTable().isEmpty()) {
+                queryBuilderPanel.setTextInPanelOutputTestingQuery("");
+                queryBuilderPanel.getBlocksPanel().removeAll();
+            }
+        }
+    }
+
+    /**
+     * A method for removing the last comma from a query.
+     * <p>
+     * Метод для удаления последней запятой из запроса.
+     */
+    private void removeLastComma() {
+        StringBuilder stringBuilderAttributes = new StringBuilder(queryConstructor.getAttribute());
+
+        if (stringBuilderAttributes.toString().length() > 1) {
+            if (stringBuilderAttributes.charAt(stringBuilderAttributes.length() - 1) == ',') {
+                stringBuilderAttributes.deleteCharAt(stringBuilderAttributes.length() - 1);
+            }
+        }
+
+        queryConstructor.replaceAttribute(stringBuilderAttributes.toString());
+        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+    }
+
+    /**
+     * A method for removing a connection (join) from a request.
+     * <p>
+     * Метод для удаления соединения (join) из запроса.
+     */
+    private void removeJoins(String values) {
+        StringBuilder stringBuilderJoin = new StringBuilder(queryConstructor.getTable());
+
+        String[] joins = queryConstructor.getTable().split("(?=INNER JOIN)|(?=LEFT JOIN)|(?=RIGHT JOIN)" +
+                "|(?=FULL OUTER JOIN)|(?=CROSS JOIN)|(?=NATURAL JOIN)");
+
+        for (int i = 1; i < joins.length; i++) {
+            if (joins[i].contains("FULL OUTER JOIN")) {
+                if (joins[i].split(" ")[3].equals(values)) {
+                    stringBuilderJoin.replace(stringBuilderJoin.indexOf(joins[i]), stringBuilderJoin.indexOf(joins[i]) + joins[i].length(), "");
+                } else {
+                    if (joins[i].contains(values + ".")) {
+                        stringBuilderJoin.replace(stringBuilderJoin.indexOf(joins[i]), stringBuilderJoin.indexOf(joins[i]) + joins[i].length(), "");
+                        removeAttributes(joins[i].split(" ")[3]);
+                    }
+                }
+            } else {
+                if (joins[i].split(" ")[2].equals(values)) {
+                    stringBuilderJoin.replace(stringBuilderJoin.indexOf(joins[i]), stringBuilderJoin.indexOf(joins[i]) + joins[i].length(), "");
+                } else {
+                    if (joins[i].contains(values + ".")) {
+                        stringBuilderJoin.replace(stringBuilderJoin.indexOf(joins[i]), stringBuilderJoin.indexOf(joins[i]) + joins[i].length(), "");
+                        removeAttributes(joins[i].split(" ")[2]);
+                    }
+                }
+            }
+        }
+
+        queryConstructor.setTable(stringBuilderJoin.toString());
+        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+    }
+
+    /**
+     * A method for deleting a table from a query.
+     * <p>
+     * Метод для удаления таблицы из запроса.
+     */
+    private void removeMainTable(String values) {
+        StringBuilder stringBuilderTable = new StringBuilder(queryConstructor.getTable());
+
+        if (stringBuilderTable.indexOf(values) == 0) {
+            if (!queryBuilderPanel.getListTable().isEmpty()) {
+                stringBuilderTable.replace(stringBuilderTable.indexOf(values), stringBuilderTable.indexOf(values) + values.length(), queryBuilderPanel.getListTable().get(0).getColumnName(0));
+            } else {
+                queryBuilderPanel.setTextInPanelOutputTestingQuery("");
+            }
+        }
+
+        queryConstructor.setTable(stringBuilderTable.toString());
+        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+    }
+
+    /**
+     * A method for removing attributes from a query.
+     * <p>
+     * Метод для удаления атрибутов из запроса.
+     */
+    private void removeAttributes(String values) {
+        StringBuilder stringBuilderAttributes = new StringBuilder(queryConstructor.getAttribute());
+        String[] attributes = queryConstructor.getAttribute().split("(?<=,)");
+
+        for (int i = 0; i < attributes.length; i++) {
+            if (attributes[i].contains(values + ".")) {
+                stringBuilderAttributes.replace(stringBuilderAttributes.indexOf(attributes[i]), stringBuilderAttributes.indexOf(attributes[i]) + attributes[i].length(), "");
+            }
+        }
+
+        queryConstructor.replaceAttribute(stringBuilderAttributes.toString());
+        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+    }
+
 
     /**
      * A method for creating and receiving a dialog icon.
