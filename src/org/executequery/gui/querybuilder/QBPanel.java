@@ -49,7 +49,8 @@ public class QBPanel extends JPanel implements TabView {
     private int locationNewTableX = 50;
     private int locationNewTableY = 50;
     private ArrayList<String> arrayListCoordinateDeleteComponents;
-    private Stack<String> historyUserActions;
+    private Stack<String> historyUserStepBack;
+    private Stack<String> historyUserStepUp;
 
     /**
      * Creating the main panel of the query builder.
@@ -143,7 +144,8 @@ public class QBPanel extends JPanel implements TabView {
      * Метод для инициализации стека.
      */
     private void initStack(){
-        historyUserActions = new Stack<>();
+        historyUserStepBack = new Stack<>();
+        historyUserStepUp = new Stack<>();
     }
 
     /**
@@ -458,30 +460,57 @@ public class QBPanel extends JPanel implements TabView {
     }
 
     /**
-     * Метод для добавления активности пользователя в историю.
+     * A method for adding user activity to the history. (Step back)
      * <p>
-     * A method for adding user activity to the history.
+     * Метод для добавления активности пользователя в историю. (Шаг назад)
      */
-    public void addUserActionInHistory(String action){
-        historyUserActions.add(action);
+    public void addStepBackActionInHistory(String action){
+        historyUserStepBack.add(action);
     }
 
     /**
-     * A method for getting and deleting an activity from the history.
+     * A method for adding user activity to the history. (Step up)
      * <p>
-     * Метод для получения и удаления активности из истории.
+     * Метод для добавления активности пользователя в историю. (Шаг вперёд)
      */
-    public String getAndRemoveUserActionsInHistory(){
-        return historyUserActions.pop();
+    public void addStepUpActionInHistory(String action){
+        historyUserStepUp.add(action);
     }
 
     /**
-     * A method for getting user activity history.
+     * A method for getting and deleting an activity from the history. (Step back)
      * <p>
-     * Метод для получения истории активности пользователей.
+     * Метод для получения и удаления активности из истории. (Шаг назад)
      */
-    public Stack<String> getHistoryUserAction(){
-        return historyUserActions;
+    public String getAndRemoveStepBackActionInHistory(){
+        return historyUserStepBack.pop();
+    }
+
+    /**
+     * A method for getting and deleting an activity from the history. (Step up)
+     * <p>
+     * Метод для получения и удаления активности из истории. (Шаг вперёд)
+     */
+    public String getAndRemoveStepUpActionInHistory(){
+        return historyUserStepUp.pop();
+    }
+
+    /**
+     * A method for getting user activity history. (Step back)
+     * <p>
+     * Метод для получения истории активности пользователей. (Шаг назад)
+     */
+    public Stack<String> getHistoryActionStepBack(){
+        return historyUserStepBack;
+    }
+
+    /**
+     * A method for getting user activity history. (Step up)
+     * <p>
+     * Метод для получения истории активности пользователей. (Шаг вперёд)
+     */
+    public Stack<String> getHistoryActionStepUp(){
+        return historyUserStepUp;
     }
 
     /**
