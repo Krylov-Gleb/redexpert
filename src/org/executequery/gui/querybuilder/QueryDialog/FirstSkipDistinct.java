@@ -241,7 +241,7 @@ public class FirstSkipDistinct extends JDialog {
             stringBuilder.append(queryConstructor.getDistinct());
         }
 
-        queryBuilderPanel.addUserActionInHistory(stringBuilder.toString());
+        queryBuilderPanel.addStepBackActionInHistory(stringBuilder.toString());
 
         addFirst();
         addSkip();
@@ -283,7 +283,7 @@ public class FirstSkipDistinct extends JDialog {
             stringBuilder.append(queryConstructor.getDistinct());
         }
 
-        queryBuilderPanel.addUserActionInHistory(stringBuilder.toString());
+        queryBuilderPanel.addStepBackActionInHistory(stringBuilder.toString());
 
         queryConstructor.setSkip("");
         queryConstructor.setFirst("");

@@ -215,7 +215,7 @@ public class Optimize extends JDialog {
      * Метод реализующий функционал добавления оптимизации в запрос.
      */
     private void eventButtonAddOptimize() {
-        queryBuilderPanel.addUserActionInHistory("Set Optimize " + queryConstructor.getOptimization());
+        queryBuilderPanel.addStepBackActionInHistory("Set Optimize " + queryConstructor.getOptimization());
         queryConstructor.setOptimization(textFieldTestOptimize.getText());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         closeDialog();
@@ -227,7 +227,7 @@ public class Optimize extends JDialog {
      * Метод реализующий функционал удаления оптимизации из запроса.
      */
     private void eventButtonRemoveOptimize() {
-        queryBuilderPanel.addUserActionInHistory("Set Optimize " + queryConstructor.getOptimization());
+        queryBuilderPanel.addStepBackActionInHistory("Set Optimize " + queryConstructor.getOptimization());
         queryConstructor.setOptimization("");
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         closeDialog();

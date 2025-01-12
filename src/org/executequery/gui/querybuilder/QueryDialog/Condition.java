@@ -289,7 +289,7 @@ public class Condition extends JDialog {
                 if (checkBoxesInScrollPane.length == 1) {
                     stringBuilderWhere.replace(0, stringBuilderWhere.length(), "");
 
-                    queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                    queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
                     queryConstructor.setWhere(stringBuilderWhere.toString());
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
@@ -299,7 +299,7 @@ public class Condition extends JDialog {
                                 stringBuilderWhere.indexOf(checkBoxesInScrollPane[i].getText()) + checkBoxesInScrollPane[i].getText().length(),
                                 "");
 
-                        queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                        queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
                         queryConstructor.setWhere(stringBuilderWhere.toString());
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
@@ -309,14 +309,14 @@ public class Condition extends JDialog {
 
         if(stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length()-3){
             stringBuilderWhere.replace(stringBuilderWhere.length()-4,stringBuilderWhere.length(),"");
-            queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+            queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
             queryConstructor.setWhere(stringBuilderWhere.toString());
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
 
         if(stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length()-4){
             stringBuilderWhere.replace(stringBuilderWhere.length()-5,stringBuilderWhere.length(),"");
-            queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+            queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
             queryConstructor.setWhere(stringBuilderWhere.toString());
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
@@ -355,7 +355,7 @@ public class Condition extends JDialog {
             }
 
             if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
                 queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder.toString());
             }
 
@@ -370,7 +370,7 @@ public class Condition extends JDialog {
             }
 
             if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                queryBuilderPanel.addUserActionInHistory("Set Where " + queryConstructor.getWhere());
+                queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
                 queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder.toString());
             }
 

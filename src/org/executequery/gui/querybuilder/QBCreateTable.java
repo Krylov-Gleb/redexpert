@@ -135,7 +135,7 @@ public class QBCreateTable {
         defaultTableModel.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                queryBuilderPanel.addUserActionInHistory("Set Attribute " + queryConstructor.getAttribute());
+                queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + queryConstructor.getAttribute());
                 queryConstructor.setAttributes(queryBuilderPanel.getListTable());
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }

@@ -130,7 +130,7 @@ public class OrderBy extends JDialog {
      * Метод для очистки OrderBy.
      */
     private void eventClearOrderBy() {
-        queryBuilderPanel.addUserActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
+        queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
         queryConstructor.setOrderBy("");
 
         for (int i = 0; i < panelPlacingCheckBoxesInScrollPane.getComponents().length; i++) {
@@ -356,7 +356,7 @@ public class OrderBy extends JDialog {
                 stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
             }
 
-            queryBuilderPanel.addUserActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
+            queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
             queryConstructor.setOrderBy(stringBuilder.toString());
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
@@ -376,7 +376,7 @@ public class OrderBy extends JDialog {
                 if (orderByElements.length == 1) {
                     stringBuilder.replace(0, stringBuilder.length(), "");
 
-                    queryBuilderPanel.addUserActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
+                    queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
                     queryConstructor.setOrderBy(stringBuilder.toString());
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
@@ -390,7 +390,7 @@ public class OrderBy extends JDialog {
                 stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
             }
 
-            queryBuilderPanel.addUserActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
+            queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
             queryConstructor.setOrderBy(stringBuilder.toString());
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
