@@ -3,9 +3,13 @@ package org.executequery.gui.querybuilder;
 import org.executequery.localization.Bundles;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
@@ -71,7 +75,7 @@ public class QBCreateTable {
      * <p>
      * Метод для добавления таблицы на перемещаемую панель (платформу).
      */
-    private void initMovePanel(JScrollPane scrollPane){
+    private void initMovePanel(JScrollPane scrollPane) {
         movePanel = new QBMovePanel(scrollPane);
     }
 
@@ -96,6 +100,30 @@ public class QBCreateTable {
         createCustomTable.getTableHeader().setReorderingAllowed(false);
         createCustomTable.getTableHeader().setEnabled(false);
         createCustomTable.setToolTipText(Bundles.get("common.table") + nameTable);
+        createCustomTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    JPopupMenu popupMenu = new JPopupMenu();
+
+                    JMenuItem menuItemOne = new JMenuItem(Bundles.get("QueryBuilder.CreateTable.itemMenuSelectAll"));
+                    popupMenu.add(menuItemOne).addActionListener(event -> {
+                        for (int i = 0; i < createCustomTable.getRowCount(); i++) {
+                            createCustomTable.setValueAt(true, i, 1);
+                        }
+                    });
+
+                    JMenuItem menuItemTwo = new JMenuItem(Bundles.get("QueryBuilder.CreateTable.itemMenuRemoveAllSelections"));
+                    popupMenu.add(menuItemTwo).addActionListener(event -> {
+                        for (int i = 0; i < createCustomTable.getRowCount(); i++) {
+                            createCustomTable.setValueAt(false, i, 1);
+                        }
+                    });
+
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
     }
 
     /**
@@ -124,7 +152,6 @@ public class QBCreateTable {
             public boolean isCellEditable(int row, int column) {
                 return column == 1;
             }
-
         };
 
         /**
@@ -177,7 +204,7 @@ public class QBCreateTable {
      * <p>
      * Метод для получения панели на которой расположена таблица.
      */
-    public JPanel getMovePanelTable(){
+    public JPanel getMovePanelTable() {
         return movePanel;
     }
 
