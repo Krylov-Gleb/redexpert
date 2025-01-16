@@ -630,7 +630,7 @@ public class QueryConstructor {
      * <p>
      * Метод для сброса значений таблиц.
      */
-    private void clearTable() {
+    public void clearTable() {
         if (!queryBuilderPanel.getListTable().isEmpty()) {
             table = queryBuilderPanel.getListTable().get(0).getColumnName(0);
         } else {
@@ -682,7 +682,7 @@ public class QueryConstructor {
      * <p>
      * Метод для сброса значений условий.
      */
-    private void clearWhere() {
+    public void clearWhere() {
         where = "";
     }
 
@@ -769,7 +769,7 @@ public class QueryConstructor {
      * <p>
      * Метод для сброса значений группировки.
      */
-    private void clearGroupBy() {
+    public void clearGroupBy() {
         groupBy = "";
     }
 
@@ -778,7 +778,7 @@ public class QueryConstructor {
      * <p>
      * Метод для сброса значений having.
      */
-    private void clearHaving() {
+    public void clearHaving() {
         having = "";
     }
 
@@ -829,7 +829,7 @@ public class QueryConstructor {
      * <p>
      * Метод для сброса значений сортировки.
      */
-    private void clearOrderBy() {
+    public void clearOrderBy() {
         orderBy = "";
     }
 
