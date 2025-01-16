@@ -49,7 +49,7 @@ public class Table extends JDialog {
     private JLabel labelSearch;
     private JTextField textFieldSearch;
     private JScrollPane scrollPaneTable;
-    private JCheckBox checkBoxShowAllTable;
+    private JCheckBox checkBoxShowSystemTable;
     private JButton buttonClose;
 
     private DefaultDatabaseHost defaultDatabaseHost;
@@ -101,16 +101,14 @@ public class Table extends JDialog {
      * Метод инициализации флажка.
      */
     private void initCheckBox() {
-        checkBoxShowAllTable = new JCheckBox();
-        checkBoxShowAllTable.setText(Bundles.get("QueryBuilder.Table.showAllTable"));
-        checkBoxShowAllTable.addActionListener(new ActionListener() {
+        checkBoxShowSystemTable = WidgetFactory.createCheckBox("checkBoxShowSystemTable", Bundles.get("QueryBuilder.Table.showSystemTable"));
+        checkBoxShowSystemTable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (checkBoxShowAllTable.isSelected()) {
+                if (checkBoxShowSystemTable.isSelected()) {
                     displayEverything = true;
                     arrangeCheckBoxesInScrollPane(displayEverything);
-                }
-                else{
+                } else {
                     displayEverything = false;
                     arrangeCheckBoxesInScrollPane(displayEverything);
                 }
@@ -125,7 +123,7 @@ public class Table extends JDialog {
      * <p>
      * Метод для инициализации полей.
      */
-    private void initField(){
+    private void initField() {
         displayEverything = false;
     }
 
@@ -159,10 +157,10 @@ public class Table extends JDialog {
      * <p>
      * Метод для размещения флажков в панели для размещения флажков.
      */
-    private void placingCheckBoxInPanel(){
+    private void placingCheckBoxInPanel() {
         GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().fillHorizontally();
         panelCheckBox.add(new JLabel(" "), gridBagHelper.setXY(0, 0).setMaxWeightX().get());
-        panelCheckBox.add(checkBoxShowAllTable, gridBagHelper.nextCol().setMaxWeightX().get());
+        panelCheckBox.add(checkBoxShowSystemTable, gridBagHelper.nextCol().setMaxWeightX().get());
         panelCheckBox.add(new JLabel(" "), gridBagHelper.nextCol().setMaxWeightX().get());
     }
 
@@ -247,7 +245,7 @@ public class Table extends JDialog {
         pack();
         setLocationRelativeTo(null);
         setModal(true);
-        setSize(600, 450);
+        setSize(600, 460);
         setVisible(true);
     }
 
@@ -261,7 +259,7 @@ public class Table extends JDialog {
         panelPlacingComponents.add(labelSearch, gridBagHelper.setXY(0, 0).setMinWeightX().get());
         panelPlacingComponents.add(textFieldSearch, gridBagHelper.nextCol().setMaxWeightX().get());
         panelPlacingComponents.add(scrollPaneTable, gridBagHelper.previousCol().nextRow().spanX().setMaxWeightX().get());
-        panelPlacingComponents.add(checkBoxShowAllTable,gridBagHelper.nextCol().nextRow().setMaxWeightX().get());
+        panelPlacingComponents.add(checkBoxShowSystemTable, gridBagHelper.nextCol().nextRow().setMaxWeightX().get());
         panelPlacingComponents.add(panelButton, gridBagHelper.previousCol().nextRow().spanX().spanY().setMaxWeightX().get());
     }
 
@@ -475,7 +473,7 @@ public class Table extends JDialog {
 
                 for (int i = 0; i < defaultDatabaseHost.getTableNames().size(); i++) {
                     if (defaultDatabaseHost.getTableNames().get(i).contains(textField.getText().toUpperCase())) {
-                        eventCreateAndAddCheckBox(i,displayEverything);
+                        eventCreateAndAddCheckBox(i, displayEverything);
                     }
                 }
 
@@ -495,7 +493,7 @@ public class Table extends JDialog {
         panelPlacingCheckBoxInScrollPane.setLayout(new BoxLayout(panelPlacingCheckBoxInScrollPane, BoxLayout.Y_AXIS));
 
         for (int i = 0; i < defaultDatabaseHost.getTableNames().size(); i++) {
-            eventCreateAndAddCheckBox(i,isDisplayEverything);
+            eventCreateAndAddCheckBox(i, isDisplayEverything);
         }
 
         scrollPaneTable.setViewportView(panelPlacingCheckBoxInScrollPane);
@@ -507,8 +505,8 @@ public class Table extends JDialog {
      * <p>
      * Метод для создания и удаления CheckBox.
      */
-    private void eventCreateAndAddCheckBox(int index,boolean isDisplayEverything) {
-        if(!isDisplayEverything) {
+    private void eventCreateAndAddCheckBox(int index, boolean isDisplayEverything) {
+        if (!isDisplayEverything) {
             if (defaultDatabaseHost.getTableNames().get(index).indexOf("MON$") != 0 & defaultDatabaseHost.getTableNames().get(index).indexOf("RDB$") != 0 & defaultDatabaseHost.getTableNames().get(index).indexOf("SEC$") != 0) {
                 JCheckBox checkBox = new JCheckBox(defaultDatabaseHost.getTableNames().get(index));
                 checkBox.setToolTipText(Bundles.get("QueryBuilder.Table.toolTipTextCheckBoxTable"));
@@ -529,8 +527,7 @@ public class Table extends JDialog {
 
                 panelPlacingCheckBoxInScrollPane.add(checkBox);
             }
-        }
-        else{
+        } else {
             JCheckBox checkBox = new JCheckBox(defaultDatabaseHost.getTableNames().get(index));
             checkBox.setToolTipText(Bundles.get("QueryBuilder.Table.toolTipTextCheckBoxTable"));
             checkBox.addItemListener(new ItemListener() {
