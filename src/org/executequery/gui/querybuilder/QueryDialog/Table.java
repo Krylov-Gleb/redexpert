@@ -347,6 +347,7 @@ public class Table extends JDialog {
             if (queryBuilderPanel.getListTable().isEmpty()) {
                 queryBuilderPanel.setTextInPanelOutputTestingQuery("");
                 queryBuilderPanel.getBlocksPanel().removeAll();
+                clearIsNotTable();
             }
         }
     }
@@ -643,6 +644,16 @@ public class Table extends JDialog {
      */
     public List<String> getListNamesColumns(String table) {
         return getDefaultDatabaseHost(queryBuilderToolBar.getConnections().getSelectedConnection()).getColumnNames(table);
+    }
+
+    private void clearIsNotTable(){
+        queryConstructor.clearAttribute();
+        queryConstructor.clearFunction();
+        queryConstructor.clearWhere();
+        queryConstructor.clearHaving();
+        queryConstructor.clearTable();
+        queryConstructor.clearGroupBy();
+        queryConstructor.clearOrderBy();
     }
 
     /**
