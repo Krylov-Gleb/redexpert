@@ -345,6 +345,13 @@ public class Table extends JDialog {
     private void checkTableIsEmpty() {
         if (queryBuilderPanel.getPanelGUIComponents().getComponents().length == 0) {
             if (queryBuilderPanel.getListTable().isEmpty()) {
+                queryConstructor.clearAttribute();
+                queryConstructor.clearFunction();
+                queryConstructor.clearWhere();
+                queryConstructor.clearHaving();
+                queryConstructor.clearTable();
+                queryConstructor.clearGroupBy();
+                queryConstructor.clearOrderBy();
                 queryBuilderPanel.setTextInPanelOutputTestingQuery("");
                 queryBuilderPanel.getBlocksPanel().removeAll();
             }
