@@ -270,7 +270,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения with в запросе.
      */
-    public void setWith(String with) {
+    public void setWith(String with, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set With " + this.with);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set With " + this.with);
+        }
+
         this.with = with;
     }
 
@@ -291,7 +300,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения First.
      */
-    public void setFirst(String number) {
+    public void setFirst(String number, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set First " + first);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set First " + first);
+        }
+
         if (!number.isEmpty()) {
             first = "FIRST " + number;
         } else {
@@ -342,7 +360,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения Skip.
      */
-    public void setSkip(String number) {
+    public void setSkip(String number, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Skip " + skip);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Skip " + skip);
+        }
+
         if (!number.isEmpty()) {
             skip = "SKIP " + number;
         } else {
@@ -377,7 +404,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения Distinct в запросе.
      */
-    public void setDistinct(String distinct) {
+    public void setDistinct(String distinct, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Distinct " + this.distinct);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Distinct " + this.distinct);
+        }
+
         this.distinct = distinct;
     }
 
@@ -451,15 +487,6 @@ public class QueryConstructor {
         attribute = stringBuilder.toString();
     }
 
-    /**
-     * A method for changing the attribute values.
-     * <p>
-     * Метод для смены значения атрибутов.
-     */
-    public void setAttributes(String attribute) {
-        this.attribute = attribute;
-    }
-
 
     /**
      * A method for resetting attribute values.
@@ -484,8 +511,17 @@ public class QueryConstructor {
      * <p>
      * Метод для перезаписи значений атрибутов.
      */
-    public void replaceAttribute(String attributes) {
-        attribute = attributes;
+    public void replaceAttribute(String attribute, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + this.attribute);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Attribute " + this.attribute);
+        }
+
+        this.attribute = attribute;
     }
 
     /**
@@ -590,7 +626,16 @@ public class QueryConstructor {
      * <p>
      * Метод для перезаписи значений функций.
      */
-    public void replaceFunctions(String functions) {
+    public void replaceFunctions(String functions, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Function " + this.functions);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Function " + this.functions);
+        }
+
         this.functions = functions;
     }
 
@@ -621,7 +666,15 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения таблицы.
      */
-    public void setTable(String Table) {
+    public void setTable(String Table, String stepUpOrBack) {
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Table " + this.table);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Table " + this.table);
+        }
+
         this.table = Table;
     }
 
@@ -700,7 +753,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения where в запросе.
      */
-    public void setWhere(String where) {
+    public void setWhere(String where, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Where " + this.where);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Where " + this.where);
+        }
+
         this.where = where;
     }
 
@@ -796,7 +858,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения группировки в запросе.
      */
-    public void setGroupBy(String groupBy) {
+    public void setGroupBy(String groupBy, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + this.groupBy);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set GroupBy " + this.groupBy);
+        }
+
         this.groupBy = groupBy;
     }
 
@@ -847,7 +918,16 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения сортировки в запросе.
      */
-    public void setOrderBy(String orderBy) {
+    public void setOrderBy(String orderBy, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + this.orderBy);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set OrderBy " + this.orderBy);
+        }
+
         this.orderBy = orderBy;
     }
 
@@ -869,11 +949,20 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения оптимизации.
      */
-    public void setOptimization(String strOptimizeFor) {
-        if (!strOptimizeFor.isEmpty()) {
-            optimization = strOptimizeFor;
+    public void setOptimization(String optimization, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Optimize " + this.optimization);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Optimize " + this.optimization);
+        }
+
+        if (!optimization.isEmpty()) {
+            this.optimization = optimization;
         } else {
-            optimization = "";
+            this.optimization = "";
         }
     }
 
@@ -891,8 +980,17 @@ public class QueryConstructor {
      * <p>
      * Метод для смены значения union.
      */
-    public void setUnion(String strUnion) {
-        union = strUnion;
+    public void setUnion(String union, String stepUpOrBack) {
+
+        if(stepUpOrBack.equals("stepBack")) {
+            queryBuilderPanel.addStepBackActionInHistory("Set Union " + this.union);
+        }
+
+        if(stepUpOrBack.equals("stepUp")){
+            queryBuilderPanel.addStepUpActionInHistory("Set Union " + this.union);
+        }
+
+        this.union = union;
     }
 
     /**

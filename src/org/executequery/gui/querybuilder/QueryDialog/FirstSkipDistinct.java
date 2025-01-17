@@ -74,10 +74,12 @@ public class FirstSkipDistinct extends JDialog {
     private void initButton() {
         buttonAddFirstSkipDistinct = WidgetFactory.createButton("buttonAddFirstSkipDistinct",Bundles.get("common.add.button"),event -> {
             eventButtonAddFirstSkipDistinct();
+            closeDialog();
         });
 
         buttonRemoveFirstSkipDistinct = WidgetFactory.createButton("buttonRemoveFirstSkipDistinct",Bundles.get("common.delete.button"),event -> {
             eventButtonRemoveFirstSkipDistinct();
+            closeDialog();
         });
 
         placingButtonsInPanel();
@@ -214,40 +216,10 @@ public class FirstSkipDistinct extends JDialog {
      * Метод реализующий функционал добавления дополнений (first,skip,distinct) в запрос.
      */
     private void eventButtonAddFirstSkipDistinct() {
-        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
-
-        if(queryConstructor.getFirst().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getFirst());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getSkip().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getSkip());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getDistinct().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getDistinct());
-        }
-
-        queryBuilderPanel.addStepBackActionInHistory(stringBuilder.toString());
-
         addFirst();
         addSkip();
         addDistinct();
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-        closeDialog();
     }
 
     /**
@@ -256,38 +228,9 @@ public class FirstSkipDistinct extends JDialog {
      * Метод реализующий функционал удаления дополнений (first,skip,distinct) из запроса.
      */
     private void eventButtonRemoveFirstSkipDistinct(){
-        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
-
-        if(queryConstructor.getFirst().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getFirst());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getSkip().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getSkip());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getDistinct().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getDistinct());
-        }
-
-        queryBuilderPanel.addStepBackActionInHistory(stringBuilder.toString());
-
-        queryConstructor.setSkip("");
-        queryConstructor.setFirst("");
-        queryConstructor.setDistinct("");
+        queryConstructor.setSkip("", "stepBack");
+        queryConstructor.setFirst("", "stepBack");
+        queryConstructor.setDistinct("", "stepBack");
         textFieldFirst.setText("");
         textFieldSkip.setText("");
         checkBoxDistinct.setSelected(false);
@@ -301,10 +244,10 @@ public class FirstSkipDistinct extends JDialog {
      */
     private String addDistinct() {
         if (checkBoxDistinct.isSelected()) {
-            queryConstructor.setDistinct("DISTINCT");
+            queryConstructor.setDistinct("DISTINCT", "stepBack");
             return "DISTINCT";
         } else {
-            queryConstructor.setDistinct("");
+            queryConstructor.setDistinct("", "stepBack");
             return "";
         }
     }
@@ -318,14 +261,14 @@ public class FirstSkipDistinct extends JDialog {
         if (!textFieldSkip.getText().isEmpty()) {
             try {
                 if (Integer.parseInt(textFieldSkip.getText()) > 0) {
-                    queryConstructor.setSkip(textFieldSkip.getText());
+                    queryConstructor.setSkip(textFieldSkip.getText(), "stepBack");
 
                     return textFieldSkip.getText();
                 }
             } catch (NumberFormatException ignored) {
             }
         } else {
-            queryConstructor.setSkip("");
+            queryConstructor.setSkip("", "stepBack");
         }
 
         return textFieldSkip.getText();
@@ -340,14 +283,13 @@ public class FirstSkipDistinct extends JDialog {
         if (!textFieldFirst.getText().isEmpty()) {
             try {
                 if (Integer.parseInt(textFieldFirst.getText()) > 0) {
-                    queryConstructor.setFirst(textFieldFirst.getText());
-
+                    queryConstructor.setFirst(textFieldFirst.getText(), "stepBack");
                     return textFieldFirst.getText();
                 }
             } catch (NumberFormatException ignored) {
             }
         } else {
-            queryConstructor.setFirst("");
+            queryConstructor.setFirst("", "stepBack");
         }
 
         return textFieldFirst.getText();

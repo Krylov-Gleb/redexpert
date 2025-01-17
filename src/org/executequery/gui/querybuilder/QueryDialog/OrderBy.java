@@ -131,7 +131,7 @@ public class OrderBy extends JDialog {
      */
     private void eventClearOrderBy() {
         queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-        queryConstructor.setOrderBy("");
+        queryConstructor.setOrderBy("", "stepBack");
 
         for (int i = 0; i < panelPlacingCheckBoxesInScrollPane.getComponents().length; i++) {
             JCheckBox checkBox = (JCheckBox) panelPlacingCheckBoxesInScrollPane.getComponent(i);
@@ -356,8 +356,7 @@ public class OrderBy extends JDialog {
                 stringBuilder.append(",").append(checkBox.getText()).append(" ").append(comboBoxAscDesc.getSelectedItem().toString()).append(" ");
             }
 
-            queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-            queryConstructor.setOrderBy(stringBuilder.toString());
+            queryConstructor.setOrderBy(stringBuilder.toString(), "stepBack");
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
     }
@@ -376,8 +375,7 @@ public class OrderBy extends JDialog {
                 if (orderByElements.length == 1) {
                     stringBuilder.replace(0, stringBuilder.length(), "");
 
-                    queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-                    queryConstructor.setOrderBy(stringBuilder.toString());
+                    queryConstructor.setOrderBy(stringBuilder.toString(), "stepBack");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
                 }
@@ -390,8 +388,7 @@ public class OrderBy extends JDialog {
                 stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), "");
             }
 
-            queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-            queryConstructor.setOrderBy(stringBuilder.toString());
+            queryConstructor.setOrderBy(stringBuilder.toString(), "stepBack");
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
     }

@@ -266,7 +266,7 @@ public class With extends JDialog {
                         }
 
                         queryBuilderPanel.addStepBackActionInHistory("Set With " + queryConstructor.getWith());
-                        queryConstructor.setWith(stringBuilder.toString());
+                        queryConstructor.setWith(stringBuilder.toString(), "stepBack");
                         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     }
                 }
@@ -289,7 +289,7 @@ public class With extends JDialog {
                     stringBuilder.replace(0, stringBuilder.length(), "");
 
                     queryBuilderPanel.addStepBackActionInHistory("Set With " + queryConstructor.getWith());
-                    queryConstructor.setWith("");
+                    queryConstructor.setWith("", "stepBack");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
                 } else {
@@ -311,7 +311,7 @@ public class With extends JDialog {
         }
 
         queryBuilderPanel.addStepBackActionInHistory("Set With " + queryConstructor.getWith());
-        queryConstructor.setWith(stringBuilder.toString());
+        queryConstructor.setWith(stringBuilder.toString(), "stepBack");
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 

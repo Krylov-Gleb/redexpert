@@ -244,8 +244,7 @@ public class Union extends JDialog {
         deleteWith(stringBuilderTestQueryValue);
         stringBuilderUnionValue.append(stringBuilderTestQueryValue.toString()).append("UNION").append("\n");
 
-        queryBuilderPanel.addStepBackActionInHistory("Set Union " + queryConstructor.getUnion());
-        queryConstructor.setUnion(stringBuilderUnionValue.toString());
+        queryConstructor.setUnion(stringBuilderUnionValue.toString(), "stepBack");
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
@@ -306,8 +305,7 @@ public class Union extends JDialog {
             if (checkBoxesFromScrollPane[i].isSelected()) {
                 if (checkBoxesFromScrollPane.length == 1) {
                     stringBuilderUnionValue.replace(0, stringBuilderUnionValue.length(), "");
-                    queryBuilderPanel.addStepBackActionInHistory("Set Union " + queryConstructor.getUnion());
-                    queryConstructor.setUnion("");
+                    queryConstructor.setUnion("", "stepBack");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
                 } else {
@@ -324,8 +322,7 @@ public class Union extends JDialog {
             stringBuilderUnionValue.replace(0, 1, "");
         }
 
-        queryBuilderPanel.addStepBackActionInHistory("Set Union " + queryConstructor.getUnion());
-        queryConstructor.setUnion(stringBuilderUnionValue.toString());
+        queryConstructor.setUnion(stringBuilderUnionValue.toString(), "stepBack");
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 

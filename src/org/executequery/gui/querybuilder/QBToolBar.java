@@ -248,7 +248,7 @@ public class QBToolBar extends JToolBar {
         panelPlacingComponents.add(buttonUnion, gridBagHelper.setXY(10, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonWith, gridBagHelper.setXY(11, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonStepBack, gridBagHelper.setXY(12, 0).setMinWeightX().setWidth(1).get());
-        panelPlacingComponents.add(buttonStepUp,gridBagHelper.setXY(13,0).setMinWeightX().setWidth(1).get());
+        panelPlacingComponents.add(buttonStepUp, gridBagHelper.setXY(13, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonClearQuery, gridBagHelper.setXY(14, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonSaveQuery, gridBagHelper.setXY(15, 0).setMinWeightX().setWidth(1).get());
         panelPlacingComponents.add(buttonSaveQueryBuilder, gridBagHelper.setXY(16, 0).setMinWeightX().setWidth(1).get());
@@ -290,8 +290,6 @@ public class QBToolBar extends JToolBar {
             String queryElement = backActions.toString().split(" ")[1];
             String pattern = backActions.substring(backActions.indexOf(queryElement) + queryElement.length() + 1);
             methodActionSetStepBack(actions, queryElement, pattern);
-            methodIfActionAddStepBack(actions, queryElement, pattern);
-            methodIfActionDeleteStepBack(actions, queryElement, pattern);
         }
     }
 
@@ -302,84 +300,52 @@ public class QBToolBar extends JToolBar {
      */
     private void methodActionSetStepBack(String actions, String queryElement, String pattern) {
         if (actions.equals("Set")) {
-            if (queryElement.equals("FirstSkipDistinct")) {
-                addNextFirstSkipDistinctInHistory();
-
-                String first = pattern.split(" ")[0];
-
-                if (first.equals("empty")) {
-                    first = "";
-                }
-
-                String skip = pattern.split(" ")[1];
-
-                if (skip.equals("empty")) {
-                    skip = "";
-                }
-
-                String distinct = pattern.split(" ")[2];
-
-                if (distinct.equals("empty")) {
-                    distinct = "";
-                }
-
-                queryConstructor.setFirst(first);
-                queryConstructor.setSkip(skip);
-                queryConstructor.setDistinct(distinct);
+            if (queryElement.equals("First")) {
+                queryConstructor.setFirst(pattern, "stepUp");
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Skip")) {
+                queryConstructor.setSkip(pattern, "stepUp");
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Distinct")) {
+                queryConstructor.setDistinct(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Where")) {
-
-                // Taking a step back. Making a record for a step forward.
-                // Делая шаг назад. Делаем запись для шага вперёд.
-                queryBuilderPanel.addStepUpActionInHistory("Set Where " + queryConstructor.getWhere());
-                queryConstructor.setWhere(pattern);
+                queryConstructor.setWhere(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Optimize")) {
-
-                // Taking a step back. Making a record for a step forward.
-                // Делая шаг назад. Делаем запись для шага вперёд.
-                queryBuilderPanel.addStepUpActionInHistory("Set Optimize " + queryConstructor.getOptimization());
-                queryConstructor.setOptimization(pattern);
+                queryConstructor.setOptimization(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("OrderBy")) {
-
-                // Taking a step back. Making a record for a step forward.
-                // Делая шаг назад. Делаем запись для шага вперёд.
-                queryBuilderPanel.addStepUpActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-                queryConstructor.setOrderBy(pattern);
+                queryConstructor.setOrderBy(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Function")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set Function " + queryConstructor.getFunctions());
-                queryConstructor.replaceFunctions(pattern);
+                queryConstructor.replaceFunctions(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("GroupBy")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-                queryConstructor.setGroupBy(pattern);
+                queryConstructor.setGroupBy(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
-            if (queryElement.equals("Join")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set Join " + queryConstructor.getTable());
-                queryConstructor.setTable(pattern);
+            if (queryElement.equals("Table")) {
+                queryConstructor.setTable(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Union")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set Union " + queryConstructor.getUnion());
-                queryConstructor.setUnion(pattern);
+                queryConstructor.setUnion(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("With")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set With " + queryConstructor.getWith());
-                queryConstructor.setWith(pattern);
+                queryConstructor.setWith(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Attribute")) {
-                queryBuilderPanel.addStepUpActionInHistory("Set Attribute " + queryConstructor.getAttribute());
-                queryConstructor.setAttributes(pattern);
+                queryConstructor.replaceAttribute(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
         }
@@ -394,28 +360,25 @@ public class QBToolBar extends JToolBar {
     private void addNextFirstSkipDistinctInHistory() {
         StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
 
-        if(queryConstructor.getFirst().isEmpty()){
+        if (queryConstructor.getFirst().isEmpty()) {
             stringBuilder.append("empty");
-        }
-        else{
+        } else {
             stringBuilder.append(queryConstructor.getFirst());
         }
 
         stringBuilder.append(" ");
 
-        if(queryConstructor.getSkip().isEmpty()){
+        if (queryConstructor.getSkip().isEmpty()) {
             stringBuilder.append("empty");
-        }
-        else{
+        } else {
             stringBuilder.append(queryConstructor.getSkip());
         }
 
         stringBuilder.append(" ");
 
-        if(queryConstructor.getDistinct().isEmpty()){
+        if (queryConstructor.getDistinct().isEmpty()) {
             stringBuilder.append("empty");
-        }
-        else{
+        } else {
             stringBuilder.append(queryConstructor.getDistinct());
         }
 
@@ -423,47 +386,17 @@ public class QBToolBar extends JToolBar {
     }
 
     /**
-     * The method that works with the Add entry on the stack (step back).
-     * <p>
-     * Метод работающий с записью Add в стеке (шаг назад).
-     */
-    private void methodIfActionAddStepBack(String actions, String queryElement, String pattern) {
-        if (actions.equals("Add")) {
-            if (queryElement.equals("Table")) {
-                queryBuilderPanel.addStepUpActionInHistory("Delete Table " + pattern);
-                table.addTable(new JCheckBox(pattern), true);
-            }
-        }
-    }
-
-    /**
-     * A method that works with the Delete entry on the stack (step back).
-     * <p>
-     * Метод работающий с записью Delete в стеке (шаг назад).
-     */
-    private void methodIfActionDeleteStepBack(String actions, String queryElement, String pattern) {
-        if (actions.equals("Delete")) {
-            if (queryElement.equals("Table")) {
-                queryBuilderPanel.addStepUpActionInHistory("Add Table " + pattern);
-                table.removeTable(new JCheckBox(pattern), true);
-            }
-        }
-    }
-
-    /**
      * The method that implements the functionality is a step forward.
      * <p>
      * Метод реализующий функционал шаг вперёд.
      */
-    private void stepUp(){
+    private void stepUp() {
         if (!queryBuilderPanel.getHistoryActionStepUp().isEmpty()) {
             StringBuilder userBak = new StringBuilder(queryBuilderPanel.getAndRemoveStepUpActionInHistory());
             String actions = userBak.toString().split(" ")[0];
             String queryElement = userBak.toString().split(" ")[1];
             String pattern = userBak.substring(userBak.indexOf(queryElement) + queryElement.length() + 1);
             methodActionSetStepUp(actions, queryElement, pattern);
-            methodIfActionAddStepUp(actions, queryElement, pattern);
-            methodIfActionDeleteStepUp(actions, queryElement, pattern);
         }
     }
 
@@ -474,151 +407,55 @@ public class QBToolBar extends JToolBar {
      */
     private void methodActionSetStepUp(String actions, String queryElement, String pattern) {
         if (actions.equals("Set")) {
-            if (queryElement.equals("FirstSkipDistinct")) {
-                addBackFirstSkipDistinctInHistory();
-
-                String first = pattern.split(" ")[0];
-
-                if (first.equals("empty")) {
-                    first = "";
-                }
-
-                String skip = pattern.split(" ")[1];
-
-                if (skip.equals("empty")) {
-                    skip = "";
-                }
-
-                String distinct = pattern.split(" ")[2];
-
-                if (distinct.equals("empty")) {
-                    distinct = "";
-                }
-
-                queryConstructor.setFirst(first);
-                queryConstructor.setSkip(skip);
-                queryConstructor.setDistinct(distinct);
+            if (queryElement.equals("First")) {
+                queryConstructor.setFirst(pattern, "stepBack");
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Skip")) {
+                queryConstructor.setSkip(pattern, "stepBack");
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            }
+            if (queryElement.equals("Distinct")) {
+                queryConstructor.setDistinct(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Where")) {
-
-                // Taking a step forward. Making a record for a step back.
-                // Делая шаг вперёд. Делаем запись для шага назад.
-                queryBuilderPanel.addStepBackActionInHistory("Set Where " + queryConstructor.getWhere());
-                queryConstructor.setWhere(pattern);
+                queryConstructor.setWhere(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Optimize")) {
-
-                // Taking a step forward. Making a record for a step back.
-                // Делая шаг вперёд. Делаем запись для шага назад.
-                queryBuilderPanel.addStepBackActionInHistory("Set Optimize " + queryConstructor.getOptimization());
-                queryConstructor.setOptimization(pattern);
+                queryConstructor.setOptimization(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("OrderBy")) {
-
-                // Taking a step forward. Making a record for a step back.
-                // Делая шаг вперёд. Делаем запись для шага назад.
-                queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + queryConstructor.getOrderBy());
-                queryConstructor.setOrderBy(pattern);
+                queryConstructor.setOrderBy(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Function")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set Function " + queryConstructor.getFunctions());
-                queryConstructor.replaceFunctions(pattern);
+                queryConstructor.replaceFunctions(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("GroupBy")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-                queryConstructor.setGroupBy(pattern);
+                queryConstructor.setGroupBy(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
-            if (queryElement.equals("Join")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
-                queryConstructor.setTable(pattern);
+            if (queryElement.equals("Table")) {
+                queryConstructor.setTable(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Union")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set Union " + queryConstructor.getUnion());
-                queryConstructor.setUnion(pattern);
+                queryConstructor.setUnion(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("With")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set With " + queryConstructor.getWith());
-                queryConstructor.setWith(pattern);
+                queryConstructor.setWith(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
             if (queryElement.equals("Attribute")) {
-                queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + queryConstructor.getAttribute());
-                queryConstructor.setAttributes(pattern);
+                queryConstructor.replaceAttribute(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
             }
         }
-    }
-
-    /**
-     * The method that works with the Add entry on the stack (step up).
-     * <p>
-     * Метод работающий с записью Add в стеке (шаг вперёд).
-     */
-    private void methodIfActionAddStepUp(String actions, String queryElement, String pattern) {
-        if (actions.equals("Add")) {
-            if (queryElement.equals("Table")) {
-                queryBuilderPanel.addStepBackActionInHistory("Delete Table " + pattern);
-                table.addTable(new JCheckBox(pattern), true);
-            }
-        }
-    }
-
-    /**
-     * A method that works with the Delete entry on the stack (step up).
-     * <p>
-     * Метод работающий с записью Delete в стеке (шаг вперёд).
-     */
-    private void methodIfActionDeleteStepUp(String actions, String queryElement, String pattern) {
-        if (actions.equals("Delete")) {
-            if (queryElement.equals("Table")) {
-                queryBuilderPanel.addStepBackActionInHistory("Add Table " + pattern);
-                table.removeTable(new JCheckBox(pattern), true);
-            }
-        }
-    }
-
-    /**
-     * Taking a step forward. Making a record for a step back.
-     * <p>
-     *  Делая шаг вперёд. Делаем запись для шага назад.
-     */
-    private void addBackFirstSkipDistinctInHistory() {
-        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
-
-        if(queryConstructor.getFirst().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getFirst());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getSkip().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getSkip());
-        }
-
-        stringBuilder.append(" ");
-
-        if(queryConstructor.getDistinct().isEmpty()){
-            stringBuilder.append("empty");
-        }
-        else{
-            stringBuilder.append(queryConstructor.getDistinct());
-        }
-
-        queryBuilderPanel.addStepBackActionInHistory(stringBuilder.toString());
     }
 
     /**
@@ -648,7 +485,7 @@ public class QBToolBar extends JToolBar {
      * Метод для очистки запроса.
      */
     public void clearQuery() {
-        int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.warningCompleteCleaning"), Bundles.get("common.warning"), JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+        int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.warningCompleteCleaning"), Bundles.get("common.warning"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (userDecision == JOptionPane.YES_OPTION) {
             queryConstructor.clearAll();
             removeTableInOutputPanel();

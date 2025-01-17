@@ -115,8 +115,7 @@ public class GroupBy extends JDialog {
      * Метод для очистки GroupBy.
      */
     private void eventClearGroupBy() {
-        queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-        queryConstructor.setGroupBy("");
+        queryConstructor.setGroupBy("", "stepBack");
 
         for (int i = 0; i < panelPlacingCheckBoxInScrollPane.getComponents().length; i++) {
             JCheckBox checkBox = (JCheckBox) panelPlacingCheckBoxInScrollPane.getComponent(i);
@@ -327,8 +326,7 @@ public class GroupBy extends JDialog {
                 stringBuilder.append(",").append(checkBox.getText());
             }
 
-            queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-            queryConstructor.setGroupBy(stringBuilder.toString());
+            queryConstructor.setGroupBy(stringBuilder.toString(), "stepBack");
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
     }
@@ -344,8 +342,7 @@ public class GroupBy extends JDialog {
 
             if (stringBuilder.charAt(stringBuilder.indexOf(checkBox.getText()) - 1) == ',') {
                 stringBuilder.replace(stringBuilder.indexOf(checkBox.getText()) - 1, stringBuilder.indexOf(checkBox.getText()) - 1 + checkBox.getText().length() + 1, "");
-                queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-                queryConstructor.setGroupBy(stringBuilder.toString());
+                queryConstructor.setGroupBy(stringBuilder.toString(), "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                 return;
             }
@@ -353,15 +350,13 @@ public class GroupBy extends JDialog {
             if (stringBuilder.charAt(stringBuilder.indexOf(checkBox.getText()) - 1) == ' ') {
                 if (stringBuilder.toString().split(",").length == 1) {
                     stringBuilder.replace(0, stringBuilder.length(), "");
-                    queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-                    queryConstructor.setGroupBy(stringBuilder.toString());
+                    queryConstructor.setGroupBy(stringBuilder.toString(), "stepBack");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
                 }
                 if (stringBuilder.toString().split(",").length > 1) {
                     stringBuilder.replace(stringBuilder.indexOf(checkBox.getText()), stringBuilder.indexOf(checkBox.getText()) + checkBox.getText().length() + 1, "");
-                    queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + queryConstructor.getGroupBy());
-                    queryConstructor.setGroupBy(stringBuilder.toString());
+                    queryConstructor.setGroupBy(stringBuilder.toString(), "stepBack");
                     queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
                     return;
                 }
