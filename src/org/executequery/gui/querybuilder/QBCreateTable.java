@@ -3,8 +3,6 @@ package org.executequery.gui.querybuilder;
 import org.executequery.localization.Bundles;
 
 import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -162,9 +160,16 @@ public class QBCreateTable {
         defaultTableModel.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + queryConstructor.getAttribute());
-                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
-                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                if(queryConstructor.getChangingValueClick()) {
+                    queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + queryConstructor.getAttribute());
+                    queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                }
+                else{
+                    queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                    queryConstructor.setChangingValueClick(true);
+                }
             }
         });
     }

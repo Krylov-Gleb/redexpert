@@ -68,6 +68,8 @@ public class QueryConstructor {
     private String union = "";
     private String with = "";
 
+    private boolean isChangingValueClick = true;
+
     /**
      * Creating a query constructor.
      * <p>
@@ -525,6 +527,15 @@ public class QueryConstructor {
     }
 
     /**
+     * A method for overwriting attribute values.
+     * <p>
+     * Метод для перезаписи значений атрибутов.
+     */
+    public void replaceAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    /**
      * If there are no functions, set an empty value.
      * <p>
      * Если функции отсутствуют задаём пустое значение.
@@ -675,6 +686,15 @@ public class QueryConstructor {
             queryBuilderPanel.addStepUpActionInHistory("Set Table " + this.table);
         }
 
+        this.table = Table;
+    }
+
+    /**
+     * A method for changing the value of a table.
+     * <p>
+     * Метод для смены значения таблицы.
+     */
+    public void setTable(String Table) {
         this.table = Table;
     }
 
@@ -1048,5 +1068,13 @@ public class QueryConstructor {
         clearOptimization();
         clearUnion();
         clearWith();
+    }
+
+    public void setChangingValueClick(boolean values){
+        isChangingValueClick = values;
+    }
+
+    public boolean getChangingValueClick(){
+        return isChangingValueClick;
     }
 }

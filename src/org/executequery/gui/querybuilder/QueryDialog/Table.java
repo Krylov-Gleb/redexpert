@@ -268,19 +268,35 @@ public class Table extends JDialog {
      * <p>
      * Метод реализующий функционал добавления таблиц в запрос.
      */
-    public void addTable(JCheckBox checkBox) {
-        QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
+    public void addTable(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
 
-        if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
-            queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
-            queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+            if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
+                queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
+                queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+                queryBuilderPanel.addStepBackActionInHistory("Delete Table " + checkBox.getText());
+            }
+
+            if (queryBuilderPanel.getListNameTable().size() == 1) {
+                queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0));
+            }
+
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+        } else {
+            QBCreateTable tableQueryBuilder = new QBCreateTable(getListNamesColumns(checkBox.getText()), checkBox.getText(), queryBuilderPanel, queryConstructor);
+
+            if (!queryBuilderPanel.getListNameTable().contains(tableQueryBuilder.getJTable().getColumnName(0))) {
+                queryBuilderPanel.addTableInListTable(tableQueryBuilder.getJTable());
+                queryBuilderPanel.addTableInPanelGUIComponents(tableQueryBuilder.getMovePanelTable());
+            }
+
+            if (queryBuilderPanel.getListNameTable().size() == 1) {
+                queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0));
+            }
+
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
-
-        if (queryBuilderPanel.getListNameTable().size() == 1) {
-            queryConstructor.setTable(queryBuilderPanel.getListTable().get(0).getColumnName(0), "stepBack");
-        }
-
-        queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
     /**
@@ -288,19 +304,36 @@ public class Table extends JDialog {
      * <p>
      * Метод реализующий функционал удаления таблиц из запроса.
      */
-    public void removeTable(JCheckBox checkBox) {
-        if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
-            queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
-            queryBuilderPanel.removeTableInListTable(checkBox.getText());
-            removeAttributes(checkBox.getText());
-            removeMainTable(checkBox.getText());
-            removeJoins(checkBox.getText());
-            removeLastComma();
+    public void removeTable(JCheckBox checkBox, boolean externalCall) {
+        if (!externalCall) {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                queryBuilderPanel.addStepBackActionInHistory("Add Table " + checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
 
-            queryConstructor.setAttributes(queryBuilderPanel.getListTable());
-            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
 
-            checkTableIsEmpty();
+                checkTableIsEmpty();
+            }
+        } else {
+            if (queryBuilderPanel.getListNameTable().contains(checkBox.getText())) {
+                queryBuilderPanel.removeTableInInputPanel(checkBox.getText());
+                queryBuilderPanel.removeTableInListTable(checkBox.getText());
+                removeAttributes(checkBox.getText());
+                removeMainTable(checkBox.getText());
+                removeJoins(checkBox.getText());
+                removeLastComma();
+
+                queryConstructor.setAttributes(queryBuilderPanel.getListTable());
+                queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                checkTableIsEmpty();
+            }
         }
     }
 
@@ -314,7 +347,6 @@ public class Table extends JDialog {
             if (queryBuilderPanel.getListTable().isEmpty()) {
                 queryBuilderPanel.setTextInPanelOutputTestingQuery("");
                 queryBuilderPanel.getBlocksPanel().removeAll();
-                clearIsNotTable();
             }
         }
     }
@@ -333,7 +365,7 @@ public class Table extends JDialog {
             }
         }
 
-        queryConstructor.replaceAttribute(stringBuilderAttributes.toString(), "stepBack");
+        queryConstructor.replaceAttribute(stringBuilderAttributes.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
@@ -370,7 +402,7 @@ public class Table extends JDialog {
             }
         }
 
-        queryConstructor.setTable(stringBuilderJoin.toString(), "stepBack");
+        queryConstructor.setTable(stringBuilderJoin.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
@@ -390,7 +422,7 @@ public class Table extends JDialog {
             }
         }
 
-        queryConstructor.setTable(stringBuilderTable.toString(), "stepBack");
+        queryConstructor.setTable(stringBuilderTable.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
@@ -409,7 +441,7 @@ public class Table extends JDialog {
             }
         }
 
-        queryConstructor.replaceAttribute(stringBuilderAttributes.toString(), "stepBack");
+        queryConstructor.replaceAttribute(stringBuilderAttributes.toString());
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
@@ -482,9 +514,9 @@ public class Table extends JDialog {
                     @Override
                     public void itemStateChanged(ItemEvent e) {
                         if (checkBox.isSelected()) {
-                            addTable(checkBox);
+                            addTable(checkBox, false);
                         } else {
-                            removeTable(checkBox);
+                            removeTable(checkBox, false);
                         }
                     }
                 });
@@ -502,9 +534,9 @@ public class Table extends JDialog {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     if (checkBox.isSelected()) {
-                        addTable(checkBox);
+                        addTable(checkBox, false);
                     } else {
-                        removeTable(checkBox);
+                        removeTable(checkBox, false);
                     }
                 }
             });
@@ -534,7 +566,6 @@ public class Table extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
-                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString(), "stepBack");
                 return;
             } else {
@@ -551,7 +582,6 @@ public class Table extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
-                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString(), "stepBack");
                 return;
             } else {
@@ -568,7 +598,6 @@ public class Table extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameTwo).append(" ");
                 }
 
-                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString(), "stepBack");
                 return;
             } else {
@@ -585,7 +614,6 @@ public class Table extends JDialog {
                     stringBuilderTable.append(" ").append(joinName.toUpperCase()).append(" ").append(tableNameOne).append(" ");
                 }
 
-                queryBuilderPanel.addStepBackActionInHistory("Set Join " + queryConstructor.getTable());
                 queryConstructor.setTable(stringBuilderTable.toString(), "stepBack");
                 return;
             } else {
@@ -611,16 +639,6 @@ public class Table extends JDialog {
      */
     public List<String> getListNamesColumns(String table) {
         return getDefaultDatabaseHost(queryBuilderToolBar.getConnections().getSelectedConnection()).getColumnNames(table);
-    }
-
-    private void clearIsNotTable() {
-        queryConstructor.clearAttribute();
-        queryConstructor.clearFunction();
-        queryConstructor.clearWhere();
-        queryConstructor.clearHaving();
-        queryConstructor.clearTable();
-        queryConstructor.clearGroupBy();
-        queryConstructor.clearOrderBy();
     }
 
     /**
@@ -700,7 +718,7 @@ public class Table extends JDialog {
                 if (!tableValues.contains(" " + listNameTables.get(i) + " ")) {
                     int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.Join.connectionMissing") + listNameTables.get(i) + ".\n" + Bundles.get("QueryBuilder.Join.isDeleteTable"), Bundles.get("QueryBuilder.Join.connectionMissingTitle"), JOptionPane.YES_NO_OPTION);
                     if (userDecision == JOptionPane.YES_OPTION) {
-                        removeTable(new JCheckBox(listNameTables.get(i)));
+                        removeTable(new JCheckBox(listNameTables.get(i)), false);
                     }
                 }
             }

@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This class creates a toolbar for the query constructor (QueryBuilder).
@@ -290,6 +291,8 @@ public class QBToolBar extends JToolBar {
             String queryElement = backActions.toString().split(" ")[1];
             String pattern = backActions.substring(backActions.indexOf(queryElement) + queryElement.length() + 1);
             methodActionSetStepBack(actions, queryElement, pattern);
+            methodIfActionAddStepBack(actions, queryElement, pattern);
+            methodIfActionDeleteStepBack(actions, queryElement, pattern);
         }
     }
 
@@ -347,42 +350,57 @@ public class QBToolBar extends JToolBar {
             if (queryElement.equals("Attribute")) {
                 queryConstructor.replaceAttribute(pattern, "stepUp");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                ArrayList<JTable> tables = queryBuilderPanel.getListTable();
+                String attribute = queryConstructor.getAttribute();
+
+                for (int i = 0; i < tables.size(); i++) {
+                    for (int j = 0; j < tables.get(i).getRowCount(); j++) {
+                        if (attribute.contains(tables.get(i).getColumnName(0) + "." + tables.get(i).getValueAt(j, 0))) {
+                            queryConstructor.setChangingValueClick(false);
+                            tables.get(i).setValueAt(true, j, 1);
+                            tables.get(i).revalidate();
+                            tables.get(i).repaint();
+                        }
+                        else{
+                            queryConstructor.setChangingValueClick(false);
+                            tables.get(i).setValueAt(false, j, 1);
+                            tables.get(i).revalidate();
+                            tables.get(i).repaint();
+                        }
+                    }
+                }
             }
         }
     }
 
 
     /**
-     * Taking a step back. Making a record for a step forward.
+     * The method that works with the Add entry on the stack (step back).
      * <p>
-     * Делая шаг назад. Делаем запись для шага вперёд.
+     * Метод работающий с записью Add в стеке (шаг назад).
      */
-    private void addNextFirstSkipDistinctInHistory() {
-        StringBuilder stringBuilder = new StringBuilder("Set FirstSkipDistinct ");
-
-        if (queryConstructor.getFirst().isEmpty()) {
-            stringBuilder.append("empty");
-        } else {
-            stringBuilder.append(queryConstructor.getFirst());
+    private void methodIfActionAddStepBack(String actions, String queryElement, String pattern) {
+        if (actions.equals("Add")) {
+            if (queryElement.equals("Table")) {
+                queryBuilderPanel.addStepUpActionInHistory("Delete Table " + pattern);
+                table.addTable(new JCheckBox(pattern), true);
+            }
         }
+    }
 
-        stringBuilder.append(" ");
-
-        if (queryConstructor.getSkip().isEmpty()) {
-            stringBuilder.append("empty");
-        } else {
-            stringBuilder.append(queryConstructor.getSkip());
+    /**
+     * A method that works with the Delete entry on the stack (step back).
+     * <p>
+     * Метод работающий с записью Delete в стеке (шаг назад).
+     */
+    private void methodIfActionDeleteStepBack(String actions, String queryElement, String pattern) {
+        if (actions.equals("Delete")) {
+            if (queryElement.equals("Table")) {
+                queryBuilderPanel.addStepUpActionInHistory("Add Table " + pattern);
+                table.removeTable(new JCheckBox(pattern), true);
+            }
         }
-
-        stringBuilder.append(" ");
-
-        if (queryConstructor.getDistinct().isEmpty()) {
-            stringBuilder.append("empty");
-        } else {
-            stringBuilder.append(queryConstructor.getDistinct());
-        }
-
-        queryBuilderPanel.addStepUpActionInHistory(stringBuilder.toString());
     }
 
     /**
@@ -397,6 +415,8 @@ public class QBToolBar extends JToolBar {
             String queryElement = userBak.toString().split(" ")[1];
             String pattern = userBak.substring(userBak.indexOf(queryElement) + queryElement.length() + 1);
             methodActionSetStepUp(actions, queryElement, pattern);
+            methodIfActionAddStepUp(actions, queryElement, pattern);
+            methodIfActionDeleteStepUp(actions, queryElement, pattern);
         }
     }
 
@@ -454,6 +474,54 @@ public class QBToolBar extends JToolBar {
             if (queryElement.equals("Attribute")) {
                 queryConstructor.replaceAttribute(pattern, "stepBack");
                 queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+
+                ArrayList<JTable> tables = queryBuilderPanel.getListTable();
+                String attribute = queryConstructor.getAttribute();
+
+                for (int i = 0; i < tables.size(); i++) {
+                    for (int j = 0; j < tables.get(i).getRowCount(); j++) {
+                        if (attribute.contains(tables.get(i).getColumnName(0) + "." + tables.get(i).getValueAt(j, 0))) {
+                            queryConstructor.setChangingValueClick(false);
+                            tables.get(i).setValueAt(true, j, 1);
+                            tables.get(i).revalidate();
+                            tables.get(i).repaint();
+                        }
+                        else{
+                            queryConstructor.setChangingValueClick(false);
+                            tables.get(i).setValueAt(false, j, 1);
+                            tables.get(i).revalidate();
+                            tables.get(i).repaint();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The method that works with the Add entry on the stack (step up).
+     * <p>
+     * Метод работающий с записью Add в стеке (шаг вперёд).
+     */
+    private void methodIfActionAddStepUp(String actions, String queryElement, String pattern) {
+        if (actions.equals("Add")) {
+            if (queryElement.equals("Table")) {
+                queryBuilderPanel.addStepBackActionInHistory("Delete Table " + pattern);
+                table.addTable(new JCheckBox(pattern), true);
+            }
+        }
+    }
+
+    /**
+     * A method that works with the Delete entry on the stack (step up).
+     * <p>
+     * Метод работающий с записью Delete в стеке (шаг вперёд).
+     */
+    private void methodIfActionDeleteStepUp(String actions, String queryElement, String pattern) {
+        if (actions.equals("Delete")) {
+            if (queryElement.equals("Table")) {
+                queryBuilderPanel.addStepBackActionInHistory("Add Table " + pattern);
+                table.removeTable(new JCheckBox(pattern), true);
             }
         }
     }
