@@ -4,29 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- * A class for dynamically creating SQL queries (SQL Query Constructor).
- * <p>
- * Класс для динамического создания SQL запросов (Конструктор SQL запросов).
- *
- * @author Krylov Gleb
- */
 public class QueryConstructor {
 
-    // --- Elements accepted using the constructor. ----
-    // --- Поля, которые передаются через конструктор. ---
-
     private final QBPanel queryBuilderPanel;
-
-    // --- Constant fields ---
-    // --- Константные поля ---
-
     private final String EMPTINESS = "";
     private final String WHITESPACE = " ";
     private final String STAR = "*";
-
-    // --- Fields of colors ---
-    // --- Поля цветов ---
 
     private final Color colorBorderBlockFrom = new Color(191, 34, 51);
     private final Color colorBackgroundBlockFrom = new Color(234, 140, 150);
@@ -51,9 +34,6 @@ public class QueryConstructor {
     private final Color colorBorderBlockOptimization = new Color(91, 58, 41);
     private final Color colorBackgroundBlockOptimization = new Color(197, 150, 126);
 
-    // --- Other field ---
-    // --- Остальные поля ---
-
     private String distinct = "";
     private String table = "EMPLOYEE";
     private String first = "";
@@ -70,20 +50,10 @@ public class QueryConstructor {
 
     private boolean isChangingValueClick = true;
 
-    /**
-     * Creating a query constructor.
-     * <p>
-     * Создание конструктора запросов.
-     */
     public QueryConstructor(QBPanel queryBuilderPanel) {
         this.queryBuilderPanel = queryBuilderPanel;
     }
 
-    /**
-     * The main method for creating (assembling) and receiving a request.
-     * <p>
-     * Главный метод для создания (сборки) и получения запроса.
-     */
     public String buildAndGetQuery() {
         StringBuilder query = new StringBuilder();
         queryBuilderPanel.clearBlocksPanel();
@@ -106,31 +76,16 @@ public class QueryConstructor {
         return query.toString();
     }
 
-    /**
-     * A method for adding from to a request.
-     * <p>
-     * Метод для добавления from в запрос.
-     */
     private void addFrom(StringBuilder query) {
         query.append("\n").append("FROM").append(WHITESPACE);
         queryBuilderPanel.addBlockInBlocksPanel("FROM", colorBorderBlockFrom, colorBackgroundBlockFrom);
     }
 
-    /**
-     * A method for adding select to a query.
-     * <p>
-     * Метод для добавления select в запрос.
-     */
     private void addSelect(StringBuilder query) {
         query.append("SELECT").append(WHITESPACE);
         queryBuilderPanel.addBlockInBlocksPanel("SELECT", colorBorderBlockSelect, colorBackgroundBlockSelect);
     }
 
-    /**
-     * A method for adding a union to a request.
-     * <p>
-     * Метод для добавления union в запрос.
-     */
     private void addUnion(StringBuilder query) {
         if (!union.isEmpty()) {
 
@@ -167,11 +122,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for adding distinct to a query.
-     * <p>
-     * Метод для добавления distinct в запрос.
-     */
     private void addDistinct(StringBuilder query) {
         if (!distinct.isEmpty()) {
             query.append("\n").append(distinct).append(WHITESPACE);
@@ -179,11 +129,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for adding with to a query.
-     * <p>
-     * Метод для добавления with в запрос.
-     */
     private void addWith(StringBuilder query) {
         if (!with.isEmpty()) {
             StringBuilder stringBuilder = new StringBuilder(with);
@@ -194,10 +139,10 @@ public class QueryConstructor {
 
             String[] withSplit = stringBuilder.toString().split("(?<=\\),)");
 
-            for (int i = 0; i < withSplit.length; i++) {
+            for (String s : withSplit) {
                 query.append("\n");
 
-                StringBuilder stringBuilderWith = new StringBuilder(withSplit[i]);
+                StringBuilder stringBuilderWith = new StringBuilder(s);
                 int countStrFunctions = (int) Math.ceil((double) stringBuilderWith.length() / 30);
                 int start = 0;
 
@@ -258,38 +203,23 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * The method for getting the with value.
-     * <p>
-     * Метод для получения значения with.
-     */
     public String getWith() {
         return with;
     }
 
-    /**
-     * A method for changing the with value in a request.
-     * <p>
-     * Метод для смены значения with в запросе.
-     */
     public void setWith(String with, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set With " + this.with);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set With " + this.with);
         }
 
         this.with = with;
     }
 
-    /**
-     * The method for adding First to the request.
-     * <p>
-     * Метод для добавления First в запрос.
-     */
     private void addFirstInQuery(StringBuilder query) {
         if (!first.isEmpty()) {
             query.append("\n").append(first).append(WHITESPACE);
@@ -297,18 +227,13 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * The method for changing the value of First.
-     * <p>
-     * Метод для смены значения First.
-     */
     public void setFirst(String number, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set First " + first);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set First " + first);
         }
 
@@ -319,11 +244,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * The method for getting the First value.
-     * <p>
-     * Метод для получения значения First.
-     */
     public String getFirst() {
         if (first.isEmpty()) {
             return "";
@@ -332,11 +252,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * Method for resetting first values.
-     * <p>
-     * Метод для сброса значений first
-     */
     private void clearFirst() {
         first = EMPTINESS;
     }
@@ -345,11 +260,6 @@ public class QueryConstructor {
         distinct = "";
     }
 
-    /**
-     * The method for adding Skip to the request.
-     * <p>
-     * Метод для добавления Skip в запрос.
-     */
     private void addSkipInQuery(StringBuilder query) {
         if (!skip.isEmpty()) {
             query.append("\n").append(skip).append(WHITESPACE);
@@ -357,18 +267,13 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for changing the Skip value.
-     * <p>
-     * Метод для смены значения Skip.
-     */
     public void setSkip(String number, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Skip " + skip);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Skip " + skip);
         }
 
@@ -379,11 +284,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * The method for getting the Skip value.
-     * <p>
-     * Метод для получения значения Skip.
-     */
     public String getSkip() {
         if (skip.isEmpty()) {
             return "";
@@ -392,86 +292,61 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for resetting skip values.
-     * <p>
-     * Метод для сброса значений skip.
-     */
     private void clearSkip() {
         skip = EMPTINESS;
     }
 
-    /**
-     * A method for changing the Distinct value in a request.
-     * <p>
-     * Метод для смены значения Distinct в запросе.
-     */
     public void setDistinct(String distinct, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Distinct " + this.distinct);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Distinct " + this.distinct);
         }
 
         this.distinct = distinct;
     }
 
-    /**
-     * A method for getting Distinct values.
-     * <p>
-     * Метод для получения значений Distinct.
-     */
     public String getDistinct() {
         return distinct;
     }
 
-    /**
-     * A method for adding attributes to a request.
-     * <p>
-     * Метод для добавления атрибутов в запрос.
-     */
     private void addAttributesInQuery() {
         if (attribute.isEmpty()) {
             attribute = STAR;
         }
     }
 
-    /**
-     * A method for changing the attribute values.
-     * <p>
-     * Метод для смены значения атрибутов.
-     */
     public void setAttributes(ArrayList<JTable> tablesOnOutputPanel) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < tablesOnOutputPanel.size(); i++) {
-            if (table.indexOf(tablesOnOutputPanel.get(i).getColumnName(0)) == 0) {
-                for (int j = 0; j < tablesOnOutputPanel.get(i).getRowCount(); j++) {
-                    if ((boolean) tablesOnOutputPanel.get(i).getValueAt(j, 1)) {
+        for (JTable jTable : tablesOnOutputPanel) {
+            if (table.indexOf(jTable.getColumnName(0)) == 0) {
+                for (int j = 0; j < jTable.getRowCount(); j++) {
+                    if ((boolean) jTable.getValueAt(j, 1)) {
                         if (queryBuilderPanel.getBlocksPanel().getComponents().length == 1) {
-                            stringBuilder.append(tablesOnOutputPanel.get(i).getColumnName(0)).append(".").append(tablesOnOutputPanel.get(i).getValueAt(j, 0)).append(",");
+                            stringBuilder.append(jTable.getColumnName(0)).append(".").append(jTable.getValueAt(j, 0)).append(",");
 
                         } else {
-                            if (table.contains(tablesOnOutputPanel.get(i).getColumnName(0))) {
-                                stringBuilder.append(tablesOnOutputPanel.get(i).getColumnName(0)).append(".").append(tablesOnOutputPanel.get(i).getValueAt(j, 0)).append(",");
+                            if (table.contains(jTable.getColumnName(0))) {
+                                stringBuilder.append(jTable.getColumnName(0)).append(".").append(jTable.getValueAt(j, 0)).append(",");
                             }
                         }
 
                     }
                 }
             } else {
-                if (table.contains(" " + tablesOnOutputPanel.get(i).getColumnName(0) + " ")) {
-                    for (int j = 0; j < tablesOnOutputPanel.get(i).getRowCount(); j++) {
-                        if ((boolean) tablesOnOutputPanel.get(i).getValueAt(j, 1)) {
+                if (table.contains(" " + jTable.getColumnName(0) + " ")) {
+                    for (int j = 0; j < jTable.getRowCount(); j++) {
+                        if ((boolean) jTable.getValueAt(j, 1)) {
                             if (queryBuilderPanel.getBlocksPanel().getComponents().length == 1) {
-                                stringBuilder.append(tablesOnOutputPanel.get(i).getColumnName(0)).append(".").append(tablesOnOutputPanel.get(i).getValueAt(j, 0)).append(",");
+                                stringBuilder.append(jTable.getColumnName(0)).append(".").append(jTable.getValueAt(j, 0)).append(",");
 
                             } else {
-                                if (table.contains(tablesOnOutputPanel.get(i).getColumnName(0))) {
-                                    stringBuilder.append(tablesOnOutputPanel.get(i).getColumnName(0)).append(".").append(tablesOnOutputPanel.get(i).getValueAt(j, 0)).append(",");
+                                if (table.contains(jTable.getColumnName(0))) {
+                                    stringBuilder.append(jTable.getColumnName(0)).append(".").append(jTable.getValueAt(j, 0)).append(",");
                                 }
                             }
 
@@ -489,68 +364,37 @@ public class QueryConstructor {
         attribute = stringBuilder.toString();
     }
 
-
-    /**
-     * A method for resetting attribute values.
-     * <p>
-     * Метод для сброса значений атрибутов.
-     */
     public void clearAttribute() {
         attribute = STAR;
     }
 
-    /**
-     * A method for getting attribute values.
-     * <p>
-     * Метод для получения значения атрибутов.
-     */
     public String getAttribute() {
         return attribute;
     }
 
-    /**
-     * A method for overwriting attribute values.
-     * <p>
-     * Метод для перезаписи значений атрибутов.
-     */
     public void replaceAttribute(String attribute, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Attribute " + this.attribute);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Attribute " + this.attribute);
         }
 
         this.attribute = attribute;
     }
 
-    /**
-     * A method for overwriting attribute values.
-     * <p>
-     * Метод для перезаписи значений атрибутов.
-     */
     public void replaceAttribute(String attribute) {
         this.attribute = attribute;
     }
 
-    /**
-     * If there are no functions, set an empty value.
-     * <p>
-     * Если функции отсутствуют задаём пустое значение.
-     */
     private void addFunctionIsEmpty() {
         if (functions.isEmpty()) {
             functions = "";
         }
     }
 
-    /**
-     * A method for adding functions to a query.
-     * <p>
-     * Метод для добавления функций в запрос.
-     */
     private void addFunctions(StringBuilder query) {
         if (!functions.isEmpty()) {
             if (attribute.equals("*")) {
@@ -564,11 +408,11 @@ public class QueryConstructor {
 
                 String[] functionElements = functions.split("(?<=\\),)");
 
-                for (int i = 0; i < functionElements.length; i++) {
-                    String[] functionsElementIsAlias = functionElements[i].split("(?<=\",)");
-                    for (int j = 0; j < functionsElementIsAlias.length; j++) {
-                        query.append("\n").append(functionsElementIsAlias[j]);
-                        queryBuilderPanel.addBlockInBlocksPanel(functionsElementIsAlias[j], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
+                for (String functionElement : functionElements) {
+                    String[] functionsElementIsAlias = functionElement.split("(?<=\",)");
+                    for (String elementIsAlias : functionsElementIsAlias) {
+                        query.append("\n").append(elementIsAlias);
+                        queryBuilderPanel.addBlockInBlocksPanel(elementIsAlias, colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                     }
                 }
 
@@ -583,18 +427,18 @@ public class QueryConstructor {
 
                 String[] attributes = attribute.split("(?<=,)");
 
-                for (int i = 0; i < attributes.length; i++) {
-                    query.append("\n").append(attributes[i]);
-                    queryBuilderPanel.addBlockInBlocksPanel(attributes[i], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
+                for (String s : attributes) {
+                    query.append("\n").append(s);
+                    queryBuilderPanel.addBlockInBlocksPanel(s, colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                 }
 
                 String[] functionElements = functions.split("(?<=\\),)");
 
-                for (int i = 0; i < functionElements.length; i++) {
-                    String[] functionsElementIsAlias = functionElements[i].split("(?<=\",)");
-                    for (int j = 0; j < functionsElementIsAlias.length; j++) {
-                        query.append("\n").append(functionsElementIsAlias[j]);
-                        queryBuilderPanel.addBlockInBlocksPanel(functionsElementIsAlias[j], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
+                for (String functionElement : functionElements) {
+                    String[] functionsElementIsAlias = functionElement.split("(?<=\",)");
+                    for (String elementIsAlias : functionsElementIsAlias) {
+                        query.append("\n").append(elementIsAlias);
+                        queryBuilderPanel.addBlockInBlocksPanel(elementIsAlias, colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
                     }
                 }
 
@@ -605,104 +449,69 @@ public class QueryConstructor {
 
             String[] attributes = attribute.split("(?<=,)");
 
-            for (int i = 0; i < attributes.length; i++) {
-                query.append("\n").append(attributes[i]);
-                queryBuilderPanel.addBlockInBlocksPanel(attributes[i], colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
+            for (String s : attributes) {
+                query.append("\n").append(s);
+                queryBuilderPanel.addBlockInBlocksPanel(s, colorBorderBlockFunctionsAndAttributes, colorBackgroundBlockFunctionsAndAttributes);
             }
 
             query.append(WHITESPACE);
         }
     }
 
-    /**
-     * A method for resetting function values.
-     * <p>
-     * Метод для сброса значений функций.
-     */
     public void clearFunction() {
         functions = "";
     }
 
-    /**
-     * A method for getting the value of functions.
-     * <p>
-     * Метод для получения значения функций.
-     */
     public String getFunctions() {
         return functions;
     }
 
-    /**
-     * A method for overwriting function values.
-     * <p>
-     * Метод для перезаписи значений функций.
-     */
     public void replaceFunctions(String functions, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Function " + this.functions);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Function " + this.functions);
         }
 
         this.functions = functions;
     }
 
-    /**
-     * A method for adding tables to a query.
-     * <p>
-     * Метод для добавления таблиц в запрос.
-     */
     private void addTableInQuery(StringBuilder query) {
         query.append(WHITESPACE);
 
         String[] joins = table.split("(?=INNER JOIN)|(?=LEFT JOIN)|(?=RIGHT JOIN)" +
                 "|(?=FULL OUTER JOIN)|(?=CROSS JOIN)|(?=NATURAL JOIN)");
 
-        for (int i = 0; i < joins.length; i++) {
-            String[] splitOn = joins[i].split("(?=ON)");
-            for (int j = 0; j < splitOn.length; j++) {
-                query.append("\n").append(splitOn[j]);
-                queryBuilderPanel.addBlockInBlocksPanel(splitOn[j], colorBorderBlockTable, colorBackgroundBlockTable);
+        for (String join : joins) {
+            String[] splitOn = join.split("(?=ON)");
+            for (String s : splitOn) {
+                query.append("\n").append(s);
+                queryBuilderPanel.addBlockInBlocksPanel(s, colorBorderBlockTable, colorBackgroundBlockTable);
             }
         }
 
         query.append(WHITESPACE);
     }
 
-    /**
-     * A method for changing the value of a table.
-     * <p>
-     * Метод для смены значения таблицы.
-     */
     public void setTable(String Table, String stepUpOrBack) {
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Table " + this.table);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Table " + this.table);
         }
 
         this.table = Table;
     }
 
-    /**
-     * A method for changing the value of a table.
-     * <p>
-     * Метод для смены значения таблицы.
-     */
     public void setTable(String Table) {
         this.table = Table;
     }
 
-    /**
-     * A method for resetting table values.
-     * <p>
-     * Метод для сброса значений таблиц.
-     */
     public void clearTable() {
         if (!queryBuilderPanel.getListTable().isEmpty()) {
             table = queryBuilderPanel.getListTable().get(0).getColumnName(0);
@@ -711,20 +520,10 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for getting table values.
-     * <p>
-     * Метод для получения значений таблиц.
-     */
     public String getTable() {
         return table;
     }
 
-    /**
-     * A method for checking and adding a condition to a request.
-     * <p>
-     * Метод для проверки и добавления условия в запрос.
-     */
     private void addWhereIfGroupingIsEmpty(StringBuilder query) {
         if (groupBy.isEmpty()) {
             if (!where.isEmpty()) {
@@ -740,9 +539,9 @@ public class QueryConstructor {
 
                 String[] conditions = stringBuilder.toString().split("(?=OR )|(?=AND )");
 
-                for (int i = 0; i < conditions.length; i++) {
-                    query.append("\n").append(conditions[i]);
-                    queryBuilderPanel.addBlockInBlocksPanel(conditions[i], colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+                for (String condition : conditions) {
+                    query.append("\n").append(condition);
+                    queryBuilderPanel.addBlockInBlocksPanel(condition, colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
                 }
 
                 query.append(WHITESPACE);
@@ -750,47 +549,27 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for resetting condition values.
-     * <p>
-     * Метод для сброса значений условий.
-     */
     public void clearWhere() {
         where = "";
     }
 
-    /**
-     * A method for getting the value of the conditions.
-     * <p>
-     * Метод для получения значения условий.
-     */
     public String getWhere() {
         return where;
     }
 
-    /**
-     * A method for changing the value of where in the request.
-     * <p>
-     * Метод для смены значения where в запросе.
-     */
     public void setWhere(String where, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Where " + this.where);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Where " + this.where);
         }
 
         this.where = where;
     }
 
-    /**
-     * A method for changing where to having if there is a grouping.
-     * <p>
-     * Метод для смены where на having при наличии группировки.
-     */
     public void swapWhereOnHaving() {
         if (!where.isEmpty()) {
             StringBuilder stringBuilder = new StringBuilder(where);
@@ -799,11 +578,6 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for checking and adding a grouping to a query and replacing where with having.
-     * <p>
-     * Метод для проверки и добавления группировки в запрос а также замены where на having.
-     */
     private void addGroupingAndSwapWhereOnHaving(StringBuilder query) {
         if (!groupBy.isEmpty()) {
 
@@ -815,9 +589,9 @@ public class QueryConstructor {
 
             String[] attributeGroupBY = stringBuilder.toString().split("(?<=,)");
 
-            for (int i = 0; i < attributeGroupBY.length; i++) {
-                query.append("\n").append(attributeGroupBY[i]);
-                queryBuilderPanel.addBlockInBlocksPanel(attributeGroupBY[i], colorBorderBlockGroupBy, colorBackgroundBlockGroupBy);
+            for (String s : attributeGroupBY) {
+                query.append("\n").append(s);
+                queryBuilderPanel.addBlockInBlocksPanel(s, colorBorderBlockGroupBy, colorBackgroundBlockGroupBy);
             }
 
             query.append(WHITESPACE);
@@ -836,9 +610,9 @@ public class QueryConstructor {
 
                 String[] conditions = stringBuilderHaving.toString().split("(?=OR )|(?=AND )");
 
-                for (int i = 0; i < conditions.length; i++) {
-                    query.append("\n").append(conditions[i]);
-                    queryBuilderPanel.addBlockInBlocksPanel(conditions[i], colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
+                for (String condition : conditions) {
+                    query.append("\n").append(condition);
+                    queryBuilderPanel.addBlockInBlocksPanel(condition, colorBorderBlockWhereAndHaving, colorBackgroundBlockWhereAndHaving);
                 }
 
                 query.append(WHITESPACE);
@@ -846,56 +620,31 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for resetting the grouping values.
-     * <p>
-     * Метод для сброса значений группировки.
-     */
     public void clearGroupBy() {
         groupBy = "";
     }
 
-    /**
-     * A method for resetting having values.
-     * <p>
-     * Метод для сброса значений having.
-     */
     public void clearHaving() {
         having = "";
     }
 
-    /**
-     * The method for getting the grouping value.
-     * <p>
-     * Метод для получения значения группировки.
-     */
     public String getGroupBy() {
         return groupBy;
     }
 
-    /**
-     * A method for changing the grouping value in a request.
-     * <p>
-     * Метод для смены значения группировки в запросе.
-     */
     public void setGroupBy(String groupBy, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set GroupBy " + this.groupBy);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set GroupBy " + this.groupBy);
         }
 
         this.groupBy = groupBy;
     }
 
-    /**
-     * A method for adding sorting to a query.
-     * <p>
-     * Метод для добавления сортировки в запрос.
-     */
     private void addOrderByInQuery(StringBuilder query) {
         if (!orderBy.isEmpty()) {
             StringBuilder stringBuilder = new StringBuilder(orderBy);
@@ -906,56 +655,36 @@ public class QueryConstructor {
 
             String[] attributeOrderBy = stringBuilder.toString().split("(?<=,)");
 
-            for (int i = 0; i < attributeOrderBy.length; i++) {
-                query.append("\n").append(attributeOrderBy[i]);
-                queryBuilderPanel.addBlockInBlocksPanel(attributeOrderBy[i], colorBorderBlockOrderBy, colorBackgroundBlockOrderBy);
+            for (String s : attributeOrderBy) {
+                query.append("\n").append(s);
+                queryBuilderPanel.addBlockInBlocksPanel(s, colorBorderBlockOrderBy, colorBackgroundBlockOrderBy);
             }
 
             query.append(WHITESPACE);
         }
     }
 
-    /**
-     * A method for resetting sorting values.
-     * <p>
-     * Метод для сброса значений сортировки.
-     */
     public void clearOrderBy() {
         orderBy = "";
     }
 
-    /**
-     * The method for getting the sort value.
-     * <p>
-     * Метод для получения значения сортировки.
-     */
     public String getOrderBy() {
         return orderBy;
     }
 
-    /**
-     * A method for changing the sort value in a query.
-     * <p>
-     * Метод для смены значения сортировки в запросе.
-     */
     public void setOrderBy(String orderBy, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set OrderBy " + this.orderBy);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set OrderBy " + this.orderBy);
         }
 
         this.orderBy = orderBy;
     }
 
-    /**
-     * A method for checking and adding optimization to a query.
-     * <p>
-     * Метод для проверки и добавления оптимизации в запрос.
-     */
     private void addOptimizationInQuery(StringBuilder query) {
         if (!optimization.isEmpty()) {
             query.append("\n").append(optimization);
@@ -964,18 +693,13 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for changing the optimization value.
-     * <p>
-     * Метод для смены значения оптимизации.
-     */
     public void setOptimization(String optimization, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Optimize " + this.optimization);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Optimize " + this.optimization);
         }
 
@@ -986,74 +710,35 @@ public class QueryConstructor {
         }
     }
 
-    /**
-     * A method for resetting optimization values.
-     * <p>
-     * Метод для сброса значений оптимизации.
-     */
     public void clearOptimization() {
         optimization = "";
     }
 
-    /**
-     * A method for changing the value of union.
-     * <p>
-     * Метод для смены значения union.
-     */
     public void setUnion(String union, String stepUpOrBack) {
 
-        if(stepUpOrBack.equals("stepBack")) {
+        if (stepUpOrBack.equals("stepBack")) {
             queryBuilderPanel.addStepBackActionInHistory("Set Union " + this.union);
         }
 
-        if(stepUpOrBack.equals("stepUp")){
+        if (stepUpOrBack.equals("stepUp")) {
             queryBuilderPanel.addStepUpActionInHistory("Set Union " + this.union);
         }
 
         this.union = union;
     }
 
-    /**
-     * A method for resetting union values.
-     * <p>
-     * Метод для сброса значений union.
-     */
     private void clearUnion() {
         union = "";
     }
 
-    /**
-     * A method for resetting with values.
-     * <p>
-     * Метод для сброса значений with.
-     */
     private void clearWith() {
         with = "";
     }
 
-    /**
-     * The method for getting the union value.
-     * <p>
-     * Метод для получения значения union.
-     */
     public String getUnion() {
         return union;
     }
 
-    /**
-     * A method for obtaining the optimization value.
-     * <p>
-     * Метод для получения значения оптимизации.
-     */
-    public String getOptimization() {
-        return optimization;
-    }
-
-    /**
-     * A method for completely clearing the request.
-     * <p>
-     * Метод для полной очистки запроса.
-     */
     public void clearAll() {
         clearAttribute();
         clearFunction();
@@ -1070,11 +755,11 @@ public class QueryConstructor {
         clearWith();
     }
 
-    public void setChangingValueClick(boolean values){
+    public void setChangingValueClick(boolean values) {
         isChangingValueClick = values;
     }
 
-    public boolean getChangingValueClick(){
+    public boolean getChangingValueClick() {
         return isChangingValueClick;
     }
 }

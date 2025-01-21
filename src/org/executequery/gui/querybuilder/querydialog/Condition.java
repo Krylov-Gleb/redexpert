@@ -1,4 +1,4 @@
-package org.executequery.gui.querybuilder.QueryDialog;
+package org.executequery.gui.querybuilder.querydialog;
 
 import org.executequery.gui.IconManager;
 import org.executequery.gui.WidgetFactory;
@@ -11,25 +11,12 @@ import org.underworldlabs.swing.layouts.GridBagHelper;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
-/**
- * This class creates a dialog (window) that adds conditions to the request.
- * <p>
- * Этот класс создаёт диалог (окно) который добавляет в запрос условия.
- *
- * @author Krylov Gleb
- */
 public class Condition extends JDialog {
 
-    // --- Fields that are passed through the constructor ----
-    // --- Поля, которые передаются через конструктор ---
-
-    private QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
-
-    // --- GUI Components. ---
-    // --- Компоненты графического интерфейса. ---
-
+    private final QueryConstructor queryConstructor;
+    private final QBPanel queryBuilderPanel;
     private JPanel panelPlacingComponents;
     private JPanel panelPlacingCheckBoxInScrollPane;
     private JPanel panelButtons;
@@ -46,24 +33,12 @@ public class Condition extends JDialog {
     private JButton buttonDeleteCondition;
     private JButton buttonClose;
 
-    /**
-     * A dialog (window) is created.
-     * A method is used to initialize fields.
-     * <p>
-     * Создаётся диалог (окно).
-     * Используется метод для инициализации полей.
-     */
     public Condition(QueryConstructor queryConstructor, QBPanel queryBuilderPanel) {
         this.queryConstructor = queryConstructor;
         this.queryBuilderPanel = queryBuilderPanel;
         init();
     }
 
-    /**
-     * A method for initializing fields.
-     * <p>
-     * Метод для инициализации полей.
-     */
     private void init() {
         initPanel();
         initLabels();
@@ -74,11 +49,6 @@ public class Condition extends JDialog {
         arrangeComponent();
     }
 
-    /**
-     * A method for initializing buttons.
-     * <p>
-     * Метод для инициализации кнопок.
-     */
     private void initButtons() {
         buttonAddCondition = WidgetFactory.createButton("buttonAddCondition", Bundles.get("common.add.button"), event -> {
             eventButtonAddConditions();
@@ -90,18 +60,11 @@ public class Condition extends JDialog {
             arrangeCheckBoxesInScrollPane();
         });
 
-        buttonClose = WidgetFactory.createButton("buttonClose", Bundles.get("common.close.button"), event -> {
-            closeDialog();
-        });
+        buttonClose = WidgetFactory.createButton("buttonClose", Bundles.get("common.close.button"), event -> closeDialog());
 
         placingButtonInPanel();
     }
 
-    /**
-     * A method for placing buttons in a panel to place buttons.
-     * <p>
-     * Метод для размещения кнопок в панели для размещения кнопок.
-     */
     private void placingButtonInPanel() {
         GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(5, 5, 5, 5).fillHorizontally();
         panelButtons.add(buttonAddCondition, gridBagHelper.setXY(0, 0).setMaxWeightX().get());
@@ -109,11 +72,6 @@ public class Condition extends JDialog {
         panelButtons.add(buttonClose, gridBagHelper.nextRow().setMaxWeightX().get());
     }
 
-    /**
-     * A method for initializing drop-down lists (comboBox).
-     * <p>
-     * Метод для инициализации выпадающих списков (comboBox).
-     */
     private void initComboBox() {
         comboBoxLeftOperand = WidgetFactory.createComboBox("comboBoxLeftOperand", arrangeComponentsInLeftComboBox());
         comboBoxLeftOperand.setEditable(true);
@@ -138,11 +96,6 @@ public class Condition extends JDialog {
         comboBoxJoinConditions.setToolTipText(Bundles.get("QueryBuilder.Condition.toolTipTextConnection"));
     }
 
-    /**
-     * A method for adding components to the left ComboBox.
-     * <p>
-     * Метод для добавления компонентов в левый ComboBox.
-     */
     private ArrayList<String> arrangeComponentsInLeftComboBox() {
         ArrayList<String> attributes = new ArrayList<>();
         attributes.add("");
@@ -158,11 +111,6 @@ public class Condition extends JDialog {
         return attributes;
     }
 
-    /**
-     * A method for initializing text fields.
-     * <p>
-     * Метод для инициализации текстовых полей.
-     */
     private void initTextField() {
         textFieldRightOperand = WidgetFactory.createTextField("textFieldRightOperand");
         textFieldRightOperand.setToolTipText(Bundles.get("QueryBuilder.Condition.toolTipTextRightOperand"));
@@ -171,22 +119,12 @@ public class Condition extends JDialog {
         textFieldRightOperand.setMaximumSize(new Dimension(200, 30));
     }
 
-    /**
-     * A method for initializing the ScrollPane and placing checkboxes on it.
-     * <p>
-     * Метод для инициализации панели прокрутки (scrollPane) и размещения на ней флажков.
-     */
     private void initScrollPane() {
         scrollPaneCheckBoxesCondition = new JScrollPane();
         scrollPaneCheckBoxesCondition.setPreferredSize(new Dimension(100, 200));
         arrangeCheckBoxesInScrollPane();
     }
 
-    /**
-     * A method for initializing labels.
-     * <p>
-     * Метод для инициализации меток.
-     */
     private void initLabels() {
         labelLeftOperand = WidgetFactory.createLabel(Bundles.get("QueryBuilder.Condition.labelLeftOperand"));
         labelLeftOperand.setPreferredSize(new Dimension(100, 30));
@@ -198,11 +136,6 @@ public class Condition extends JDialog {
         labelConnectionCondition.setPreferredSize(new Dimension(100, 30));
     }
 
-    /**
-     * The method for initializing JPanel.
-     * <p>
-     * Метод для инициализации JPanel.
-     */
     private void initPanel() {
         panelPlacingComponents = WidgetFactory.createPanel("panelPlacingComponents");
         panelPlacingComponents.setLayout(new GridBagLayout());
@@ -211,21 +144,11 @@ public class Condition extends JDialog {
         panelButtons.setLayout(new GridBagLayout());
     }
 
-    /**
-     * A method for placing components as well as setting up a dialog (window).
-     * <p>
-     * Метод для размещения компонентов а так же настройки диалога (окна).
-     */
     private void arrangeComponent() {
         arrangeComponentsInPanelForAddConditionInQuery();
         configurationDialog();
     }
 
-    /**
-     * A method for configuring the parameters of a dialog (window) created by this class.
-     * <p>
-     * Метод для настройки параметров диалога (окна) созданного этим классом.
-     */
     private void configurationDialog() {
         setLayout(new BorderLayout());
         add(panelPlacingComponents, BorderLayout.CENTER);
@@ -239,11 +162,6 @@ public class Condition extends JDialog {
         setVisible(true);
     }
 
-    /**
-     * A method for placing components in a panel for placing components.
-     * <p>
-     * Метод для размещения компонентов в панели для размещения компонентов.
-     */
     private void arrangeComponentsInPanelForAddConditionInQuery() {
         GridBagHelper gridBagHelper = new GridBagHelper().setInsets(10, 5, 10, 5).anchorCenter().setMaxWeightX().fillHorizontally();
         panelPlacingComponents.add(scrollPaneCheckBoxesCondition, gridBagHelper.setXY(0, 0).setWidth(3).setMaxWeightX().get());
@@ -258,16 +176,11 @@ public class Condition extends JDialog {
         panelPlacingComponents.add(panelButtons, gridBagHelper.nextRow().spanY().spanX().setMaxWeightX().get());
     }
 
-    /**
-     * The event of the button to remove the condition from the request.
-     * <p>
-     * Событие кнопки по удалению условия из запроса.
-     */
     private void eventButtonAddConditions() {
-        if (!comboBoxLeftOperand.getSelectedItem().toString().isEmpty()) {
+        if (!Objects.requireNonNull(comboBoxLeftOperand.getSelectedItem()).toString().isEmpty()) {
             if (!textFieldRightOperand.getText().isEmpty()) {
-                if (!comboBoxJoinConditions.getSelectedItem().toString().isEmpty()) {
-                    addWhere(comboBoxLeftOperand.getSelectedItem().toString(), comboBoxOperation.getSelectedItem().toString(), textFieldRightOperand.getText(), comboBoxJoinConditions.getSelectedItem().toString());
+                if (!Objects.requireNonNull(comboBoxJoinConditions.getSelectedItem()).toString().isEmpty()) {
+                    addWhere(comboBoxLeftOperand.getSelectedItem().toString(), Objects.requireNonNull(comboBoxOperation.getSelectedItem()).toString(), textFieldRightOperand.getText(), comboBoxJoinConditions.getSelectedItem().toString());
                 }
             }
         }
@@ -275,27 +188,29 @@ public class Condition extends JDialog {
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
-    /**
-     * A method for removing conditions from a query.
-     * <p>
-     * Метод для удаления условий из запроса.
-     */
     private void eventButtonRemoveConditions() {
         StringBuilder stringBuilderWhere = new StringBuilder(queryConstructor.getWhere());
         JCheckBox[] checkBoxesInScrollPane = getCheckBoxesFromPanelArrangeCheckBox();
 
-        for (int i = 0; i < checkBoxesInScrollPane.length; i++) {
-            if (checkBoxesInScrollPane[i].isSelected()) {
-                if (checkBoxesInScrollPane.length == 1) {
-                    stringBuilderWhere.replace(0, stringBuilderWhere.length(), "");
+        boolean isSelectAll = true;
 
-                    queryConstructor.setWhere(stringBuilderWhere.toString(), "stepBack");
-                    queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
-                    return;
-                } else {
-                    if (stringBuilderWhere.toString().contains(checkBoxesInScrollPane[i].getText())) {
-                        stringBuilderWhere.replace(stringBuilderWhere.indexOf(checkBoxesInScrollPane[i].getText()),
-                                stringBuilderWhere.indexOf(checkBoxesInScrollPane[i].getText()) + checkBoxesInScrollPane[i].getText().length(),
+        for (JCheckBox jCheckBox : checkBoxesInScrollPane) {
+            if (!jCheckBox.isSelected()) {
+                isSelectAll = false;
+                break;
+            }
+        }
+
+        if (isSelectAll) {
+            queryConstructor.setWhere("", "stepBack");
+            queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
+            return;
+        } else {
+            for (JCheckBox checkBox : checkBoxesInScrollPane) {
+                if (checkBox.isSelected()) {
+                    if (stringBuilderWhere.toString().contains(checkBox.getText())) {
+                        stringBuilderWhere.replace(stringBuilderWhere.indexOf(checkBox.getText()),
+                                stringBuilderWhere.indexOf(checkBox.getText()) + checkBox.getText().length(),
                                 "");
 
                         queryConstructor.setWhere(stringBuilderWhere.toString(), "stepBack");
@@ -305,24 +220,19 @@ public class Condition extends JDialog {
             }
         }
 
-        if(stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length()-3){
-            stringBuilderWhere.replace(stringBuilderWhere.length()-4,stringBuilderWhere.length(),"");
+        if (stringBuilderWhere.lastIndexOf("OR") == stringBuilderWhere.length() - 3) {
+            stringBuilderWhere.replace(stringBuilderWhere.length() - 4, stringBuilderWhere.length(), "");
             queryConstructor.setWhere(stringBuilderWhere.toString(), "stepBack");
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
 
-        if(stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length()-4){
-            stringBuilderWhere.replace(stringBuilderWhere.length()-5,stringBuilderWhere.length(),"");
+        if (stringBuilderWhere.lastIndexOf("AND") == stringBuilderWhere.length() - 4) {
+            stringBuilderWhere.replace(stringBuilderWhere.length() - 5, stringBuilderWhere.length(), "");
             queryConstructor.setWhere(stringBuilderWhere.toString(), "stepBack");
             queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
         }
     }
 
-    /**
-     * A method for getting an array of checkboxes from the panel on which they are placed.
-     * <p>
-     * Метод для получения массива флажков из панели на которой они размещены.
-     */
     private JCheckBox[] getCheckBoxesFromPanelArrangeCheckBox() {
         Component[] component = panelPlacingCheckBoxInScrollPane.getComponents();
         JCheckBox[] checkBoxes = new JCheckBox[panelPlacingCheckBoxInScrollPane.getComponents().length];
@@ -334,11 +244,6 @@ public class Condition extends JDialog {
         return checkBoxes;
     }
 
-    /**
-     * A method for adding a condition.
-     * <p>
-     * Метод для добавления условия.
-     */
     public void addWhere(String leftOperand, String operation, String rightOperand, String join) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -351,10 +256,8 @@ public class Condition extends JDialog {
             }
 
             if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder.toString(), "stepBack");
+                queryConstructor.setWhere(queryConstructor.getWhere() + " " + join + " " + stringBuilder, "stepBack");
             }
-
-            return;
 
         } else {
             stringBuilder.append("WHERE").append(" ").append(leftOperand).append(" ");
@@ -365,18 +268,11 @@ public class Condition extends JDialog {
             }
 
             if (!queryConstructor.getWhere().contains(stringBuilder.toString())) {
-                queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder.toString(), "stepBack");
+                queryConstructor.setWhere(queryConstructor.getWhere() + stringBuilder, "stepBack");
             }
-
-            return;
         }
     }
 
-    /**
-     * A method for placing checkboxes on a ScrollPane.
-     * <p>
-     * Метод для размещения флажков на ScrollPane.
-     */
     private void arrangeCheckBoxesInScrollPane() {
         panelPlacingCheckBoxInScrollPane = WidgetFactory.createPanel("panelPlacingCheckBoxInScrollPane");
         panelPlacingCheckBoxInScrollPane.setLayout(new BoxLayout(panelPlacingCheckBoxInScrollPane, BoxLayout.Y_AXIS));
@@ -384,13 +280,13 @@ public class Condition extends JDialog {
         if (!queryConstructor.getWhere().isEmpty()) {
             String[] splitConditionText = queryConstructor.getWhere().split("(?<=OR )|(?<=AND )");
 
-            for (int i = 0; i < splitConditionText.length; i++) {
-                if (queryConstructor.getWhere().contains(splitConditionText[i]) & splitConditionText[i].contains("WHERE")) {
-                    StringBuilder stringBuilder = new StringBuilder(splitConditionText[i]);
+            for (String s : splitConditionText) {
+                if (queryConstructor.getWhere().contains(s) & s.contains("WHERE")) {
+                    StringBuilder stringBuilder = new StringBuilder(s);
                     stringBuilder.replace(stringBuilder.indexOf("WHERE"), "WHERE ".length(), "");
                     panelPlacingCheckBoxInScrollPane.add(new JCheckBox(stringBuilder.toString()));
                 } else {
-                    panelPlacingCheckBoxInScrollPane.add(new JCheckBox(splitConditionText[i]));
+                    panelPlacingCheckBoxInScrollPane.add(new JCheckBox(s));
                 }
             }
         }
@@ -398,20 +294,10 @@ public class Condition extends JDialog {
         scrollPaneCheckBoxesCondition.setViewportView(panelPlacingCheckBoxInScrollPane);
     }
 
-    /**
-     * A method for creating and receiving a dialog icon.
-     * <p>
-     * Метод для создания и получения иконки диалога.
-     */
     private ImageIcon getAndCreateIconDialog() {
         return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE, "svg", 512, IconManager.IconFolder.BASE);
     }
 
-    /**
-     * The method for closing the dialog (window).
-     * <p>
-     * Метод для закрытия диалога (окна).
-     */
     private void closeDialog() {
         setVisible(false);
         dispose();

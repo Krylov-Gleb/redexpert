@@ -1,4 +1,4 @@
-package org.executequery.gui.querybuilder.QueryDialog;
+package org.executequery.gui.querybuilder.querydialog;
 
 import org.executequery.gui.IconManager;
 import org.executequery.gui.WidgetFactory;
@@ -11,24 +11,10 @@ import org.underworldlabs.swing.layouts.GridBagHelper;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * This class creates a dialog (window) that adds additions to the request (first skip distinct).
- * <p>
- * Этот класс создаёт диалог (окно) который добавляет в запрос дополнения (first skip distinct).
- *
- * @author Krylov Gleb
- */
 public class FirstSkipDistinct extends JDialog {
 
-    // --- Fields that are passed through the constructor ----
-    // --- Поля, которые передаются через конструктор ---
-
-    private QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
-
-    // --- GUI Components ---
-    // --- Компоненты графического интерфейса ---
-
+    private final QueryConstructor queryConstructor;
+    private final QBPanel queryBuilderPanel;
     private JPanel panelPlacingComponents;
     private JPanel panelButton;
     private JLabel labelFirst;
@@ -39,24 +25,12 @@ public class FirstSkipDistinct extends JDialog {
     private JButton buttonAddFirstSkipDistinct;
     private JButton buttonRemoveFirstSkipDistinct;
 
-    /**
-     * A dialog (window) is created.
-     * A method is used to initialize fields.
-     * <p>
-     * Создаётся диалог (окно).
-     * Используется метод для инициализации полей.
-     */
     public FirstSkipDistinct(QueryConstructor queryConstructor, QBPanel queryBuilderPanel) {
         this.queryConstructor = queryConstructor;
         this.queryBuilderPanel = queryBuilderPanel;
         init();
     }
 
-    /**
-     * A method for initializing fields.
-     * <p>
-     * Метод для инициализации полей.
-     */
     private void init() {
         initPanel();
         initLabel();
@@ -66,18 +40,13 @@ public class FirstSkipDistinct extends JDialog {
         arrangeComponents();
     }
 
-    /**
-     * A method for initializing buttons.
-     * <p>
-     * Метод для инициализации кнопок.
-     */
     private void initButton() {
-        buttonAddFirstSkipDistinct = WidgetFactory.createButton("buttonAddFirstSkipDistinct",Bundles.get("common.add.button"),event -> {
+        buttonAddFirstSkipDistinct = WidgetFactory.createButton("buttonAddFirstSkipDistinct", Bundles.get("common.add.button"), event -> {
             eventButtonAddFirstSkipDistinct();
             closeDialog();
         });
 
-        buttonRemoveFirstSkipDistinct = WidgetFactory.createButton("buttonRemoveFirstSkipDistinct",Bundles.get("common.delete.button"),event -> {
+        buttonRemoveFirstSkipDistinct = WidgetFactory.createButton("buttonRemoveFirstSkipDistinct", Bundles.get("common.delete.button"), event -> {
             eventButtonRemoveFirstSkipDistinct();
             closeDialog();
         });
@@ -85,48 +54,23 @@ public class FirstSkipDistinct extends JDialog {
         placingButtonsInPanel();
     }
 
-    /**
-     * A method for placing buttons in a panel to place buttons.
-     * <p>
-     * Метод для размещения кнопок в панели для размещения кнопок.
-     */
     private void placingButtonsInPanel() {
-        GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(5,5,5,5).fillHorizontally();
-        panelButton.add(buttonAddFirstSkipDistinct,gridBagHelper.setXY(0,0).setMaxWeightX().get());
-        panelButton.add(buttonRemoveFirstSkipDistinct,gridBagHelper.nextCol().setMaxWeightX().get());
+        GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().setInsets(5, 5, 5, 5).fillHorizontally();
+        panelButton.add(buttonAddFirstSkipDistinct, gridBagHelper.setXY(0, 0).setMaxWeightX().get());
+        panelButton.add(buttonRemoveFirstSkipDistinct, gridBagHelper.nextCol().setMaxWeightX().get());
     }
 
-    /**
-     * Method for initializing checkboxes (JCheckBox).
-     * <p>
-     * Метод для инициализации флажков (JCheckBox)
-     */
     private void initCheckBox() {
         checkBoxDistinct = WidgetFactory.createCheckBox("checkBoxDistinct", "DISTINCT");
         checkBoxDistinct.setToolTipText(Bundles.get("QueryBuilder.FirstSkipDistinct.toolTipTextDistinct"));
         checkUsingDistinct();
     }
 
-    /**
-     * A method to check whether Distinct is used.
-     * <p>
-     * Метод для проверки того, используется ли Distinct.
-     */
     private void checkUsingDistinct() {
         String distinct = queryConstructor.getDistinct();
-        if(distinct.isEmpty()){
-            checkBoxDistinct.setSelected(false);
-        }
-        else{
-            checkBoxDistinct.setSelected(true);
-        }
+        checkBoxDistinct.setSelected(!distinct.isEmpty());
     }
 
-    /**
-     * A method for initializing a text field.
-     * <p>
-     * Метод для инициализации текстового поля.
-     */
     private void initTextField() {
         textFieldFirst = WidgetFactory.createTextField("textFieldFirst");
         textFieldFirst.setText(queryConstructor.getFirst());
@@ -143,21 +87,11 @@ public class FirstSkipDistinct extends JDialog {
         textFieldSkip.setMaximumSize(new Dimension(200, 25));
     }
 
-    /**
-     * A method for initializing labels.
-     * <p>
-     * Метод для инициализации меток.
-     */
     private void initLabel() {
         labelFirst = WidgetFactory.createLabel(Bundles.get("QueryBuilder.FirstSkipDistinct.labelFirst"));
         labelSkip = WidgetFactory.createLabel(Bundles.get("QueryBuilder.FirstSkipDistinct.labelSkip"));
     }
 
-    /**
-     * The method for initializing JPanel.
-     * <p>
-     * Метод для инициализации JPanel.
-     */
     private void initPanel() {
         panelPlacingComponents = WidgetFactory.createPanel("panelPlacingComponents");
         panelPlacingComponents.setLayout(new GridBagLayout());
@@ -166,21 +100,11 @@ public class FirstSkipDistinct extends JDialog {
         panelButton.setLayout(new GridBagLayout());
     }
 
-    /**
-     * A method for placing components and configuring a dialog (window).
-     * <p>
-     * Метод для размещения компонентов и настройки диалога (окна).
-     */
     private void arrangeComponents() {
         arrangeComponentsInPanelForPlacingComponents();
         configurationDialog();
     }
 
-    /**
-     * Configuring the dialog (window) created by this class.
-     * <p>
-     * Настройка диалога (окна) созданного этим классом.
-     */
     private void configurationDialog() {
         setLayout(new BorderLayout());
         setTitle(Bundles.get("QueryBuilder.FirstSkipDistinct.title"));
@@ -194,11 +118,6 @@ public class FirstSkipDistinct extends JDialog {
         setVisible(true);
     }
 
-    /**
-     * Placing components in a panel to place components.
-     * <p>
-     * Размещение компонентов в панели для размещения компонентов.
-     */
     private void arrangeComponentsInPanelForPlacingComponents() {
         GridBagHelper gridBagHelper = new GridBagHelper().anchorCenter().setInsets(10, 5, 10, 5).setWidth(1).fillHorizontally();
         panelPlacingComponents.add(labelFirst, gridBagHelper.setXY(0, 0).setMinWeightX().get());
@@ -210,11 +129,6 @@ public class FirstSkipDistinct extends JDialog {
 
     }
 
-    /**
-     * A method that implements the functionality of adding add-ons (first,skip,distinct) to a query.
-     * <p>
-     * Метод реализующий функционал добавления дополнений (first,skip,distinct) в запрос.
-     */
     private void eventButtonAddFirstSkipDistinct() {
         addFirst();
         addSkip();
@@ -222,12 +136,7 @@ public class FirstSkipDistinct extends JDialog {
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
-    /**
-     * A method that implements the functionality of removing add-ons (first,skip,distinct) from a query.
-     * <p>
-     * Метод реализующий функционал удаления дополнений (first,skip,distinct) из запроса.
-     */
-    private void eventButtonRemoveFirstSkipDistinct(){
+    private void eventButtonRemoveFirstSkipDistinct() {
         queryConstructor.setSkip("", "stepBack");
         queryConstructor.setFirst("", "stepBack");
         queryConstructor.setDistinct("", "stepBack");
@@ -237,33 +146,22 @@ public class FirstSkipDistinct extends JDialog {
         queryBuilderPanel.setTextInPanelOutputTestingQuery(queryConstructor.buildAndGetQuery());
     }
 
-    /**
-     * A method for adding Distinct to a query.
-     * <p>
-     * Метод для добавления Distinct в запрос.
-     */
-    private String addDistinct() {
+    private void addDistinct() {
         if (checkBoxDistinct.isSelected()) {
             queryConstructor.setDistinct("DISTINCT", "stepBack");
-            return "DISTINCT";
         } else {
             queryConstructor.setDistinct("", "stepBack");
-            return "";
         }
     }
 
-    /**
-     * The method for adding skip to the request.
-     * <p>
-     * Метод для добавления skip в запрос.
-     */
-    private String addSkip() {
+    private void addSkip() {
         if (!textFieldSkip.getText().isEmpty()) {
             try {
                 if (Integer.parseInt(textFieldSkip.getText()) > 0) {
                     queryConstructor.setSkip(textFieldSkip.getText(), "stepBack");
 
-                    return textFieldSkip.getText();
+                    textFieldSkip.getText();
+                    return;
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -271,20 +169,16 @@ public class FirstSkipDistinct extends JDialog {
             queryConstructor.setSkip("", "stepBack");
         }
 
-        return textFieldSkip.getText();
+        textFieldSkip.getText();
     }
 
-    /**
-     * The method for adding first to the request.
-     * <p>
-     * Метод для добавления first в запрос.
-     */
-    private String addFirst() {
+    private void addFirst() {
         if (!textFieldFirst.getText().isEmpty()) {
             try {
                 if (Integer.parseInt(textFieldFirst.getText()) > 0) {
                     queryConstructor.setFirst(textFieldFirst.getText(), "stepBack");
-                    return textFieldFirst.getText();
+                    textFieldFirst.getText();
+                    return;
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -292,23 +186,13 @@ public class FirstSkipDistinct extends JDialog {
             queryConstructor.setFirst("", "stepBack");
         }
 
-        return textFieldFirst.getText();
+        textFieldFirst.getText();
     }
 
-    /**
-     * A method for creating and receiving a dialog icon.
-     * <p>
-     * Метод для создания и получения иконки диалога.
-     */
-    private ImageIcon getAndCreateIconDialog(){
-        return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE,"svg",512, IconManager.IconFolder.BASE);
+    private ImageIcon getAndCreateIconDialog() {
+        return IconManager.getIcon(BrowserConstants.APPLICATION_IMAGE, "svg", 512, IconManager.IconFolder.BASE);
     }
 
-    /**
-     * A method for closing a dialog (window) created by this class.
-     * <p>
-     * Метод для закрытия диалога (окна) созданного этим классом.
-     */
     private void closeDialog() {
         setVisible(false);
         dispose();

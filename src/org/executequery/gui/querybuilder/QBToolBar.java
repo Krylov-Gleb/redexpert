@@ -1,7 +1,7 @@
 package org.executequery.gui.querybuilder;
 
 import org.executequery.gui.WidgetFactory;
-import org.executequery.gui.querybuilder.QueryDialog.*;
+import org.executequery.gui.querybuilder.querydialog.*;
 import org.executequery.localization.Bundles;
 import org.underworldlabs.swing.ConnectionsComboBox;
 import org.underworldlabs.swing.RolloverButton;
@@ -15,26 +15,11 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * This class creates a toolbar for the query constructor (QueryBuilder).
- * <p>
- * Этот класс создаёт панель инструментов для конструктора запросов (QueryBuilder).
- *
- * @author Krylov Gleb
- */
 public class QBToolBar extends JToolBar {
 
     private final Color colorBorderButton = new Color(230, 0, 0);
-
-    // --- Fields that are passed through the constructor ----
-    // --- Поля, которые передаются через конструктор ---
-
     private final QueryConstructor queryConstructor;
-    private QBPanel queryBuilderPanel;
-
-    // --- GUI Components ---
-    // --- Компоненты графического интерфейса ---
-
+    private final QBPanel queryBuilderPanel;
     private ConnectionsComboBox connections;
     private JPanel panelPlacingComponents;
     private RolloverButton buttonTable;
@@ -54,31 +39,13 @@ public class QBToolBar extends JToolBar {
     private RolloverButton buttonSaveQueryBuilder;
 
     private Table table;
-    private OrderBy orderBy;
-    private Condition condition;
-    private Functions functions;
-    private GroupBy groupBy;
-    private Join join;
-    private Union union;
 
-    /**
-     * A toolbar is being created.
-     * A method is used to initialize fields.
-     * <p>
-     * Создаётся панель инструментов.
-     * Используется метод для инициализации полей.
-     */
     public QBToolBar(QBPanel queryBuilderPanel, QueryConstructor queryConstructor) {
         this.queryBuilderPanel = queryBuilderPanel;
         this.queryConstructor = queryConstructor;
         init();
     }
 
-    /**
-     * A method for initializing fields.
-     * <p>
-     * Метод для инициализации полей.
-     */
     private void init() {
         initButton();
         initComboBox();
@@ -86,21 +53,11 @@ public class QBToolBar extends JToolBar {
         arrangeComponent();
     }
 
-    /**
-     * The method for initializing JPanel.
-     * <p>
-     * Метод для инициализации JPanel.
-     */
     private void initJPanel() {
         panelPlacingComponents = WidgetFactory.createPanel("panelPlacingComponents");
         panelPlacingComponents.setLayout(new GridBagLayout());
     }
 
-    /**
-     * A method for initializing drop-down lists (comboBox).
-     * <p>
-     * Метод для инициализации выпадающих списков (comboBox).
-     */
     private void initComboBox() {
         connections = WidgetFactory.createConnectionComboBox("connections", true);
         connections.setMinimumSize(new Dimension(200, 40));
@@ -108,11 +65,6 @@ public class QBToolBar extends JToolBar {
         connections.setMaximumSize(new Dimension(200, 40));
     }
 
-    /**
-     * A method for initializing buttons.
-     * <p>
-     * Метод для инициализации кнопок.
-     */
     private void initButton() {
         buttonTable = WidgetFactory.createRolloverButton("buttonTable",
                 Bundles.get("common.tables"),
@@ -220,21 +172,11 @@ public class QBToolBar extends JToolBar {
         buttonSaveQueryBuilder.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorderButton, 1, true), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
     }
 
-    /**
-     * A method for placing components as well as configuring the toolbar.
-     * <p>
-     * Метод для размещения компонентов а так же настройки панели инструментов.
-     */
     private void arrangeComponent() {
         configurationToolBar();
         addComponentsInTollBar();
     }
 
-    /**
-     * A method for placing components in a panel for placing components.
-     * <p>
-     * Метод для размещения компонентов в панели для размещения компонентов.
-     */
     private void addComponentsInTollBar() {
         GridBagHelper gridBagHelper = new GridBagHelper().anchorNorth().fillHorizontally().setInsets(5, 5, 5, 5);
         panelPlacingComponents.add(connections, gridBagHelper.setXY(0, 0).setMinWeightX().spanY().get());
@@ -257,20 +199,10 @@ public class QBToolBar extends JToolBar {
         add(panelPlacingComponents);
     }
 
-    /**
-     * A method for configuring the toolbar.
-     * <p>
-     * Метод для настройки панели инструментов.
-     */
     private void configurationToolBar() {
         setPreferredSize(new Dimension(getWidth(), 40));
     }
 
-    /**
-     * The method for using the request.
-     * <p>
-     * Метод для использования запроса.
-     */
     private void saveQuery() {
         String textCopy = queryBuilderPanel.getTestQuery();
         StringSelection stringSelection = new StringSelection(textCopy);
@@ -279,11 +211,6 @@ public class QBToolBar extends JToolBar {
         JOptionPane.showMessageDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.savingRequestClipboard"), Bundles.get("QueryBuilder.ToolBar.savingRequestClipboardTitle"), JOptionPane.QUESTION_MESSAGE);
     }
 
-    /**
-     * The method that implements the functionality is a step back.
-     * <p>
-     * Метод реализующий функционал шаг назад.
-     */
     private void stepBack() {
         if (!queryBuilderPanel.getHistoryActionStepBack().empty()) {
             StringBuilder backActions = new StringBuilder(queryBuilderPanel.getAndRemoveStepBackActionInHistory());
@@ -296,11 +223,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method that works with a Set entry on the stack (step back).
-     * <p>
-     * Метод работающий с записью Set в стеке (шаг назад).
-     */
     private void methodActionSetStepBack(String actions, String queryElement, String pattern) {
         if (actions.equals("Set")) {
             if (queryElement.equals("First")) {
@@ -354,19 +276,18 @@ public class QBToolBar extends JToolBar {
                 ArrayList<JTable> tables = queryBuilderPanel.getListTable();
                 String attribute = queryConstructor.getAttribute();
 
-                for (int i = 0; i < tables.size(); i++) {
-                    for (int j = 0; j < tables.get(i).getRowCount(); j++) {
-                        if (attribute.contains(tables.get(i).getColumnName(0) + "." + tables.get(i).getValueAt(j, 0))) {
+                for (JTable jTable : tables) {
+                    for (int j = 0; j < jTable.getRowCount(); j++) {
+                        if (attribute.contains(jTable.getColumnName(0) + "." + jTable.getValueAt(j, 0))) {
                             queryConstructor.setChangingValueClick(false);
-                            tables.get(i).setValueAt(true, j, 1);
-                            tables.get(i).revalidate();
-                            tables.get(i).repaint();
-                        }
-                        else{
+                            jTable.setValueAt(true, j, 1);
+                            jTable.revalidate();
+                            jTable.repaint();
+                        } else {
                             queryConstructor.setChangingValueClick(false);
-                            tables.get(i).setValueAt(false, j, 1);
-                            tables.get(i).revalidate();
-                            tables.get(i).repaint();
+                            jTable.setValueAt(false, j, 1);
+                            jTable.revalidate();
+                            jTable.repaint();
                         }
                     }
                 }
@@ -374,12 +295,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-
-    /**
-     * The method that works with the Add entry on the stack (step back).
-     * <p>
-     * Метод работающий с записью Add в стеке (шаг назад).
-     */
     private void methodIfActionAddStepBack(String actions, String queryElement, String pattern) {
         if (actions.equals("Add")) {
             if (queryElement.equals("Table")) {
@@ -389,11 +304,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method that works with the Delete entry on the stack (step back).
-     * <p>
-     * Метод работающий с записью Delete в стеке (шаг назад).
-     */
     private void methodIfActionDeleteStepBack(String actions, String queryElement, String pattern) {
         if (actions.equals("Delete")) {
             if (queryElement.equals("Table")) {
@@ -403,11 +313,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * The method that implements the functionality is a step forward.
-     * <p>
-     * Метод реализующий функционал шаг вперёд.
-     */
     private void stepUp() {
         if (!queryBuilderPanel.getHistoryActionStepUp().isEmpty()) {
             StringBuilder userBak = new StringBuilder(queryBuilderPanel.getAndRemoveStepUpActionInHistory());
@@ -420,11 +325,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method that works with a Set entry on the stack (step up).
-     * <p>
-     * Метод работающий с записью Set в стеке (шаг вперёд).
-     */
     private void methodActionSetStepUp(String actions, String queryElement, String pattern) {
         if (actions.equals("Set")) {
             if (queryElement.equals("First")) {
@@ -478,19 +378,18 @@ public class QBToolBar extends JToolBar {
                 ArrayList<JTable> tables = queryBuilderPanel.getListTable();
                 String attribute = queryConstructor.getAttribute();
 
-                for (int i = 0; i < tables.size(); i++) {
-                    for (int j = 0; j < tables.get(i).getRowCount(); j++) {
-                        if (attribute.contains(tables.get(i).getColumnName(0) + "." + tables.get(i).getValueAt(j, 0))) {
+                for (JTable jTable : tables) {
+                    for (int j = 0; j < jTable.getRowCount(); j++) {
+                        if (attribute.contains(jTable.getColumnName(0) + "." + jTable.getValueAt(j, 0))) {
                             queryConstructor.setChangingValueClick(false);
-                            tables.get(i).setValueAt(true, j, 1);
-                            tables.get(i).revalidate();
-                            tables.get(i).repaint();
-                        }
-                        else{
+                            jTable.setValueAt(true, j, 1);
+                            jTable.revalidate();
+                            jTable.repaint();
+                        } else {
                             queryConstructor.setChangingValueClick(false);
-                            tables.get(i).setValueAt(false, j, 1);
-                            tables.get(i).revalidate();
-                            tables.get(i).repaint();
+                            jTable.setValueAt(false, j, 1);
+                            jTable.revalidate();
+                            jTable.repaint();
                         }
                     }
                 }
@@ -498,11 +397,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * The method that works with the Add entry on the stack (step up).
-     * <p>
-     * Метод работающий с записью Add в стеке (шаг вперёд).
-     */
     private void methodIfActionAddStepUp(String actions, String queryElement, String pattern) {
         if (actions.equals("Add")) {
             if (queryElement.equals("Table")) {
@@ -512,11 +406,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method that works with the Delete entry on the stack (step up).
-     * <p>
-     * Метод работающий с записью Delete в стеке (шаг вперёд).
-     */
     private void methodIfActionDeleteStepUp(String actions, String queryElement, String pattern) {
         if (actions.equals("Delete")) {
             if (queryElement.equals("Table")) {
@@ -526,11 +415,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method for saving the query builder.
-     * <p>
-     * Метод для сохранения построителя запросов.
-     */
     private void saveQueryBuilder() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle(Bundles.get("QueryBuilder.ToolBar.saveQueryBuilder"));
@@ -547,11 +431,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * The method for clearing the request.
-     * <p>
-     * Метод для очистки запроса.
-     */
     public void clearQuery() {
         int userDecision = JOptionPane.showConfirmDialog(queryBuilderPanel, Bundles.get("QueryBuilder.ToolBar.warningCompleteCleaning"), Bundles.get("common.warning"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (userDecision == JOptionPane.YES_OPTION) {
@@ -563,11 +442,6 @@ public class QBToolBar extends JToolBar {
         }
     }
 
-    /**
-     * A method for deleting a table from the output panel.
-     * <p>
-     * Метод для удаления таблицы с панели вывода.
-     */
     private void removeTableInOutputPanel() {
         queryBuilderPanel.getBlocksPanel().removeAll();
         queryBuilderPanel.getBlocksPanel().revalidate();
@@ -578,101 +452,46 @@ public class QBToolBar extends JToolBar {
         queryBuilderPanel.getListTable().clear();
     }
 
-    /**
-     * A method for adding join to a query.
-     * <p>
-     * Метод для добавления соединений в запрос.
-     */
     public void addJoinsInQuery() {
-        join = new Join(queryBuilderPanel, queryConstructor, this);
+        new Join(queryBuilderPanel, queryConstructor, this);
     }
 
-    /**
-     * A method for adding queries (With) to a query.
-     * <p>
-     * Метод для добавления запросов (With) в запрос.
-     */
     public void addWithInQuery() {
         new With(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * A method for adding functions to a query.
-     * <p>
-     * Метод для добавления функций в запрос.
-     */
     private void addFunctionsInQuery() {
-        functions = new Functions(queryBuilderPanel, queryConstructor);
+        new Functions(queryBuilderPanel, queryConstructor);
     }
 
-    /**
-     * A method for adding groupings to a query.
-     * <p>
-     * Метод для добавления группировок в запрос.
-     */
     private void addGroupInQuery() {
-        groupBy = new GroupBy(queryConstructor, queryBuilderPanel);
+        new GroupBy(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * A method for adding sorting to a query.
-     * <p>
-     * Метод для добавления сортировки в запрос.
-     */
     private void addOrderByInQuery() {
-        orderBy = new OrderBy(queryBuilderPanel, queryConstructor);
+        new OrderBy(queryBuilderPanel, queryConstructor);
     }
 
-    /**
-     * A method for adding optimization to a query.
-     * <p>
-     * Метод для добавления оптимизации в запрос.
-     */
     private void addOptimizeInQuery() {
         new Optimize(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * A method for adding conditions to a query.
-     * <p>
-     * Метод для добавления условий в запрос.
-     */
     private void addConditionsInQuery() {
-        condition = new Condition(queryConstructor, queryBuilderPanel);
+        new Condition(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * A method for adding unions to a query.
-     * <p>
-     * Метод для добавления объединений (Union) в запрос.
-     */
     private void addUnionInQuery() {
-        union = new Union(queryConstructor, queryBuilderPanel);
+        new Union(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * Add First Skip and Distinct to the request
-     * <p>
-     * Добавить First Skip и Distinct в запрос.
-     */
     private void addFirsSkipAndDistinctInQuery() {
         new FirstSkipDistinct(queryConstructor, queryBuilderPanel);
     }
 
-    /**
-     * A method for adding a table to a query.
-     * <p>
-     * Метод для добавления таблицы в запрос.
-     */
     private void addTableInQuery() {
         table = new Table(queryBuilderPanel, queryConstructor, this);
     }
 
-    /**
-     * Method for getting a drop-down list with connections
-     * <p>
-     * Метод для получения выпадающего списка с подключениями
-     */
     public ConnectionsComboBox getConnections() {
         return connections;
     }

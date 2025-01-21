@@ -13,27 +13,12 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Stack;
 
-/**
- * The main class for working with the query constructor (QueryBuilder)
- * <p>
- * Главный класс для работы с конструктором запросов (QueryBuilder)
- *
- * @author Krylov Gleb
- */
 public class QBPanel extends JPanel implements TabView {
-
-    // --- Constants ---
-    // --- Константы ---
 
     public static final String TITLE = Bundles.get("common.queryBuilder");
     public static final String FRAME_ICON = "icon_table_validation";
-
-    // --- GUI Components ---
-    // --- Компоненты графического интерфейса ---
-
     private JPanel panelPlacingComponents;
     private JSplitPane mainSplitPanePanel;
-    private JSplitPane splitPanePanelGUIComponentsAndPanelTestingQuery;
     private QueryEditorTextPanel panelTestingQuery;
     private JPanel blocksPanel;
     private JPanel panelGUIComponents;
@@ -90,11 +75,11 @@ public class QBPanel extends JPanel implements TabView {
         panelPlacingComponents.setLayout(new BorderLayout());
 
         blocksPanel = WidgetFactory.createPanel("blocksPanel");
-        blocksPanel.setLayout(new BoxLayout(blocksPanel,BoxLayout.Y_AXIS));
+        blocksPanel.setLayout(new BoxLayout(blocksPanel, BoxLayout.Y_AXIS));
         blocksPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
         panelGUIComponents = WidgetFactory.createPanel("panelGUIComponents");
-        panelGUIComponents.setPreferredSize(new Dimension(100000,100000));
+        panelGUIComponents.setPreferredSize(new Dimension(100000, 100000));
         panelGUIComponents.setLayout(null);
         panelGUIComponents.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
@@ -143,7 +128,7 @@ public class QBPanel extends JPanel implements TabView {
      * <p>
      * Метод для инициализации стека.
      */
-    private void initStack(){
+    private void initStack() {
         historyUserStepBack = new Stack<>();
         historyUserStepUp = new Stack<>();
     }
@@ -154,10 +139,10 @@ public class QBPanel extends JPanel implements TabView {
      * Метод для инициализации SplitPane.
      */
     private void initSplitPane() {
-        splitPanePanelGUIComponentsAndPanelTestingQuery = new JSplitPane(JSplitPane.VERTICAL_SPLIT,scrollPanePlacingGUIComponents,panelTestingQuery);
+        JSplitPane splitPanePanelGUIComponentsAndPanelTestingQuery = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPanePlacingGUIComponents, panelTestingQuery);
         splitPanePanelGUIComponentsAndPanelTestingQuery.setDividerLocation(550);
 
-        mainSplitPanePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,splitPanePanelGUIComponentsAndPanelTestingQuery, scrollPanePlacingBlocks);
+        mainSplitPanePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitPanePanelGUIComponentsAndPanelTestingQuery, scrollPanePlacingBlocks);
         mainSplitPanePanel.setDividerLocation(800);
     }
 
@@ -204,39 +189,24 @@ public class QBPanel extends JPanel implements TabView {
         panelPlacingComponents.add(toolBar, BorderLayout.NORTH);
     }
 
-    public void addBlockInPanelBlocks(JLabel label){
+    public void addBlockInPanelBlocks(JLabel label) {
         blocksPanel.add(label);
         blocksPanel.revalidate();
         blocksPanel.repaint();
     }
 
-    public void clearBlocksPanel(){
+    public void clearBlocksPanel() {
         blocksPanel.removeAll();
     }
 
-    /**
-     * The method for getting the output panel of the elements.
-     * <p>
-     * Метод для получения панели вывода элементов.
-     */
     public JPanel getBlocksPanel() {
         return blocksPanel;
     }
 
-    /**
-     * A method for adding tables to the list of tables that are in the output panel.
-     * <p>
-     * Метод для добавления таблиц в список таблиц которые находятся на панели вывода.
-     */
     public void addTableInListTable(JTable table) {
         listTablesPanelGUIComponents.add(table);
     }
 
-    /**
-     * A method for removing tables from the list of tables that are in the output panel.
-     * <p>
-     * Метод для удаления таблиц из списка таблиц которые находятся на панели вывода.
-     */
     public void removeTableInListTable(String nameTable) {
         for (int i = 0; i < listTablesPanelGUIComponents.size(); i++) {
             if (listTablesPanelGUIComponents.get(i).getColumnName(0).equals(nameTable)) {
@@ -245,64 +215,35 @@ public class QBPanel extends JPanel implements TabView {
         }
     }
 
-    /**
-     * A method for getting a list of tables that are in the output panel.
-     * <p>
-     * Метод для получения списка таблиц которые находятся на панели вывода.
-     */
     public ArrayList<JTable> getListTable() {
         return listTablesPanelGUIComponents;
     }
 
-    /**
-     * A method for getting a list of table names that are in the output panel.
-     * <p>
-     * Метод для получения списка имён таблиц которые находятся на панели вывода.
-     */
     public ArrayList<String> getListNameTable() {
         ArrayList<String> nameTables = new ArrayList<>();
 
-        for (int i = 0; i < listTablesPanelGUIComponents.size(); i++) {
-            nameTables.add(listTablesPanelGUIComponents.get(i).getColumnName(0));
+        for (JTable listTablesPanelGUIComponent : listTablesPanelGUIComponents) {
+            nameTables.add(listTablesPanelGUIComponent.getColumnName(0));
         }
 
         return nameTables;
     }
 
-    /**
-     * A method for changing the query in the test query output panel.
-     * <p>
-     * Метод для смены запроса в панели вывода тестовых запросов.
-     */
     public void setTextInPanelOutputTestingQuery(String Query) {
         panelTestingQuery.setQueryAreaText(Query);
     }
 
-    /**
-     * The method for getting the request that is written to the test query output panel.
-     * <p>
-     * Метод для получения запроса который записан в панель вывода тестовых запросов.
-     */
     public String getTestQuery() {
         return panelTestingQuery.getQueryAreaText();
     }
 
-    /**
-     * The method for applying the test query.
-     * <p>
-     * Метод для применения тестового запроса.
-     */
-    public void applyTestQuery(QueryEditor queryEditor) {
-        queryEditor.setEditorText(panelTestingQuery.getQueryAreaText());
-    }
-
-    public void addBlockInBlocksPanel(String text,Color colorBorder,Color colorBackground){
+    public void addBlockInBlocksPanel(String text, Color colorBorder, Color colorBackground) {
         JLabel label = new JLabel();
-        label.setFont(new Font("Arial",Font.BOLD,18));
+        label.setFont(new Font("Arial", Font.BOLD, 18));
         label.setOpaque(true);
         label.setBackground(colorBackground);
         label.setText(text);
-        label.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorder,5,true),BorderFactory.createEmptyBorder(10,10,10,10)));
+        label.setBorder(new CompoundBorder(BorderFactory.createLineBorder(colorBorder, 5, true), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         addBlockInPanelBlocks(label);
     }
 
@@ -428,11 +369,6 @@ public class QBPanel extends JPanel implements TabView {
         panelGUIComponents.repaint();
     }
 
-    /**
-     * A method for removing a table from the output panel of graphical components.
-     * <p>
-     * Метод для удаления таблицы из панели вывода графических компонентов.
-     */
     public void removeTableInInputPanel(String nameTable) {
         for (int i = 0; i < getListTable().size(); i++) {
             if (nameTable.equals(getListTable().get(i).getColumnName(0))) {
@@ -444,11 +380,7 @@ public class QBPanel extends JPanel implements TabView {
             }
         }
     }
-    /**
-     * A method for checking the table for uniqueness.
-     * <p>
-     * Метод для проверки таблицы на уникальность.
-     */
+
     private boolean isTableUnique(JScrollPane scrollPane) {
         boolean Check = true;
         for (int i = 0; i < panelGUIComponents.getComponents().length; i++) {
@@ -459,66 +391,31 @@ public class QBPanel extends JPanel implements TabView {
         return Check;
     }
 
-    /**
-     * A method for adding user activity to the history. (Step back)
-     * <p>
-     * Метод для добавления активности пользователя в историю. (Шаг назад)
-     */
-    public void addStepBackActionInHistory(String action){
+    public void addStepBackActionInHistory(String action) {
         historyUserStepBack.add(action);
     }
 
-    /**
-     * A method for adding user activity to the history. (Step up)
-     * <p>
-     * Метод для добавления активности пользователя в историю. (Шаг вперёд)
-     */
-    public void addStepUpActionInHistory(String action){
+    public void addStepUpActionInHistory(String action) {
         historyUserStepUp.add(action);
     }
 
-    /**
-     * A method for getting and deleting an activity from the history. (Step back)
-     * <p>
-     * Метод для получения и удаления активности из истории. (Шаг назад)
-     */
-    public String getAndRemoveStepBackActionInHistory(){
+    public String getAndRemoveStepBackActionInHistory() {
         return historyUserStepBack.pop();
     }
 
-    /**
-     * A method for getting and deleting an activity from the history. (Step up)
-     * <p>
-     * Метод для получения и удаления активности из истории. (Шаг вперёд)
-     */
-    public String getAndRemoveStepUpActionInHistory(){
+    public String getAndRemoveStepUpActionInHistory() {
         return historyUserStepUp.pop();
     }
 
-    /**
-     * A method for getting user activity history. (Step back)
-     * <p>
-     * Метод для получения истории активности пользователей. (Шаг назад)
-     */
-    public Stack<String> getHistoryActionStepBack(){
+    public Stack<String> getHistoryActionStepBack() {
         return historyUserStepBack;
     }
 
-    /**
-     * A method for getting user activity history. (Step up)
-     * <p>
-     * Метод для получения истории активности пользователей. (Шаг вперёд)
-     */
-    public Stack<String> getHistoryActionStepUp(){
+    public Stack<String> getHistoryActionStepUp() {
         return historyUserStepUp;
     }
 
-    /**
-     * A method for obtaining a panel for the location of graphic components.
-     * <p>
-     * Метод получения панели для расположения графических компонентов.
-     */
-    public JPanel getPanelGUIComponents(){
+    public JPanel getPanelGUIComponents() {
         return panelGUIComponents;
     }
 
